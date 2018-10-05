@@ -108,10 +108,8 @@ Indicam-se as referências históricas de cada tema:
 
 
 ##### 2)
-    Sistemas de Recomendação podem ser vistos ao realizar buscas em sites
-    de pesquisa da internet, em compras online, ou até mesmo ao visualizamos
-    nossos emails. São o mecanismo por trás da propaganda personalizada que
-    recebemos na web, com indicações de sites para visitarmos ou produtos
+    Sistemas de Recomendação podem ser vistos ao realizar buscas em sites de pesquisa da internet, em compras online, ou até mesmo ao visualizamos nossos emails. São o mecanismo por trás da propaganda personalizada que
+       recebemos na web, com indicações de sites para visitarmos ou produtos
     para compramos.
     Com o advento do consumo em dispositivos móveis e a propagação o e-commerce,
     sistemas de recomendação tornaram-se um tema extremamente atrativo.
@@ -227,6 +225,123 @@ fonte: https://www.linkedin.com/pulse/machine-learning-para-sistemas-de-recomend
 
     fonte: https://www.ibm.com/developerworks/br/local/data/sistemas_recomendacao/index.html
 
+##### 4)
+    Recomenda ao usuário itens que pessoas com gosto semelhante preferiram no
+    passado. Em um cenário de recomendação de livros, por exemplo, se dois
+    usuários avaliarem muito bem o livro “Harry Potter e a Pedra Filosofal”
+    e, em seguida, o primeiro deles avaliar muito bem o livro “A Game of
+    Thrones”, é provável que o segundo usuário receba este último livro como
+    recomendação de leitura.
+
+    Uma vantagem importante nesse tipo de abordagem é que a filtragem
+    colaborativa é independente das propriedades específicas do item.
+    Tudo o que você precisa para começar é IDs de usuário e item, e
+    alguma noção de preferência desses usuários para os itens. Contudo,
+    como desvantagem, requer grande número de informações sobre o
+    usuário e usuários com perfil similar para funcionar corretamente.
+
+    fonte: http://coral.ufsm.br/pet-si/index.php/sistemas-de-recomendacao-desvendando-uma-parte-da-magica/
+
+
+##### 5)
+    One approach to the design of recommender systems that has wide use is
+    collaborative filtering.[32] Collaborative filtering methods are based on
+    collecting and analyzing a large amount of information on users’ behaviors,
+    activities or preferences and predicting what users will like based on
+    their similarity to other users. A key advantage of the collaborative filtering approach is that it does not rely on machine analyzable content
+     and therefore it is capable of accurately recommending complex items such
+      as movies without requiring an "understanding" of the item itself.
+       Many algorithms have been used in measuring user similarity or
+        item similarity in recommender systems. For example, the k-nearest
+         neighbor (k-NN) approach[33] and the Pearson Correlation as first 
+    implemented by Allen.[34]
+
+    Collaborative filtering is based on the assumption that people who agreed
+    in the past will agree in the future, and that they will like similar kinds
+    of items as they liked in the past.
+
+    When building a model from a user's behavior, a distinction is often made
+    between explicit and implicit forms of data collection.
+
+    Examples of explicit data collection include the following:
+
+    Asking a user to rate an item on a sliding scale.
+    Asking a user to search.
+    Asking a user to rank a collection of items from favorite to least favorite.
+    Presenting two items to a user and asking him/her to choose the better one of them.
+    Asking a user to create a list of items that he/she likes.
+
+    Examples of implicit data collection include the following:
+
+    Observing the items that a user views in an online store.
+    Analyzing item/user viewing times.[35]
+    Keeping a record of the items that a user purchases online.
+    Obtaining a list of items that a user has listened to or watched on his/her computer.
+    Analyzing the user's social network and discovering similar likes and dislikes.
+
+    The recommender system compares the collected data to similar and dissimilar
+     data collected from others and calculates a list of recommended items for the
+    user. Several commercial and non-commercial examples are listed in the 
+    article on collaborative filtering systems.
+
+    One of the most famous examples of collaborative filtering is item-to-item
+    collaborative filtering (people who buy x also buy y), an algorithm 
+    popularized by Amazon.com's recommender system.[36] Other examples include:
+
+    As previously detailed, Last.fm recommends music based on a comparison of
+     the listening habits of similar users, while Readgeek compares books 
+     ratings for recommendations.
+    Facebook, MySpace, LinkedIn, and other social networks use collaborative
+     filtering to recommend new friends, groups, and other social connections
+      (by examining the network of connections between a user and their friends)
+      .[1] Twitter uses many signals and in-memory computations for 
+      recommending to its users whom they should "follow."[6]
+
+    Collaborative filtering approaches often suffer from three problems: cold start, scalability, and sparsity.[37]
+
+    Cold start: These systems often require a large amount of existing data 
+    on a user in order to make accurate recommendations.[10][11]
+    Scalability: In many of the environments in which these systems make
+     recommendations, there are millions of users and products. Thus, a large 
+     amount of computation power is often necessary to calculate 
+     recommendations.
+    Sparsity: The number of items sold on major e-commerce sites is extremely 
+    large. The most active users will only have rated a small subset of the 
+    overall database. Thus, even the most popular items have very few ratings.
+
+    A particular type of collaborative filtering algorithm uses matrix 
+    factorization, a low-rank matrix approximation technique.[38][39][40]
+
+    Collaborative filtering methods are classified as memory-based and model
+     based
+    collaborative filtering. A well-known example of memory-based approaches is 
+    user-based algorithm[41] and that of model-based approaches is 
+    Kernel-Mapping 
+    Recommender.[42] 
+
+    fonte: https://en.wikipedia.org/wiki/Recommender_system
+
+##### 6)
+    These kinds of systems utilize user interactions to filter for items of 
+    interest. We can visualize the set of interactions with a matrix, where each 
+    entry (i,j)(i, j)(i,j) represents the interaction between user iii and item 
+    jjj. An interesting way of looking at collaborative filtering is to think of it 
+    as a generalization of classification and regression. While in these cases we 
+    aim to predict a variable that directly depends on other variables (features), 
+    in collaborative filtering there is no such distinction of feature variables 
+    and class variables.
+
+    Visualizing the problem as a matrix, we don’t look to predict the values of a 
+    unique column, but rather to predict the value of any given entry.
+
+    In short, collaborative filtering systems are based on the assumption that if a 
+    user likes item A and another user likes the same item A as well as another 
+    item, item B, the first user could also be interested in the second item. Hence,
+     they aim to predict new interactions based on historical ones. There are two 
+     types of methods to achieve this goal: memory-based and model-based.
+
+    fonte: https://tryolabs.com/blog/introduction-to-recommender-systems/
+
 #### Sistemas de conteúdo
 ##### 1)
     Esses recebem uma lista de usuários e suas preferências por itens, recomendando
@@ -281,6 +396,101 @@ fonte: https://www.linkedin.com/pulse/machine-learning-para-sistemas-de-recomend
 
     fonte: https://www.ibm.com/developerworks/br/local/data/sistemas_recomendacao/index.html
 
+##### 4)
+    Recomenda ao usuário produtos que sejam semelhantes ao que ele preferiu
+    no passado. Em um cenário de recomendação de filmes, um usuário que
+    assiste e gosta do filme “Star Wars” teria, por exemplo, recomendações
+    de filmes do gênero fantasia e ficção científica.
+
+    A principal vantagem da recomendação baseada em conteúdo sobre a
+    filtragem colaborativa é que ele não requer tanto feedback do
+    usuário para começar.  Entretanto, um problema surge quando
+    a similaridade de itens não é tão facilmente definida, o que
+    pode resultar em recomendações bastante homogêneas e repetitivas.
+
+    fonte: https://www.ibm.com/developerworks/br/local/data/sistemas_recomendacao/index.html
+
+
+##### 5)
+    Another common approach when designing recommender systems is content-based filtering. Content-based filtering methods are based on a description of the 
+    item and a profile of the user’s preferences.[43][44]
+
+    In a content-based recommender system, keywords are used to describe the items 
+    and a user profile is built to indicate the type of item this user likes. In 
+    other words, these algorithms try to recommend items that are similar to those 
+    that a user liked in the past (or is examining in the present). In particular, 
+    various candidate items are compared with items previously rated by the user 
+    and the best-matching items are recommended. This approach has its roots in 
+    information retrieval and information filtering research.
+
+    To abstract the features of the items in the system, an item presentation 
+    algorithm is applied. A widely used algorithm is the tf–idf representation 
+    (also called vector space representation).
+
+    To create a user profile, the system mostly focuses on two types of information:
+
+    1. A model of the user's preference.
+
+    2. A history of the user's interaction with the recommender system.
+
+    Basically, these methods use an item profile (i.e., a set of discrete 
+    attributes and features) characterizing the item within the system. The system 
+    creates a content-based profile of users based on a weighted vector of item 
+    features. The weights denote the importance of each feature to the user and can
+     be computed from individually rated content vectors using a variety of 
+     techniques. Simple approaches use the average values of the rated item vector 
+     while other sophisticated methods use machine learning techniques such as 
+     Bayesian Classifiers, cluster analysis, decision trees, and artificial neural
+      networks in order to estimate the probability that the user is going to like 
+      the item.[45]
+
+    Direct feedback from a user, usually in the form of a like or dislike button,
+     can be used to assign higher or lower weights on the importance of certain 
+     attributes (using Rocchio classification or other similar techniques).
+
+    A key issue with content-based filtering is whether the system is able to learn
+     user preferences from users' actions regarding one content source and use them
+      across other content types. When the system is limited to recommending 
+      content of the same type as the user is already using, the value from the
+       recommendation system is significantly less than when other content types
+        from other services can be recommended. For example, recommending news 
+        articles based on browsing of news is useful, but would be much more useful
+         when music, videos, products, discussions etc. from different services can
+          be recommended based on news browsing.
+
+    Pandora Radio is an example of a content-based recommender system that plays 
+    music with similar characteristics to that of a song provided by the user as an
+     initial seed. There are also a large number of content-based recommender 
+     systems aimed at providing movie recommendations, a few such examples include 
+     Rotten Tomatoes, Internet Movie Database, Jinni, Rovi Corporation, and Jaman.
+      Document related recommender systems aim at providing document 
+      recommendations to knowledge workers. Public health professionals have been
+       studying recommender systems to personalize health education and 
+       preventative strategies.
+
+    fonte: https://en.wikipedia.org/wiki/Recommender_system
+
+##### 6)
+    These systems make recommendations using a user’s item and profile features.
+     They hypothesize that if a user was interested in an item in the past, they 
+     will once again be interested in it in the future. Similar items are usually 
+     grouped based on their features. User profiles are constructed using 
+     historical interactions or by explicitly asking users about their interests.
+      There are other systems, not considered purely content-based, which utilize 
+      user personal and social data.
+
+    One issue that arises is making obvious recommendations because of excessive 
+    specialization (user A is only interested in categories B, C, and D, and the 
+    system is not able to recommend items outside those categories, even though 
+    they could be interesting to them).
+
+    Another common problem is that new users lack a defined profile unless they are
+     explicitly asked for information. Nevertheless, it is relatively simple to add
+      new items to the system. We just need to ensure that we assign them a group
+       according to their features.
+
+    fonte: https://tryolabs.com/blog/introduction-to-recommender-systems/
+
 #### Sistemas sociais
 ##### 1)
     Descobertos com o boom das redes sociais, esses sistemas se aproveitam dos dados
@@ -322,13 +532,151 @@ fonte: https://www.linkedin.com/pulse/machine-learning-para-sistemas-de-recomend
 
     fonte: https://www.ibm.com/developerworks/br/local/data/sistemas_recomendacao/index.html
 
+##### 3)
+    Recent research has demonstrated that a hybrid approach, combining 
+    collaborative filtering and content-based filtering could be more effective in
+     some cases. Hybrid approaches can be implemented in several ways: by making 
+     content-based and collaborative-based predictions separately and then 
+     combining them; by adding content-based capabilities to a collaborative-based 
+     approach (and vice versa); or by unifying the approaches into one model (see
+     [21] for a complete review of recommender systems). Several studies 
+     empirically compare the performance of the hybrid with the pure collaborative 
+     and content-based methods and demonstrate that the hybrid methods can provide 
+     more accurate recommendations than pure approaches. These methods can also be 
+     used to overcome some of the common problems in recommender systems such as 
+     cold start and the sparsity problem.
+
+    Netflix is a good example of the use of hybrid recommender systems.[48] The 
+    website makes recommendations by comparing the watching and searching habits of 
+    similar users (i.e., collaborative filtering) as well as by offering movies 
+    that share characteristics with films that a user has rated highly 
+    (content-based filtering).
+
+    A variety of techniques have been proposed as the basis for recommender 
+    systems: collaborative, content-based, knowledge-based, and demographic 
+    techniques. Each of these techniques has known shortcomings, such as the well 
+    known cold-start problem for collaborative and content-based systems (what to 
+    do with new users with few ratings) and the knowledge engineering bottleneck[49]
+     in knowledge-based approaches. A hybrid recommender system is one that 
+     combines multiple techniques together to achieve some synergy between them.
+
+
+    Collaborative: The system generates recommendations using only information 
+    about rating profiles for different users or items. Collaborative systems 
+    locate peer users / items with a rating history similar to the current user
+     or item and generate recommendations using this neighborhood. The user 
+      deal with the cold start problem and improve recommendation results.[50]
+    Content-based: The system generates recommendations from two sources: the 
+    features associated with products and the ratings that a user has given 
+    them. Content-based recommenders treat recommendation as a user-specific 
+    classification problem and learn a classifier for the user's likes and 
+    dislikes based on product features.
+    Demographic: A demographic recommender provides recommendations based on a 
+    different demographic niches, by combining the ratings of users in those 
+    niches.
+    Knowledge-based: A knowledge-based recommender suggests products based on 
+    inferences about a user’s needs and preferences. This knowledge will 
+    sometimes contain explicit functional knowledge about how certain product 
+    features meet user needs.[51][52]
+
+    The term hybrid recommender system is used here to describe any recommender 
+    system that combines multiple recommendation techniques together to produce its
+     output. There is no reason why several different techniques of the same type
+      could not be hybridized, for example, two different content-based 
+      recommenders could work together, and a number of projects have investigated 
+      this type of hybrid: NewsDude, which uses both naive Bayes and kNN 
+      classifiers in its news recommendations is just one example.[51]
+
+    Seven hybridization techniques:
+
+    Weighted: The score of different recommendation components are combined 
+    numerically.
+    Switching: The system chooses among recommendation components and applies 
+    the selected one.
+    Mixed: Recommendations from different recommenders are presented together 
+    to give the recommendation.
+    Feature Combination: Features derived from different knowledge sources are 
+    combined together and given to a single recommendation algorithm.
+    Feature Augmentation: One recommendation technique is used to compute a 
+    feature or set of features, which is then part of the input to the next 
+    technique.
+    Cascade: Recommenders are given strict priority, with the lower priority 
+    ones breaking ties in the scoring of the higher ones.
+    Meta-level: One recommendation technique is applied and produces some sort 
+    of model, which is then the input used by the next technique.[51]
+
+    fonte: https://en.wikipedia.org/wiki/Recommender_system
+
 ## Características de cada paradigma
 #### tipos
 1. Sistemas colaborativos
 2. Sistemas de Conteúdo
 3. Sistemas sociais
 
-## Vantagens para o promotor da recomendação
+(ver o topico a cima)
+
+• Recomendação personalizada: recomenda coisas baseada no histórico
+de comportamento
+• Recomendação social: recomenda coisas baseada no histórico de
+comportamento de usuários parecidos
+• Recomendação de item: recomenda coisas baseada na própria coisa
+• Uma combinação das três abordagens acima
+
+## Vantagens para o promotor da recomendaçãoo
+##### 1)
+    Sistemas de “tagueamento”, como a folksonomia, apresentam duas
+    desvantagens que são próprias da linguagem natural, ou seja,
+    a linguagem que utilizamos no dia-a-dia. Sem um controle dos
+    vocábulos, os usuários podem criar vários termos para o mesmo
+    conceito: por exemplo, para o termo New York City, o usuário
+    pode criar tags como NYC, Newyork ou Newyourkcity. A segunda
+    desvantagem é quando palavras homógrafas representam conceitos
+    diferentes. Para entender mais sobre esse tema, leia o artigo
+    “Ecommerce 3.0: novos paradigmas e novos desafios impostos pela
+    web do futuro – a Websemântica”, que foi publicado na revista de
+    fevereiro e está disponível online em http://bit.ly/wFRywP.
+
+    Por outro lado, a indexação com o uso de um vocabulário controlado
+    (VC), ao contrário da folksonomia, não permite que o próprio usuário
+    escreva ou crie as palavras-chave de forma “descontrolada”, pois elas
+    devem ser selecionadas a partir de uma lista pré-definida e composta
+    apenas por tags autorizadas. Nessa medida, o VC faz um contraponto
+    com a folksonomia, porque esta usa a linguagem natural, e o VC
+    usa um vocabulário que busca “controlar” as ambiguidades.
+
+    Enquanto o VC nos “lembra” e nos “impõe” o uso de apenas um, de dois
+    ou mais termos sinônimos e nos permite identificar a distinção conceitual
+    entre palavras homógrafas, na folksonomia é o usuário quem cria
+    livremente as suas tags preferidas. Assim, se a indexação ou “tagueamento”
+    é feito a partir da linguagem natural do usuário, a comunicação
+    está sujeita a “ruídos” que podem tornar ambíguo o conceito representado
+    pelos “genes” ou tags. Aí, nesse momento, começam a surgir as imprecisões
+    ou mal entendidos, sejam entre humanos ou entre homens e máquinas.
+
+    Quanto mais coerentes as relações semânticas entre as tags ou conceitos,
+    mais assertivas serão as recomendações ou buscas que se baseiam nesses
+    “genes”. Uma abordagem que é híbrida, e que já é adotada pela Amazon,
+    combina a liberdade de criação de tags com um processo de moderação
+    que impõe ao cliente algumas regras, ou seja, são disponibilizadas
+    funcionalidades que o permite organizar os produtos da loja à sua
+    própria maneira, por meio das tags, bem como fazer buscas por produtos
+    tagueados por outros clientes e até usar as tags para agrupar e comparar
+    lado-a-lado produtos que considera comprar. Mas tudo isso de forma 
+    “supervisionada”, para garantir a qualidade das tags e dos serviços que delas
+    dependem.
+
+    A Amazon não organizou um concurso de US$ 1 milhão, mas disponibiliza uma
+    série de ferramentas sociais que viabilizam o trabalho que é pago através
+    da troca de diferentes satisfações e necessidades pessoais. E são essas
+    satisfações e necessidades sociais que despertam a motivação intrínseca
+    de cada pessoa de uma horda de clientes para comentar a performance
+    e as funcionalidades uma câmera fotográfica, a votar com estrelinhas
+    em um livro que de gostou ou odiou, a sugerir novas tags e a votar
+    nas tags existentes de um produto que comprou ou que deseja comprar.
+    E, isso, US$ 1 milhão não paga… ou melhor, as lojas online é que
+    ganham milhões.
+    
+    fonte: https://www.ecommercebrasil.com.br/artigos/tags-o-dna-dos-sistemas-de-recomendacao/
 
 ## Vantagens para o alvo da recomendação
 
@@ -390,7 +738,12 @@ fonte: https://www.linkedin.com/pulse/machine-learning-para-sistemas-de-recomend
 2. ebay
 3. playstore
 4. ...
+--------------------
+35% das vendas da Amazon vem de recomendações.
+http://coral.ufsm.br/pet-si/index.php/sistemas-de-recomendacao-desvendando-uma-parte-da-magica/
+--------------------
 
 ### Hotelaria e Restauracao
 1. McDonald's
-2. ...
+2. Booking 
+3. Trivago
