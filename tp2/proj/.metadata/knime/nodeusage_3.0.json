@@ -1,0 +1,28 @@
+
+{
+    "version":"3.6.1.v201809030900",
+    "created":"2018-10-25 15:53",
+    "nodestats":{
+        "nodes":[
+            {
+                "id":"org.knime.base.node.io.csvreader.CSVReaderNodeFactory#CSV Reader",
+                "nrexecs":0,
+                "nrfails":0,
+                "exectime":0,
+                "nrcreated":1,
+                "successor":"n/a"
+            }
+        ],
+        "metaNodes":{
+        },
+        "wrappedNodes":{
+        }
+    },
+    "uptime":85045,
+    "workflowsOpened":0,
+    "remoteWorkflowsOpened":0,
+    "launches":2,
+    "timeSinceLastStart":170062,
+    "crashes":0,
+    "properlyShutDown":false
+}
