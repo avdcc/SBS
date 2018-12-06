@@ -5,7 +5,7 @@ import json
 
 
 # SO MUDAR ISTO -----------------------------------------------------------
-numero_link = 3
+numero_link = 0
 pathFile = './ml-latest-small/' + 'link' + str(numero_link) + '.csv'
 
 ADRIANO = 'd6f82b99'
@@ -14,8 +14,9 @@ LUIS = '3da75bf3'
 LUIS2 = 'fb25258'
 LUIS3 = 'ade8eee5'
 EZEQUIEL = '14459687'
+AUX = '34b11df4' 
 
-apiKey = ADRIANO
+apiKey = AUX
 
 # SO MUDAR ISTO -----------------------------------------------------------
 
@@ -26,7 +27,7 @@ i = 0
 with open(pathFile, 'rb') as csvfile:
     for row in csvfile:
         i+=1
-        ref = row.decode("utf-8")[0:-1]
+        ref = row.decode("utf-8").strip("\n")
         res = omdb.get(imdbid=ref, fullplot=False, tomatoes=False)
         d[ref] = res
 
@@ -36,5 +37,5 @@ with open(pathFile, 'rb') as csvfile:
         #   exit()
 
 final = pandas.read_json(json.dumps(d, ensure_ascii=False))
-final.to_csv('res' + str(numero_link)+'.csv', header = True, index = False)
+final.to_csv('res' + str(numero_link)+'.csv', header = True, index = False, sep = '£' )
 
