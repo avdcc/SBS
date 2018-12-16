@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<title>W3.CSS Template</title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Lato", sans-serif
+  }
+
+  .w3-bar,
+  h1,
+  button {
+    font-family: "Montserrat", sans-serif
+  }
+
+  .fa-anchor,
+  .fa-coffee {
+    font-size: 200px
+  }
+</style>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="w3-top">
+  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Content Based</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Collaborative Filtering</a>
+    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">...</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Content Based</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Collaborative Filtering</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">...</a>
+  </div>
+</div>
+
+  <!-- Header -->
+  <header class="w3-container w3-red w3-center" style="padding:128px 16px">
+    <h1 class="w3-margin w3-jumbo">MOVIES THAT WE RECOMMEND:</h1>
+    <p class="w3-xlarge">Sistemas Baseados em Similaridade (2018/2019)</p>
+    <!-- <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button> -->
+  </header>
+
+  <!-- First Grid -->
+  <div class="w3-row-padding w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-twothird w3-right-align">
+        <h1>Titulo</h1>
+        <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5>
+
+        <button onclick="show('1')" class="w3-button w3-red w3-padding-large w3-large w3-margin-top">Show More</button>
+
+        <div id='1' style="display: none">
+          <h5 class="w3-padding-5">actors: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">awards: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">country: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">director: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">genre: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">imdb_rating: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">imdb_votes: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">language: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">metascore: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">plot: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">poster: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">production: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">ratings: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">title: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">writer: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">year: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">dvdYear: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">releasedMonth: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">releasedYear: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">duration: <span style="color: grey"> ... </span></h5>
+        </div>
+
+      </div>
+
+      <div class="w3-third w3-center">
+        <!-- <i class="fa fa-anchor w3-padding-64 w3-text-red"></i> -->
+        <img src="https://images-na.ssl-images-amazon.com/images/M/MV5BNGYwZmZkYWItNjdmMi00MjI2LThmOGYtMmI1NTQ0OWQ1YWIxXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_SX300.jpg"
+          alt="filme1">
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Grid -->
+  <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+    <div class="w3-content">
+      <div class="w3-third w3-center">
+        <img src="https://m.media-amazon.com/images/M/MV5BMTUzMzY1MzI3Nl5BMl5BanBnXkFtZTcwOTM4OTYwNA@@._V1_SX300.jpg"
+          alt="filme1">
+        <!-- <i class="fa fa-coffee w3-padding-64 w3-text-red w3-margin-right"></i> -->
+      </div>
+
+      <div class="w3-twothird">
+        <h1>Titulo</h1>
+        <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5>
+
+        <button onclick="show('2')" class="w3-button w3-red w3-padding-large w3-large w3-margin-top">Show More</button>
+
+        <div id='2' style="display: none">
+          <h5 class="w3-padding-5">actors: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">awards: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">country: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">director: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">genre: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">imdb_rating: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">imdb_votes: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">language: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">metascore: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">plot: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">poster: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">production: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">ratings: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">title: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">writer: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">year: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">dvdYear: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">releasedMonth: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">releasedYear: <span style="color: grey"> ... </span></h5>
+          <h5 class="w3-padding-5">duration: <span style="color: grey"> ... </span></h5>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Quote of the day: live life</h1>
+  </div>
+
+  <!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
+  <script src="d3.min.js?v=3.2.8"></script>
+
+  <!-- <script>
+    function arrayToTable(tableData) {
+      var table = $('<table></table>');
+      $(tableData).each(function (i, rowData) {
+        var row = $('<tr></tr>');
+        $(rowData).each(function (j, cellData) {
+          row.append($('<td>' + cellData + '</td>'));
+        });
+        table.append(row);
+      });
+      return table;
+    }
+
+    $.ajax({
+      type: "GET",
+      url: "http://insight.dev.schoolwires.com/HelpAssets/C2Assets/C2Files/C2MassAssignUsersSample_.csv",
+      success: function (data) {
+        $('body').append(arrayToTable(Papa.parse(data).data));
+      }
+    });
+  </script> -->
+
+  <script>
+    function show(x) {
+      var x = document.getElementById(x);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+    <div class="w3-xlarge w3-padding-32">
+      <i class="fa fa-facebook-official w3-hover-opacity"></i>
+      <i class="fa fa-instagram w3-hover-opacity"></i>
+      <i class="fa fa-snapchat w3-hover-opacity"></i>
+      <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+      <i class="fa fa-twitter w3-hover-opacity"></i>
+      <i class="fa fa-linkedin w3-hover-opacity"></i>
+    </div>
+    <p> SBS (2018/2019) </p>
+  </footer>
+
+</body>
+
+</html>
