@@ -105,8 +105,11 @@ def cfRecommendations(user):
 
 
     #teste de guardar para ficheiro
+    #parametros da função: nomeFicheiro, previsões(opcional), modelo(opcional), verboso(opcional)
+    #como só queremos guardar o svd, colocamos o campo de previsões a None
     dump.dump('testeOutModel',None,svd,1)
 
+    # o load retorna um tuplo, mas neste caso o pred não tem nada com significado
     pred,svdFromFile = dump.load('testeOutModel')
 
     listAux = []
@@ -125,6 +128,7 @@ def cfRecommendations(user):
     a = list[0]
     b = listAux[0]
 
+    #Se o último for true, então temos o que esperavamos
     return(a,b,list==listAux)
 
 print(cfRecommendations(1))
