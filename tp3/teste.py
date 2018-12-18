@@ -126,7 +126,6 @@ def cfRecommendations(user):
     list = sorted(list, key=lambda x: x[1], reverse=True)
 
 
-    #Se o último for true, então temos o que esperavamos
     return(list[0])
 
 print(cfRecommendations(1))
