@@ -99,7 +99,6 @@ def startPredModel(user,ratings,fileOutput):
 
 
 def cfRecommendations(user):
-
     ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
     # Fill NaN values in user_id and movie_id column with 0
@@ -126,6 +125,13 @@ def cfRecommendations(user):
     list = sorted(list, key=lambda x: x[1], reverse=True)
 
 
-    return(list[0])
+    return(list)
 
-print(cfRecommendations(1))
+def cfRecommendationsExcludingList(user,listExcluded):
+    listAux = cfRecommendations(user)
+    listRec = list(filter(lambda x: x[0] not in listExcluded , listAux))
+    return (
+        listRec[0]
+    )
+
+print(cfRecommendationsExcludingList(1,[]))
