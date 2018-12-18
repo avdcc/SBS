@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
-from surprise import Reader, Dataset, SVD, evaluate
+from surprise import Reader, Dataset, SVD, evaluate, dump
 
 import pprint
 
@@ -68,9 +68,9 @@ def cbRecommendations(title, features, filters, nRes):
 
 # ------------------------------------------
 # - Print Resultados
-# print(
-# completeRecommendations('Dial M for Murder', ['genre','actors'],[], 100)
-# )
+#print(
+# cbRecommendations('Dial M for Murder', ['genre','actors'],[], 20)
+#)
 # "actors";"awards";"country";"director";"genre";"imdb_rating";"imdb_votes";"language";"metascore";"plot";"poster";"production";"ratings";"title";"writer";"year";"dvdYear";"releasedMonth";"releasedYear";"duration"
 # "country";"director";"genre";"imdb_rating";"imdb_votes";"language";"metascore";"plot";"poster";"production";"ratings";"title";"writer";"year";"dvdYear";"releasedMonth";"releasedYear";"duration"
 
@@ -103,11 +103,28 @@ def cfRecommendations(user):
     print(type(trainset))
     svd.train(trainset)
 
+
+    #teste de guardar para ficheiro
+    dump.dump('testeOutModel',None,svd,1)
+
+    pred,svdFromFile = dump.load('testeOutModel')
+
+    listAux = []
+    for mov in ratings.imdbId.unique():
+        listAux.append((mov, svdFromFile.predict(user, mov, 3).est))
+
+    listAux = sorted(listAux, key=lambda x: x[1], reverse=True)
+
+
     list = []
     for mov in ratings.imdbId.unique():
         list.append((mov, svd.predict(user, mov, 3).est))
 
     list = sorted(list, key=lambda x: x[1], reverse=True)
-    return(list[0])
+
+    a = list[0]
+    b = listAux[0]
+
+    return(a,b,list==listAux)
 
 print(cfRecommendations(1))
