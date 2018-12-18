@@ -78,6 +78,26 @@ def cbRecommendations(title, features, filters, nRes):
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
 
+fileModel = 'testeOutModel'
+
+def startPredModel(user,ratings,fileOutput):
+
+    reader = Reader ()
+
+    data = Dataset.load_from_df(ratings[['userId', 'imdbId', 'rating']], reader)
+    data.split(n_folds=2)
+
+    svd = SVD()
+    evaluate(svd, data, measures=['RMSE', 'MAE'])
+
+    trainset = data.build_full_trainset()
+    svd.train(trainset)
+
+
+    dump.dump(fileOutput,None,svd,1)
+
+
+
 def cfRecommendations(user):
 
     ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
@@ -91,33 +111,13 @@ def cfRecommendations(user):
 
     # "userId";"rating";"imdbId"
 
-    reader = Reader ()
 
-    data = Dataset.load_from_df(ratings[['userId', 'imdbId', 'rating']], reader)
-    data.split(n_folds=2)
+    #inicializa o modelo e guarda para um ficheiro
+    startPredModel(user,ratings,fileModel)
 
-    svd = SVD()
-    evaluate(svd, data, measures=['RMSE', 'MAE'])
-
-    trainset = data.build_full_trainset()
-    print(type(trainset))
-    svd.train(trainset)
-
-
-    #teste de guardar para ficheiro
-    #parametros da função: nomeFicheiro, previsões(opcional), modelo(opcional), verboso(opcional)
-    #como só queremos guardar o svd, colocamos o campo de previsões a None
-    dump.dump('testeOutModel',None,svd,1)
 
     # o load retorna um tuplo, mas neste caso o pred não tem nada com significado
-    pred,svdFromFile = dump.load('testeOutModel')
-
-    listAux = []
-    for mov in ratings.imdbId.unique():
-        listAux.append((mov, svdFromFile.predict(user, mov, 3).est))
-
-    listAux = sorted(listAux, key=lambda x: x[1], reverse=True)
-
+    pred,svd = dump.load(fileModel)
 
     list = []
     for mov in ratings.imdbId.unique():
@@ -125,10 +125,8 @@ def cfRecommendations(user):
 
     list = sorted(list, key=lambda x: x[1], reverse=True)
 
-    a = list[0]
-    b = listAux[0]
 
     #Se o último for true, então temos o que esperavamos
-    return(a,b,list==listAux)
+    return(list[0])
 
 print(cfRecommendations(1))
