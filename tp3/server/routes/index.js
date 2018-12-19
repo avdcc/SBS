@@ -36,4 +36,56 @@ router.post('/collFilt',(req,res)=>{
   res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
+
+
+//userBestRated
+
+router.get('/userBestRated',(req,res)=>{
+  res.render('userBestRatedGET')
+})
+
+router.post('/userBestRated',(req,res)=>{
+  res.render('userBestRatedPOST')
+})
+
+
+
+//userMostPopular
+
+router.get('/userMostPopular',(req,res)=>{
+  res.render('userMostPopularGET')
+})
+
+
+router.post('/userMostPopular',(req,res)=>{
+  res.render('userMostPopularPOST')
+})
+
+
+
+//wsBestRated
+
+router.get('/wsBestRated',(req,res)=>{
+  res.render('wsBestRatedGET')
+})
+
+router.post('/wsBestRated',(req,res)=>{
+  res.render('wsBestRatedPOST')
+})
+
+
+
+//wsMostPopular
+
+router.get('/wsMostPopular',(req,res)=>{
+  res.render('wsMostPopularGET')
+})
+
+router.post('/wsMostPopular',(req,res)=>{
+  res.render('wsMostPopularPOST')
+})
+
+
+
+
 module.exports = router;
