@@ -134,4 +134,35 @@ def cfRecommendationsExcludingList(user,listExcluded):
         listRec[0]
     )
 
-print(cfRecommendationsExcludingList(1,[]))
+def userBestRated():
+
+    ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
+    result = ratings.sort_values(by=['av'], ascending=False)
+
+    return(list(result['imdbId']))
+
+def userMostPopular():
+
+    ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
+    result = ratings.sort_values(by=['nov'], ascending=False)
+
+    return(list(result['imdbId']))
+
+def wsBestRated(site):
+
+    ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+    result = ratings.sort_values(by=[site+ '_rating'], ascending=False)
+
+    return(list(result['imdbId']))
+
+def wsMostPopular(site):
+
+    ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+    result = ratings.sort_values(by=[site+ '_votes'], ascending=False)
+
+    return(list(result['imdbId']))
+
+# http://nbviewer.jupyter.org/github/khanhnamle1994/movielens/blob/master/Deep_Learning_Model.ipynb
+# https://www.kaggle.com/rounakbanik/movie-recommender-systems
+# https://www.datacamp.com/community/tutorials/recommender-systems-python
+# https://www.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/
