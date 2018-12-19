@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .w3-container 
+    .w3-card-4
+      header.w3-container.w3-blue
+        h3= title
+      .w3-container
+        p Welcome to #{title}
+        p please select your option for filtering
+        p
+          a(href='http://localhost:3000/contFilt') 
+            | Content Based Filtering
+        p
+          a(href='http://localhost:3000/collFilt') 
+            | Collaborative Filtering
