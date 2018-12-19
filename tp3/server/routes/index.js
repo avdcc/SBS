@@ -21,6 +21,7 @@ router.get('/contFilt',(req,res)=>{
 
 router.post('/contFilt',(req,res)=>{
   //here we will handle the actual data passed from the user
+  res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
 
@@ -33,6 +34,7 @@ router.get('/collFilt',(req,res)=>{
 
 router.post('/collFilt',(req,res)=>{
   //here we will handle the actual data passed from the user
+  res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
 module.exports = router;
