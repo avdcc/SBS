@@ -1,6 +1,6 @@
 Inicialização:
 
-Antes de correr deve-se chamar o comando npm start na diretoria deste documento
+Antes de correr deve-se chamar o comando npm install na diretoria deste documento
 
 Note-se que apenas se corre isto uma vez ao inicio, e se houver erros depois 
 na consola sobre modulos
@@ -10,8 +10,12 @@ Operação do servidor:
 
 1-entrar na diretoria deste documento
 
-2-correr npm start
+2- correr  FLASK_APP=flackTest.py flask run
 
-3- ir para localhost:3000 no browser preferido
+3- abrir uma nova consola(ou colocar o processo anterior em background)
 
-4-se tudo correu bem, deve estar a funcionar
+4-correr npm start na diretoria deste documento
+
+5- ir para localhost:3000 no browser preferido
+
+6-se tudo correu bem, deve estar a funcionar
