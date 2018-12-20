@@ -92,7 +92,7 @@ def cbRecommendations(title, features):
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
+#generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
 
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
@@ -140,26 +140,25 @@ def cfRecommendations(user):
 # Os melhores com base nos nossos utilizadores e outros sites
 
 def userBestRated():
-
     ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
+        
     result = ratings.sort_values(by=['av'], ascending=False)
 
     return(list(result['imdbId']))
 
 def userMostPopular():
-
     ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
+
     result = ratings.sort_values(by=['nov'], ascending=False)
 
     return(list(result['imdbId']))
 
 def wsBestRated(site):
-
     ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
     if (site == 'meta'):
         result = ratings.sort_values(by=['metascore'], ascending=False)
     else:    
-        result = ratings.sort_values(by=[site+ '_rating'], ascending=False)
+        result = ratings.sort_values(by=[site + '_rating'], ascending=False)
 
     return(list(result['imdbId']))
 
@@ -212,6 +211,7 @@ def testCall():
 def callUserBestRated():
   #get the list of recomendations
   listRecomended = userBestRated()
+
 
   # transform list into JSON to be later used on the other server
   res = listIDSToJSON(listRecomended)

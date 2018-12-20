@@ -153,7 +153,7 @@ router.post('/userBestRated',(req,res)=>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
        })
-  res.render('filterMethods/userBestRatedPOST',{title: websiteTitle})
+  //res.render('filterMethods/userBestRatedPOST',{title: websiteTitle})
 })
 
 
@@ -174,7 +174,7 @@ router.post('/userMostPopular',(req,res)=>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
        })
-  res.render('filterMethods/userMostPopularPOST',{title: websiteTitle})
+  //res.render('filterMethods/userMostPopularPOST',{title: websiteTitle})
 })
 
 
@@ -194,7 +194,7 @@ router.post('/wsBestRated',(req,res)=>{
         console.log('Erro na listagem de utilizadores: ' + erro)
         res.render('index')
       })
-  res.render('filterMethods/wsBestRatedPOST',{title: websiteTitle})
+  //res.render('filterMethods/wsBestRatedPOST',{title: websiteTitle})
 })
 
 
