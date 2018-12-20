@@ -2,8 +2,99 @@
 
 var express = require('express');
 var router = express.Router();
+var axios = require('axios')
 
 var websiteTitle = 'title'
+
+
+
+//sketch.js
+var filmes;
+
+function preload(){
+  filmes = loadStrings("../filmes.csv");
+}
+
+function aux(string){
+	var res;
+  for (var i = 0; i< string.length ; i++){
+  	if(string[i] != "\""){
+    	res.append(string[i]);
+    }
+  }
+  return res;
+}
+
+function stripall(list){
+	return list.map(x => aux(x));
+}
+
+function column(table,ind){
+	var res = [];
+  for(var i =0; i< table.length ; i++){
+  	res += (table[i][ind]);
+  }
+  return res;
+}
+
+function createDic(table){
+	dic = [];
+  for(var i=0; table[0].length; i++){
+  	dic.push({ key: table[0][i],
+               value: column(table,i)})
+  }
+  return dic;
+}
+
+function data_imdbid(id,database){
+	for(var i=0; i<database.length; i++){
+  	if(database[i][5] == id){
+    	return database[i];
+    }
+  }	
+}
+
+function List_toSet(List){
+	var res = new Set();
+  for(var i=0; i<List.length; i++){
+  	res.add(List[i]);
+  }
+  return res;
+}
+
+function setup() {
+  noCanvas();
+  filmes = filmes.map(x => x.replace(/\"/g,"").split(";"));
+
+  print(filmes[0]);
+  
+  //print(data_imdbid("tt0113326",filmes));
+  //print(createDic(filmes));
+  //print(Array.from(List_toSet(column(filmes,0))));
+  //print(List_toSet(["ola","ole","ola"]));
+  var atores = column(filmes,0);
+   for(var i=0; i<atores.length; i++){
+   	print(atores[i]);
+   }
+  
+}
+
+
+
+function draw() {
+  background(220);
+}
+
+//end of sketch.js
+
+
+
+
+
+
+
+
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -20,7 +111,15 @@ router.get('/contFilt',(req,res)=>{
 })
 
 router.post('/contFilt',(req,res)=>{
-  //here we will handle the actual data passed from the user
+  //test for the python server
+  axios.get('http://localhost:5000/test')
+       .then(dataRec => res.render('message', {
+        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
+       }))
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
   res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
@@ -33,6 +132,7 @@ router.get('/collFilt',(req,res)=>{
 })
 
 router.post('/collFilt',(req,res)=>{
+  //here we will handle the actual data passed from the user
   res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
@@ -41,11 +141,19 @@ router.post('/collFilt',(req,res)=>{
 //userBestRated
 
 router.get('/userBestRated',(req,res)=>{
-  res.render('userBestRatedGET')
+  res.render('filterMethods/userBestRatedGET',{title: websiteTitle})
 })
 
 router.post('/userBestRated',(req,res)=>{
-  res.render('userBestRatedPOST')
+  axios.get('http://localhost:5000/userBestRated')
+       .then(dataRec => res.render('message', {
+        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
+       }))
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
+  //res.render('filterMethods/userBestRatedPOST',{title: websiteTitle})
 })
 
 
@@ -53,12 +161,20 @@ router.post('/userBestRated',(req,res)=>{
 //userMostPopular
 
 router.get('/userMostPopular',(req,res)=>{
-  res.render('userMostPopularGET')
+  res.render('filterMethods/userMostPopularGET',{title: websiteTitle})
 })
 
 
 router.post('/userMostPopular',(req,res)=>{
-  res.render('userMostPopularPOST')
+  axios.get('http://localhost:5000/userMostPopular')
+       .then(dataRec => res.render('message', {
+        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
+       }))
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
+  //res.render('filterMethods/userMostPopularPOST',{title: websiteTitle})
 })
 
 
@@ -66,24 +182,32 @@ router.post('/userMostPopular',(req,res)=>{
 //wsBestRated
 
 router.get('/wsBestRated',(req,res)=>{
-  res.render('wsBestRatedGET')
+  res.render('filterMethods/wsBestRatedGET',{title: websiteTitle})
 })
 
 router.post('/wsBestRated',(req,res)=>{
-  res.render('wsBestRatedPOST')
+  axios.get('http://localhost:5000/wsBestRated/' + req.body.data)
+      .then(dataRec => res.render('message', {
+      message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
+      }))
+      .catch(erro =>{
+        console.log('Erro na listagem de utilizadores: ' + erro)
+        res.render('index')
+      })
+  //res.render('filterMethods/wsBestRatedPOST',{title: websiteTitle})
 })
 
 
 
 //wsMostPopular
-
-router.get('/wsMostPopular',(req,res)=>{
-  res.render('wsMostPopularGET')
-})
-
-router.post('/wsMostPopular',(req,res)=>{
-  res.render('wsMostPopularPOST')
-})
+//
+//router.get('/wsMostPopular',(req,res)=>{
+//  res.render('filterMethods/wsMostPopularGET',{title: websiteTitle})
+//})
+//
+//router.post('/wsMostPopular',(req,res)=>{
+//  res.render('filterMethods/wsMostPopularPOST',{title: websiteTitle})
+//})
 
 
 
