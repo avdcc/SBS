@@ -22,7 +22,7 @@ router.get('/contFilt',(req,res)=>{
 })
 
 router.post('/contFilt',(req,res)=>{
-  //here we will handle the actual data passed from the user
+  //test for the python server
   axios.get('http://localhost:5000/test')
        .then(dataRec => res.render('message', {
         message:"data received: " + stringy.stringify(dataRec.data) , title: websiteTitle
@@ -42,6 +42,7 @@ router.get('/collFilt',(req,res)=>{
 })
 
 router.post('/collFilt',(req,res)=>{
+  //here we will handle the actual data passed from the user
   res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
