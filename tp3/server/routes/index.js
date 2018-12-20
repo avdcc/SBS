@@ -41,11 +41,11 @@ router.post('/collFilt',(req,res)=>{
 //userBestRated
 
 router.get('/userBestRated',(req,res)=>{
-  res.render('userBestRatedGET')
+  res.render('filterMethods/userBestRatedGET')
 })
 
 router.post('/userBestRated',(req,res)=>{
-  res.render('userBestRatedPOST')
+  res.render('filterMethods/userBestRatedPOST')
 })
 
 
@@ -53,12 +53,12 @@ router.post('/userBestRated',(req,res)=>{
 //userMostPopular
 
 router.get('/userMostPopular',(req,res)=>{
-  res.render('userMostPopularGET')
+  res.render('filterMethods/userMostPopularGET')
 })
 
 
 router.post('/userMostPopular',(req,res)=>{
-  res.render('userMostPopularPOST')
+  res.render('filterMethods/userMostPopularPOST')
 })
 
 
@@ -66,11 +66,11 @@ router.post('/userMostPopular',(req,res)=>{
 //wsBestRated
 
 router.get('/wsBestRated',(req,res)=>{
-  res.render('wsBestRatedGET')
+  res.render('filterMethods/wsBestRatedGET')
 })
 
 router.post('/wsBestRated',(req,res)=>{
-  res.render('wsBestRatedPOST')
+  res.render('filterMethods/wsBestRatedPOST')
 })
 
 
@@ -78,11 +78,11 @@ router.post('/wsBestRated',(req,res)=>{
 //wsMostPopular
 
 router.get('/wsMostPopular',(req,res)=>{
-  res.render('wsMostPopularGET')
+  res.render('filterMethods/wsMostPopularGET')
 })
 
 router.post('/wsMostPopular',(req,res)=>{
-  res.render('wsMostPopularPOST')
+  res.render('filterMethods/wsMostPopularPOST')
 })
 
 
