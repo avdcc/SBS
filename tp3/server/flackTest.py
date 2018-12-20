@@ -1,4 +1,5 @@
 from flask import Flask,jsonify
+
 app = Flask(__name__)
 
 def hello():
@@ -6,7 +7,14 @@ def hello():
 
 @app.route("/")
 def call():
-  return jsonify(result=hello()) 
+  res = jsonify(result=hello())
+  return res
+
+
+@app.route("/test")
+def testCall():
+  res = jsonify(result=hello())
+  return res
 
 @app.route("/funcCall")
 def testFunctionArgs():

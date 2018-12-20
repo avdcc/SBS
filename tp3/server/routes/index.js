@@ -2,6 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
+var axios = require('axios')
+var stringy = require('stringy')
 
 var websiteTitle = 'title'
 
@@ -21,7 +23,14 @@ router.get('/contFilt',(req,res)=>{
 
 router.post('/contFilt',(req,res)=>{
   //here we will handle the actual data passed from the user
-  res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
+  axios.get('http://localhost:5000/test')
+       .then(dataRec => res.render('message', {
+        message:"data received: " + stringy.stringify(dataRec.data) , title: websiteTitle
+       }))
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
 })
 
 
