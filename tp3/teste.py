@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 import tkinter 
@@ -19,6 +20,8 @@ import pprint
 import warnings; warnings.simplefilter('ignore')
 
 movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
+
 
 # ------------------------------------------------------------------------
 # Content Based
@@ -84,7 +87,7 @@ def cbRecommendations(title, features):
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-# generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
+generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
 
 # a = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
 # b = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
@@ -114,7 +117,7 @@ def startPredModel(user,ratings,fileOutput):
     dump.dump(fileOutput,None,svd,1)
 
 def cfRecommendations(user):
-    ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
+    # ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
     # Fill NaN values in user_id and movie_id column with 0
     ratings['userId'] = ratings['userId'].fillna(0)
@@ -170,7 +173,7 @@ def wsBestRated(site):
 
     return(list(result['imdbId']))
 
-pprint.pprint(wsBestRated('meta'))
+# pprint.pprint(wsBestRated('meta'))
 
 # TRATAR DAS PONTUACOES (MEDIA?, VARIAS? ...)
 
@@ -193,6 +196,44 @@ pprint.pprint(wsBestRated('meta'))
 
 # ------------------------------------------------------------------------
 #  Deep Learning
+
+# # Import Keras libraries
+# from keras.callbacks import Callback, EarlyStopping, ModelCheckpoint
+# # Import CF Model Architecture
+# from CFModel import CFModel
+
+# # Define constants
+# K_FACTORS = 100 # The number of dimensional embeddings for movies and users
+# TEST_USER = 2000 # A random test user (user_id = 2000)
+
+# max_userid = len(ratings['userId'].unique())
+# max_movieid = len(movies['imdbId'].unique())
+
+
+# import tensorflow as tf
+# from tensorflow import keras
+
+
+# vocab_size = 10000
+
+# model = keras.Sequential()
+# model.add(keras.layers.Embedding(vocab_size, 16))
+# model.add(keras.layers.GlobalAveragePooling1D())
+# model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+# model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
+
+# print(model.summary())
+
+# model.compile(optimizer=tf.train.AdamOptimizer(),
+#               loss='binary_crossentropy',
+#               metrics=['accuracy'])
+
+
+# # # Use 30 epochs, 90% training data, 10% validation data 
+# history = model.fit(movies,  epochs=10, validation_split=.1,batch_size=512, verbose=1)
+
+
+
 
 # ------------------------------------------------------------------------
 # Filtragem de Filmes 
