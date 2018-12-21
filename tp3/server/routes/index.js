@@ -101,8 +101,6 @@ function setup() {
 
 //auxiliar functions
 function idListToMovies(listItems){
-
-
   var res = []
   var i=0
   var elemAux = listItems[i]
@@ -118,6 +116,28 @@ function idListToMovies(listItems){
   return res
 }
 
+
+function csvDataToDict(elem){
+  // "actors";"awards";"country";"director";"genre";"imdbId";
+  //"imdb_rating";"imdb_votes";"language";"metascore";"plot";
+  //"poster";"production";"ratings";"title";"writer";"year";
+  //"dvdYear";"releasedMonth";"releasedYear";"duration"
+  var res 
+
+  if(elem){
+    res = {
+      actors: elem[0],awards: elem[1],country: elem[2],director: elem[3],
+      genre: elem[4],imdbId: elem[5],imdb_rating: elem[6],imdb_votes: elem[7],
+      language: elem[8],metascore: elem[9],plot: elem[10],poster: elem[11],
+      production: elem[12],ratings: elem[13],title: elem[14],writer: elem[15],
+      year: elem[16],dvdYear: elem[17],releasedMonth: elem[18],releasedYear: elem[19],
+      duration: elem[20]
+    }  
+  }
+  
+
+  return res
+}
 
 
 
@@ -174,23 +194,21 @@ router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
-        var listData = JSON.parse(listString).result.slice(0,10)
+        var listData = JSON.parse(listString).result.slice(0,9)
         var listRec = idListToMovies(listData)
-        res.render('message',{
-          message: "data received: " + listRec ,
+        //21 campos por cada entrada de listRec
+        //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
+        res.render('listDataFromFilms',{
+          films: dataProcessed ,
           title: websiteTitle
         })
        }
-        //res.render('message', 
-          //         {message:"data received: " + JSON.stringify(dataRec.data) ,
-            //        title: websiteTitle
-          //})
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
        })
-  //res.render('filterMethods/userBestRatedPOST',{title: websiteTitle})
 })
 
 
