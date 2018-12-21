@@ -4,16 +4,23 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios')
 
+
 var websiteTitle = 'title'
 
+var fs = require('fs')
+var parseCSV = require('papaparse')
 
+var file = fs.readFileSync('../filmes.csv', 'utf8')
 
-//sketch.js
-var filmes;
+var filmes 
 
-function preload(){
-  filmes = loadStrings("../filmes.csv");
-}
+parseCSV.parse(file,{
+  delimiter: ";",
+  complete: (results) => {
+    filmes = results.data
+  }
+})
+
 
 function aux(string){
 	var res;
@@ -48,6 +55,7 @@ function createDic(table){
 
 function data_imdbid(id,database){
 	for(var i=0; i<database.length; i++){
+    
   	if(database[i][5] == id){
     	return database[i];
     }
@@ -81,16 +89,34 @@ function setup() {
 
 
 
-function draw() {
-  background(220);
+
+
+
+
+
+
+
+
+
+
+//auxiliar functions
+function idListToMovies(listItems){
+
+
+  var res = []
+  var i=0
+  var elemAux = listItems[i]
+  while(elemAux){
+
+    var elem = data_imdbid(elemAux,filmes)
+
+    res.push(elem)
+    
+    i++
+    elemAux = listItems[i]
+  }
+  return res
 }
-
-//end of sketch.js
-
-
-
-
-
 
 
 
@@ -146,9 +172,20 @@ router.get('/userBestRated',(req,res)=>{
 
 router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
-       .then(dataRec => res.render('message', {
-        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
-       }))
+       .then(dataRec =>{
+        var listString = JSON.stringify(dataRec.data)
+        var listData = JSON.parse(listString).result.slice(0,10)
+        var listRec = idListToMovies(listData)
+        res.render('message',{
+          message: "data received: " + listRec ,
+          title: websiteTitle
+        })
+       }
+        //res.render('message', 
+          //         {message:"data received: " + JSON.stringify(dataRec.data) ,
+            //        title: websiteTitle
+          //})
+       )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
@@ -200,14 +237,14 @@ router.post('/wsBestRated',(req,res)=>{
 
 
 //wsMostPopular
-//
-//router.get('/wsMostPopular',(req,res)=>{
-//  res.render('filterMethods/wsMostPopularGET',{title: websiteTitle})
-//})
-//
-//router.post('/wsMostPopular',(req,res)=>{
-//  res.render('filterMethods/wsMostPopularPOST',{title: websiteTitle})
-//})
+
+router.get('/wsMostPopular',(req,res)=>{
+  res.render('filterMethods/wsMostPopularGET',{title: websiteTitle})
+})
+
+router.post('/wsMostPopular',(req,res)=>{
+  res.render('filterMethods/wsMostPopularPOST',{title: websiteTitle})
+})
 
 
 
