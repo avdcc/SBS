@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  .w3-container 
+    .w3-card-4
+      header.w3-container.w3-blue
+        h3= title
+      .w3-container
+        form.w3-container(action='/wsBestRated' method='POST')
+          p This option allows you to return the best rated movies for site
+          p Just add the site's name below, click the button and we'll give you the list
+          input.w3-input(type='text',name="data" ,placeholder="nome do site(atenção: deve ser preenchido)")
+          input.w3-btn.w3-green(type='submit', value='Enviar') 
+

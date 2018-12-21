@@ -207,6 +207,30 @@ def testCall():
   res = jsonify(result=hello())
   return res
 
+
+#Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
+@app.route("/contentBased",  methods=['POST'])
+def callCbRecommendations():
+    req_data = request.get_json()
+
+    title = req_data['title']
+    features = req_data['features']
+
+    listRecomended = cbRecommendations(title,features)
+
+    res = listIDSToJSON(listRecomended)
+
+    return res
+
+
+@app.route("/collaborativeBased/<int:user>")
+def callCfRecommendations(user):
+  startPredModel(user,ratings,fileModel)
+  listRecomended = cfRecommendations(user)
+  res = listIDSToJSON(listRecomended)
+  return res
+
+
 @app.route("/userBestRated")
 def callUserBestRated():
   #get the list of recomendations

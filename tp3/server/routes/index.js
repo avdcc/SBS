@@ -160,16 +160,16 @@ router.get('/movies/:id',(req,res)=>{
 
 
 
-//métodos de filtragem
 
 //content-based filtering
 
-router.get('/contFilt',(req,res)=>{
-  res.render('content',{ title: websiteTitle })
+router.get('/contentBased',(req,res)=>{
+  //TODO: alter this to give the JSON to python  
+  res.render('filterMethods/contentBased',{ title: websiteTitle })
 })
 
-router.post('/contFilt',(req,res)=>{
-  //test for the python server
+router.post('/contentBased',(req,res)=>{
+  //TODO: alter this to give the JSON to python
   axios.get('http://localhost:5000/test')
        .then(dataRec => res.render('message', {
         message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
@@ -185,21 +185,39 @@ router.post('/contFilt',(req,res)=>{
 
 //collaborative filtering
 
-router.get('/collFilt',(req,res)=>{
-  res.render('collaborative',{ title: websiteTitle })
+router.get('/collaborativeBased',(req,res)=>{
+  res.render('filterMethods/collaborativeBased',{ title: websiteTitle })
 })
 
-router.post('/collFilt',(req,res)=>{
-  //here we will handle the actual data passed from the user
-  res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
+router.post('/collaborativeBased',(req,res)=>{
+  axios.get('http://localhost:5000/collaborativeBased/' + req.body.data)
+       .then(dataRec =>{
+         var listString = JSON.stringify(dataRec.data)
+         var listData = JSON.parse(listString).result.slice(0,9)
+         var listRec = idListToMovies(listData)
+         //21 campos por cada entrada de listRec
+         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+         var dataProcessed = listRec.map(elem => csvDataToDict(elem))
+         res.render('listDataFromFilms',{
+           films: dataProcessed ,
+           title: websiteTitle
+         })
+       }
+       )
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
 })
 
 
+
+//popular
 
 //userBestRated
 
 router.get('/userBestRated',(req,res)=>{
-  res.render('filterMethods/userBestRatedGET',{title: websiteTitle})
+  res.render('filterMethods/userBestRated',{title: websiteTitle})
 })
 
 router.post('/userBestRated',(req,res)=>{
@@ -228,7 +246,7 @@ router.post('/userBestRated',(req,res)=>{
 //userMostPopular
 
 router.get('/userMostPopular',(req,res)=>{
-  res.render('filterMethods/userMostPopularGET',{title: websiteTitle})
+  res.render('filterMethods/userMostPopular',{title: websiteTitle})
 })
 
 
@@ -258,7 +276,7 @@ router.post('/userMostPopular',(req,res)=>{
 //wsBestRated
 
 router.get('/wsBestRated',(req,res)=>{
-  res.render('filterMethods/wsBestRatedGET',{title: websiteTitle})
+  res.render('filterMethods/wsBestRated',{title: websiteTitle})
 })
 
 router.post('/wsBestRated',(req,res)=>{
@@ -282,6 +300,12 @@ router.post('/wsBestRated',(req,res)=>{
        })
 })
 
+
+
+//hibrido
+router.get('/hybrid',(req,res)=>{
+
+})
 
 
 
