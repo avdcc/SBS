@@ -164,13 +164,14 @@ router.get('/movies/:id',(req,res)=>{
 //content-based filtering
 
 router.get('/contentBased',(req,res)=>{
-  //TODO: alter this to give the JSON to python  
   res.render('filterMethods/contentBased',{ title: websiteTitle })
 })
 
 router.post('/contentBased',(req,res)=>{
-  //TODO: alter this to give the JSON to python
-  axios.get('http://localhost:5000/test')
+  var title = req.body.title
+  var user = req.body.name
+  var jsonPack = {"title" : title }
+  axios.post('http://localhost:5000/contentBased', jsonPack)
        .then(dataRec => res.render('message', {
         message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
        }))
@@ -178,7 +179,6 @@ router.post('/contentBased',(req,res)=>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
        })
-  res.render('message',{message:"you wrote: " + req.body.data, title: websiteTitle})
 })
 
 
@@ -213,6 +213,9 @@ router.post('/collaborativeBased',(req,res)=>{
 
 
 //popular
+router.get('/popular',(req,res)=>{
+  res.render('popular',{title:websiteTitle})
+})
 
 //userBestRated
 

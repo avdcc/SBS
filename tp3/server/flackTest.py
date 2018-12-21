@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request
 
 import sys
 reload(sys)
@@ -214,9 +214,8 @@ def callCbRecommendations():
     req_data = request.get_json()
 
     title = req_data['title']
-    features = req_data['features']
 
-    listRecomended = cbRecommendations(title,features)
+    listRecomended = cbRecommendations(title,[])
 
     res = listIDSToJSON(listRecomended)
 

@@ -6,7 +6,9 @@ block content
       header.w3-container.w3-blue
         h3= title
       .w3-container
+        p Add your title or an user id to give a recomendation below
         form.w3-container(action='/contentBased' method='POST')
-          input.w3-input(type='text',name="data" ,placeholder="data(warming: placeholder)")
+          input.w3-input(type='text',name="title" ,placeholder="add your title here")
+          input.w3-input(type='text',name="name" ,placeholder="add your user id(integer) here")
           input.w3-btn.w3-green(type='submit', value='Enviar')   
 
