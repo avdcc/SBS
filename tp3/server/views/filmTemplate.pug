@@ -1,0 +1,53 @@
+extends layout
+
+block content
+  .w3-container 
+    .w3-card-4
+      header.w3-container.w3-blue
+        h3= title
+      .w3-container
+        table.w3-table-all.l4.m6
+          tr
+            th Atores
+            th Prémios
+            th País
+            th Diretor
+            th Género
+            th imdbId
+            th Avaliação imdb
+            th Votos imdb
+            th Linguagem
+            th Metascore
+            th Resumo
+            th Poster
+            th Produção
+            th Ratings
+            th Titulo
+            th Escritor
+            th Ano de estreia
+            th Ano de estreia do DVD
+            th Mês de estreia
+            th Duração
+          tr
+            td= film.actors
+            td= film.awards
+            td= film.country
+            td= film.director
+            td= film.genre
+            td= film.imdbId
+            td= film.imdb_rating
+            td= film.imdb_votes
+            td= film.language
+            td= film.metascore
+            td= film.plot
+            td= film.poster
+            td= film.production
+            td= film.ratings
+            td= film.title
+            td= film.writer
+            td= film.year
+            td= film.dvdYear
+            td= film.releasedMonth
+            td= film.releasedYear
+            td= film.duration
+

@@ -149,6 +149,18 @@ router.get('/', function(req, res, next) {
 });
 
 
+//páginas para os filmes
+router.get('/movies/:id',(req,res)=>{
+  var imdbid = req.params.id
+  var movieInfo = data_imdbid(imdbid,filmes)
+  var transformedInfo = csvDataToDict(movieInfo)
+  res.render('filmTemplate',{film: transformedInfo,title:websiteTitle})
+})
+
+
+
+
+//métodos de filtragem
 
 //content-based filtering
 
@@ -222,14 +234,23 @@ router.get('/userMostPopular',(req,res)=>{
 
 router.post('/userMostPopular',(req,res)=>{
   axios.get('http://localhost:5000/userMostPopular')
-       .then(dataRec => res.render('message', {
-        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
-       }))
+       .then(dataRec =>{
+        var listString = JSON.stringify(dataRec.data)
+        var listData = JSON.parse(listString).result.slice(0,9)
+        var listRec = idListToMovies(listData)
+        //21 campos por cada entrada de listRec
+        //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
+        res.render('listDataFromFilms',{
+          films: dataProcessed ,
+          title: websiteTitle
+        })
+       }
+       )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
        })
-  //res.render('filterMethods/userMostPopularPOST',{title: websiteTitle})
 })
 
 
@@ -242,27 +263,25 @@ router.get('/wsBestRated',(req,res)=>{
 
 router.post('/wsBestRated',(req,res)=>{
   axios.get('http://localhost:5000/wsBestRated/' + req.body.data)
-      .then(dataRec => res.render('message', {
-      message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
-      }))
-      .catch(erro =>{
-        console.log('Erro na listagem de utilizadores: ' + erro)
-        res.render('index')
-      })
-  //res.render('filterMethods/wsBestRatedPOST',{title: websiteTitle})
+       .then(dataRec =>{
+        var listString = JSON.stringify(dataRec.data)
+        var listData = JSON.parse(listString).result.slice(0,9)
+        var listRec = idListToMovies(listData)
+        //21 campos por cada entrada de listRec
+        //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
+        res.render('listDataFromFilms',{
+          films: dataProcessed ,
+          title: websiteTitle
+        })
+       }
+       )
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
 })
 
-
-
-//wsMostPopular
-
-router.get('/wsMostPopular',(req,res)=>{
-  res.render('filterMethods/wsMostPopularGET',{title: websiteTitle})
-})
-
-router.post('/wsMostPopular',(req,res)=>{
-  res.render('filterMethods/wsMostPopularPOST',{title: websiteTitle})
-})
 
 
 
