@@ -16,15 +16,15 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD, evaluate, dump
 
+import pickle
+
 import pprint
 import warnings; warnings.simplefilter('ignore')
 
+# ------------------------------------------------------------------------
+
 movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
-
-
-# ------------------------------------------------------------------------
-# Content Based
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
@@ -33,7 +33,18 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 titles = movies['title']
 indices = pd.Series(movies.index, index=movies['title'])
 
-dM = {}
+cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
+dM = {} # Dicionario de Content Based
+
+# Fill NaN values in user_id and movie_id column with 0
+ratings['userId'] = ratings['userId'].fillna(0)
+ratings['imdbId'] = ratings['imdbId'].fillna(0)
+
+# Replace NaN values in rating column with average of all values
+ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
+
+# ------------------------------------------------------------------------
+# Treatment
 
 def index2Name(lista):
     return(titles.iloc[lista].tolist())
@@ -50,7 +61,12 @@ def many2One(listas):
     sorted_by_value = [i[0] for i in sorted_by_value]
     return(sorted_by_value)
 
-# many2One([['d','b'],['d','b'],['d','b']])
+def utilizador2Vistos(user):
+    vistos = ratings.loc[ratings['userId'] == user]
+    return(vistos['imdbId'].tolist())
+
+# ------------------------------------------------------------------------
+# Content Based
 
 # Function that get movie recommendations based on the cosine similarity score of movie features
 def cbRecMatrix(feature):
@@ -68,12 +84,7 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def generateCBMatrix(features):
-    for f in features:
-        dM[f] = cbRecMatrix(f)
-        print("GeneratedCBMatrix:" + f)
-
-def cbRecommendations(title, features):
+def cbRecFromMovie(title, features):
 
     idx = indices[title]
     mx = np.empty([len(titles),len(titles)])
@@ -87,15 +98,41 @@ def cbRecommendations(title, features):
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
+def cbRecForUser(user, features):
 
-# a = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# b = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# c = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# d = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# e = cbRecommendations('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+    lista = utilizador2Vistos(user)
+    for x in range(len(lista)):
+        lista[x] = cbRecFromMovie(x, features)
+    return(many2One(lista))
+
+# ------------------------------------------
+
+def generateCBMatrix():
+    for key in cb:
+        print("Generating CBMatrix: " + key)
+        dM[key] = cbRecMatrix(key)
+    print("Geration Complete")
+
+def saveCBMatrix():
+    for key in dM:
+        print("Saving CBMatrix: " + key)
+        np.save('cb/' + key, dM[key])
+    print("Save Complete")
+
+def loadCBMatrix():
+    for key in cb:
+        print("Loading CBMatrix: " + key)
+        dM[key] = np.load('./cb/' + key + '.npy') 
+    print("Load Complete")
+
+# a = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# b = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# c = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# d = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# e = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
 
 # print(index2Name(many2One([a,b,c,d,e]))[0:30])
+
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
 
@@ -119,20 +156,11 @@ def startPredModel(user,ratings,fileOutput):
 def cfRecommendations(user):
     # ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
-    # Fill NaN values in user_id and movie_id column with 0
-    ratings['userId'] = ratings['userId'].fillna(0)
-    ratings['imdbId'] = ratings['imdbId'].fillna(0)
-
-    # Replace NaN values in rating column with average of all values
-    ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
-
     # "userId";"rating";"imdbId"
 
     # o load retorna um tuplo, mas neste caso o pred não tem nada com significado
     pred,svd = dump.load(fileModel)
-
-    vistos = ratings.loc[ratings['userId'] == user]
-    vistosLista = vistos['imdbId'].tolist()
+    vistosLista = utilizador2Vistos(user)
 
     list = []
     for mov in ratings.imdbId.unique():
@@ -173,9 +201,15 @@ def wsBestRated(site):
 
     return(list(result['imdbId']))
 
-# pprint.pprint(wsBestRated('meta'))
+# ------------------------------------------------------------------------
+# Hibrido
 
-# TRATAR DAS PONTUACOES (MEDIA?, VARIAS? ...)
+def hibRecomend(user):
+    pass
+
+
+
+
 
 # ------------------------------------------------------------------------
 # Referencias de Sites?
@@ -195,69 +229,4 @@ def wsBestRated(site):
 # filtros = {'gen':'Romance'}
 
 # ------------------------------------------------------------------------
-#  Deep Learning
-
-# # Import Keras libraries
-# from keras.callbacks import Callback, EarlyStopping, ModelCheckpoint
-# # Import CF Model Architecture
-# from CFModel import CFModel
-
-# # Define constants
-# K_FACTORS = 100 # The number of dimensional embeddings for movies and users
-# TEST_USER = 2000 # A random test user (user_id = 2000)
-
-# max_userid = len(ratings['userId'].unique())
-# max_movieid = len(movies['imdbId'].unique())
-
-
-# import tensorflow as tf
-# from tensorflow import keras
-
-
-# vocab_size = 10000
-
-# model = keras.Sequential()
-# model.add(keras.layers.Embedding(vocab_size, 16))
-# model.add(keras.layers.GlobalAveragePooling1D())
-# model.add(keras.layers.Dense(16, activation=tf.nn.relu))
-# model.add(keras.layers.Dense(1, activation=tf.nn.sigmoid))
-
-# print(model.summary())
-
-# model.compile(optimizer=tf.train.AdamOptimizer(),
-#               loss='binary_crossentropy',
-#               metrics=['accuracy'])
-
-
-# # # Use 30 epochs, 90% training data, 10% validation data 
-# history = model.fit(movies,  epochs=10, validation_split=.1,batch_size=512, verbose=1)
-
-
-
-
-# ------------------------------------------------------------------------
-# Filtragem de Filmes 
-# def filtrar(lista, filtros):
-    
-#     for key in filtros:
-
-#         if (key == 'gen'):
-
-#             for filme in lista:
-
-#                 generos = movies['genre'][filme].str.split(', ')
-#                 if (filtros(key) not in generos):
-#                     lista.remove(filme)
-        
-#         elif (key != 'gen'):
-#             print("yey")
-
-#         elif (key != 'gen'):
-#             print("yey")
-
-#         elif (key != 'gen'):
-#             print("yey")
-        
-# print(filtrar(lista,filtros))
-
-#ratings.loc[ratings['userId'] == user]
+generateCBMatrix()
