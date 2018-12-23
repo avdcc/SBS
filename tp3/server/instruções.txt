@@ -1,21 +1,13 @@
-Inicialização:
+inicialização:
+  correr make install se houver erros de modulos
 
-Antes de correr deve-se chamar o comando npm install na diretoria deste documento
+correr:
+  usar make run
 
-Note-se que apenas se corre isto uma vez ao inicio, e se houver erros depois 
-na consola sobre modulos
-
-
-Operação do servidor:
-
-1-entrar na diretoria deste documento
-
-2- correr  FLASK_APP=flackTest.py flask run
-
-3- abrir uma nova consola(ou colocar o processo anterior em background)
-
-4-correr npm start na diretoria deste documento
-
-5- ir para localhost:3000 no browser preferido
-
-6-se tudo correu bem, deve estar a funcionar
+parar:
+  usar make stop
+  atenção: é possivel que o programam falhe se houver outro servidor flask 
+  a funcionar em paralelo com o que governa este programa
+  se tal for o caso, terá de ser terminado manulamente pelo utilizador
+  atenção: se houver outro processo node a funcionar em paralelo,
+  ele será terminado por este comando

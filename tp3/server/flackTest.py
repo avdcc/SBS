@@ -24,23 +24,35 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD, evaluate, dump
 
+import pickle
+
 import pprint
 import warnings; warnings.simplefilter('ignore')
+
+# ------------------------------------------------------------------------
 
 movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
-
-# ------------------------------------------------------------------------
-# Content Based
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
 
+# Build a 1-dimensional array with movie titles
 titles = movies['title']
 indices = pd.Series(movies.index, index=movies['title'])
 
-dM = {}
+cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
+dM = {} # Dicionario de Content Based
+
+# Fill NaN values in user_id and movie_id column with 0
+ratings['userId'] = ratings['userId'].fillna(0)
+ratings['imdbId'] = ratings['imdbId'].fillna(0)
+
+# Replace NaN values in rating column with average of all values
+ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
+
+# ------------------------------------------------------------------------
+# Treatment
 
 def index2Name(lista):
     return(titles.iloc[lista].tolist())
@@ -57,10 +69,17 @@ def many2One(listas):
     sorted_by_value = [i[0] for i in sorted_by_value]
     return(sorted_by_value)
 
+def utilizador2Vistos(user):
+    vistos = ratings.loc[ratings['userId'] == user]
+    return(vistos['imdbId'].tolist())
+
+# ------------------------------------------------------------------------
+# Content Based
 
 # Function that get movie recommendations based on the cosine similarity score of movie features
 def cbRecMatrix(feature):
     
+    # Break up the big genre string into a string array and Convert genres to string value
     if (feature in ["actors", "country", "genre", "language", "writer"]):
         movies[feature] = movies[feature].str.split(', ')
     elif ( feature == "plot"):
@@ -73,12 +92,7 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def generateCBMatrix(features):
-    for f in features:
-        dM[f] = cbRecMatrix(f)
-        print("GeneratedCBMatrix:" + f)
-
-def cbRecommendations(title, features):
+def cbRecFromMovie(title, features):
 
     idx = indices[title]
     mx = np.empty([len(titles),len(titles)])
@@ -92,7 +106,33 @@ def cbRecommendations(title, features):
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-#generateCBMatrix(['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production'])
+def cbRecForUser(user, features):
+
+    lista = utilizador2Vistos(user)
+    for x in range(len(lista)):
+        lista[x] = cbRecFromMovie(x, features)
+    return(many2One(lista))
+
+# ------------------------------------------
+
+def generateCBMatrix():
+    for key in cb:
+        print("Generating CBMatrix: " + key)
+        dM[key] = cbRecMatrix(key)
+    print("Geration Complete")
+
+def saveCBMatrix():
+    for key in dM:
+        print("Saving CBMatrix: " + key)
+        np.save('cb/' + key, dM[key])
+    print("Save Complete")
+
+def loadCBMatrix():
+    for key in cb:
+        print("Loading CBMatrix: " + key)
+        dM[key] = np.load('./cb/' + key + '.npy') 
+    print("Load Complete")
+
 
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
@@ -115,15 +155,11 @@ def startPredModel(user,ratings,fileOutput):
     dump.dump(fileOutput,None,svd,1)
 
 def cfRecommendations(user):
-    ratings['userId'] = ratings['userId'].fillna(0)
-    ratings['imdbId'] = ratings['imdbId'].fillna(0)
 
-    ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
+    # "userId";"rating";"imdbId"
 
     pred,svd = dump.load(fileModel)
-
-    vistos = ratings.loc[ratings['userId'] == user]
-    vistosLista = vistos['imdbId'].tolist()
+    vistosLista = utilizador2Vistos(user)
 
     list = []
     for mov in ratings.imdbId.unique():
@@ -135,37 +171,43 @@ def cfRecommendations(user):
 
     return(res)
 
-
 # ------------------------------------------------------------------------
 # Os melhores com base nos nossos utilizadores e outros sites
 
 def userBestRated():
+
     ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
-        
     result = ratings.sort_values(by=['av'], ascending=False)
 
     return(list(result['imdbId']))
 
 def userMostPopular():
-    ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
 
+    ratings = pd.read_csv('votesMovie.csv', sep=';', encoding='utf-8')
     result = ratings.sort_values(by=['nov'], ascending=False)
 
     return(list(result['imdbId']))
 
 def wsBestRated(site):
+
     ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
     if (site == 'meta'):
         result = ratings.sort_values(by=['metascore'], ascending=False)
     else:    
-        result = ratings.sort_values(by=[site + '_rating'], ascending=False)
+        result = ratings.sort_values(by=[site+ '_rating'], ascending=False)
 
     return(list(result['imdbId']))
 
+# ------------------------------------------------------------------------
+# Hibrido
+
+def hibRecomend(user):
+    pass
 
 
 
 
+#generateCBMatrix()
 
 
 
@@ -186,6 +228,12 @@ def wsBestRated(site):
 def listIDSToJSON(list):
   return jsonify(result = list)
 
+def processFeatures(features):
+    res = []
+    for feature,value in features.items():
+        pair = (str(feature),value)
+        res.append(pair)
+    return res
 
 
 
@@ -208,27 +256,45 @@ def testCall():
   return res
 
 
+
+
 #Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
-@app.route("/contentBased",  methods=['POST'])
-def callCbRecommendations():
+@app.route("/contentBased/<title>",  methods=['POST'])
+def callCbRecommendations(title):
+
     req_data = request.get_json()
+    unprocessedFeatures = req_data
+    features = processFeatures(unprocessedFeatures)
 
-    title = req_data['title']
-
-    listRecomended = cbRecommendations(title,[])
-
+    listRecomended = cbRecFromMovie(str(title),features)
     res = listIDSToJSON(listRecomended)
-
     return res
 
 
-@app.route("/collaborativeBased/<int:user>")
+#Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
+@app.route("/collaborativeBased/<int:user>",methods=['POST'])
 def callCfRecommendations(user):
-  startPredModel(user,ratings,fileModel)
-  listRecomended = cfRecommendations(user)
+
+    req_data = request.get_json()
+    unprocessedFeatures = req_data    
+    features = processFeatures(unprocessedFeatures)
+
+    listRecomended = cbRecForUser(user,features)
+    res = listIDSToJSON(listRecomended)
+    return res
+
+
+@app.route("/hybrid/<int:user>")
+def callHibRecomend(user):
+  listRecomended = hibRecomend(user)
   res = listIDSToJSON(listRecomended)
   return res
 
+
+
+
+
+#popular
 
 @app.route("/userBestRated")
 def callUserBestRated():
@@ -251,7 +317,7 @@ def callUserMostPopular():
 
 @app.route("/wsBestRated/<site>")
 def callWsBestRated(site):
-  listRecomended = wsBestRated(site)
+  listRecomended = wsBestRated(str(site))
   res = listIDSToJSON(listRecomended)
   return res
   
