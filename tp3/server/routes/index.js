@@ -16,6 +16,9 @@ var filmes
 
 parseCSV.parse(file,{
   delimiter: ";",
+  header: true,
+  encoding: "utf8",
+  newline: "\n",
   complete: (results) => {
     filmes = results.data
   }
@@ -55,10 +58,10 @@ function createDic(table){
 
 function data_imdbid(id,database){
 	for(var i=0; i<database.length; i++){
-    
-  	if(database[i][5] == id){
-    	return database[i];
+    if(database[i]['imdb_id']==id){
+      return database[i];
     }
+
   }	
 }
 
@@ -227,11 +230,13 @@ router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
+        
         var listData = JSON.parse(listString).result.slice(0,9)
-        var listRec = idListToMovies(listData)
+        
+        var dataProcessed = idListToMovies(listData)
+        console.log(dataProcessed)
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
-        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
         res.render('listDataFromFilms',{
           films: dataProcessed ,
           title: websiteTitle
