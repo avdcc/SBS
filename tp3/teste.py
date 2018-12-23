@@ -32,6 +32,8 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 # Build a 1-dimensional array with movie titles
 titles = movies['title']
 indices = pd.Series(movies.index, index=movies['title'])
+index = pd.Series(movies.index, index=movies['imdb_id'])
+# print(index)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
 dM = {} # Dicionario de Content Based
@@ -65,6 +67,9 @@ def utilizador2Vistos(user):
     vistos = ratings.loc[ratings['userId'] == user]
     return(vistos['imdbId'].tolist())
 
+def imdb2index(imdb):
+    return([index[imdb]][0])
+
 # ------------------------------------------------------------------------
 # Content Based
 
@@ -84,26 +89,49 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def cbRecFromMovie(title, features):
-
+def cbRecFromTitle(title, features):
     idx = indices[title]
+    return (cbRecFromId(idx,features))
+
+def cbRecFromImdb(title, features):
+    idx = index[title]
+    
     mx = np.empty([len(titles),len(titles)])
     for f in features:
-        mx[idx] += (dM[f[0]][idx] * f[1])
+        mx[0] += (dM[f[0]][idx] * f[1])
 
-    sim_scores = list(enumerate(mx[idx]))
+    return(mx[0])
+
+
+def cbRecFromId(idx, features):
+
+    mx = np.empty([len(titles),len(titles)])
+    for f in features:
+        mx[0] += (dM[f[0]][idx] * f[1])
+        # print(mx)
+    # print(mx[0])
+
+    sim_scores = list(enumerate(mx[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
     sim_scores = list(filter(lambda x: x[0] != idx, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-def cbRecForUser(user, features):
+def cbRecFromUser(user, features):
 
     lista = utilizador2Vistos(user)
+    mx = np.empty([len(titles),len(titles)])
     for x in range(len(lista)):
-        lista[x] = cbRecFromMovie(x, features)
-    return(many2One(lista))
+        mx[0] += cbRecFromImdb(lista[x], features)
+
+    sim_scores = list(enumerate(mx[0]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
+    sim_scores = list(filter(lambda x: x[0] not in lista, sim_scores))
+
+    movie_indices = [i[0] for i in sim_scores]
+    return(movie_indices)
+
 
 # ------------------------------------------
 
@@ -125,13 +153,20 @@ def loadCBMatrix():
         dM[key] = np.load('./cb/' + key + '.npy') 
     print("Load Complete")
 
-# a = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# b = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# c = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# d = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-# e = cbRecFromMovie('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+generateCBMatrix()
 
-# print(index2Name(many2One([a,b,c,d,e]))[0:30])
+print(index2Name(cbRecFromUser(504, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:100]) # 111 514
+
+# print(cbRecFromUser(1,cb))
+# a = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# b = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# c = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# d = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# e = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+
+# print((a))
+
+# print((index2Name(a))[0:10])
 
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
@@ -205,7 +240,7 @@ def wsBestRated(site):
 # Hibrido
 
 def hibRecomend(user):
-    pass
+    pass    
 
 
 
@@ -229,4 +264,4 @@ def hibRecomend(user):
 # filtros = {'gen':'Romance'}
 
 # ------------------------------------------------------------------------
-generateCBMatrix()
+# generatezCBMatrix()
