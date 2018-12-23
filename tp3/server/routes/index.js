@@ -170,14 +170,49 @@ router.get('/contentBased',(req,res)=>{
   res.render('filterMethods/contentBased',{ title: websiteTitle })
 })
 
+//features: title,actors,country,genre,language,writer,plot,director,production
+//valores dos pesos: 0-inf
+//output final[('feature',peso)]
 router.post('/contentBased',(req,res)=>{
-  var title = req.body.title
-  var user = req.body.name
-  var jsonPack = {"title" : title }
-  axios.post('http://localhost:5000/contentBased', jsonPack)
-       .then(dataRec => res.render('message', {
-        message:"data received: " + JSON.stringify(dataRec.data) , title: websiteTitle
-       }))
+  var mainTitle = req.body.mainTitle
+
+  var features = {
+    title : req.body.title,
+    actors : req.body.actors,
+    country : req.body.country,
+    genre : req.body.genre,
+    language : req.body.language,
+    writer : req.body.writer,
+    plot : req.body.plot,
+    director : req.body.director,
+    production : req.body.production
+  }
+
+  Object.keys(features).map((key,index)=>{
+    if(features[key]){
+      features[key] = (features[key],1)
+    }else{
+      features[key] = (features[key],0)
+    }
+  })
+
+
+  var headers = {"Content-Type" : "application/json"}
+
+  axios.post('http://localhost:5000/contentBased/' + mainTitle, features,{headers:headers})
+       .then(dataRec =>{
+         console.log(dataRec)
+         var listString = JSON.stringify(dataRec.data)
+         var listData = JSON.parse(listString).result.slice(0,9)
+         var dataProcessed = idListToMovies(listData)
+         //21 campos por cada entrada de listRec
+         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+         res.render('listDataFromFilms',{
+           films: dataProcessed ,
+           title: websiteTitle
+         })
+       }
+       )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
           res.render('index')
@@ -192,15 +227,44 @@ router.get('/collaborativeBased',(req,res)=>{
   res.render('filterMethods/collaborativeBased',{ title: websiteTitle })
 })
 
+//features: title,actors,country,genre,language,writer,plot,director,production
+//valores dos pesos: 0-inf
+//output final[('feature',peso)]
+
 router.post('/collaborativeBased',(req,res)=>{
-  axios.get('http://localhost:5000/collaborativeBased/' + req.body.data)
+  var user = req.body.user
+
+  var features = {
+    title : req.body.title,
+    actors : req.body.actors,
+    country : req.body.country,
+    genre : req.body.genre,
+    language : req.body.language,
+    writer : req.body.writer,
+    plot : req.body.plot,
+    director : req.body.director,
+    production : req.body.production
+  }
+
+  Object.keys(features).map((key,index)=>{
+    if(features[key]){
+      features[key] = (features[key],1)
+    }else{
+      features[key] = (features[key],0)
+    }
+  })
+
+
+  var headers = {"Content-Type" : "application/json"}
+
+  axios.post('http://localhost:5000/collaborativeBased/' + user, features,{headers:headers})
        .then(dataRec =>{
+         console.log(dataRec)
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
-         var listRec = idListToMovies(listData)
+         var dataProcessed = idListToMovies(listData)
          //21 campos por cada entrada de listRec
          //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
-         var dataProcessed = listRec.map(elem => csvDataToDict(elem))
          res.render('listDataFromFilms',{
            films: dataProcessed ,
            title: websiteTitle
@@ -234,7 +298,7 @@ router.post('/userBestRated',(req,res)=>{
         var listData = JSON.parse(listString).result.slice(0,9)
         
         var dataProcessed = idListToMovies(listData)
-        console.log(dataProcessed)
+        
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
         res.render('listDataFromFilms',{
@@ -262,11 +326,13 @@ router.post('/userMostPopular',(req,res)=>{
   axios.get('http://localhost:5000/userMostPopular')
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
+        
         var listData = JSON.parse(listString).result.slice(0,9)
-        var listRec = idListToMovies(listData)
+        
+        var dataProcessed = idListToMovies(listData)
+        
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
-        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
         res.render('listDataFromFilms',{
           films: dataProcessed ,
           title: websiteTitle
@@ -291,11 +357,13 @@ router.post('/wsBestRated',(req,res)=>{
   axios.get('http://localhost:5000/wsBestRated/' + req.body.data)
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
+        
         var listData = JSON.parse(listString).result.slice(0,9)
-        var listRec = idListToMovies(listData)
+        
+        var dataProcessed = idListToMovies(listData)
+        
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
-        var dataProcessed = listRec.map(elem => csvDataToDict(elem))
         res.render('listDataFromFilms',{
           films: dataProcessed ,
           title: websiteTitle

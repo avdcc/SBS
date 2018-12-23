@@ -228,6 +228,12 @@ def hibRecomend(user):
 def listIDSToJSON(list):
   return jsonify(result = list)
 
+def processFeatures(features):
+    res = []
+    for feature,value in features.items():
+        pair = (str(feature),value)
+        res.append(pair)
+    return res
 
 
 
@@ -255,34 +261,28 @@ def testCall():
 #Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
 @app.route("/contentBased/<title>",  methods=['POST'])
 def callCbRecommendations(title):
+
     req_data = request.get_json()
-
-    unprocessedFeatures = req_data['features']
-
+    unprocessedFeatures = req_data
     features = processFeatures(unprocessedFeatures)
 
-    listRecomended = cbRecFromMovie(title,features)
-
+    listRecomended = cbRecFromMovie(str(title),features)
     res = listIDSToJSON(listRecomended)
-
     return res
 
 
 
 
 #Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
-@app.route("/collaborativeBased/<int:user>")
+@app.route("/collaborativeBased/<int:user>",methods=['POST'])
 def callCfRecommendations(user):
+
     req_data = request.get_json()
-
-    unprocessedFeatures = req_data['features']
-
+    unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
 
     listRecomended = cbRecForUser(user,features)
-
     res = listIDSToJSON(listRecomended)
-
     return res
 
 
@@ -307,7 +307,7 @@ def callUserMostPopular():
 
 @app.route("/wsBestRated/<site>")
 def callWsBestRated(site):
-  listRecomended = wsBestRated(site)
+  listRecomended = wsBestRated(str(site))
   res = listIDSToJSON(listRecomended)
   return res
   

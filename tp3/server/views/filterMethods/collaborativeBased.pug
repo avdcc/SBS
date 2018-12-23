@@ -7,6 +7,27 @@ block content
         h3= title
       .w3-container
         p Add the user id that you wish to predict the preferences of below
+        p after that choose the features you wish to use
+        p notice: the features are a WIP, with their weights beeing either 0(not selected) or 1(selected)
         form.w3-container(action='/collaborativeBased' method='POST')
-          input.w3-input(type='text',name="data" ,placeholder="please insert the user to predict(integer)")
+          input.w3-input(type='text',name="user" ,placeholder="please insert the user to predict(integer)")
+          input.w3-check(type='checkbox', name ='title')
+          label Title
+          input.w3-check(type='checkbox', name ='actors')
+          label Actors
+          input.w3-check(type='checkbox', name ='country')
+          label Country
+          input.w3-check(type='checkbox', name ='genre')
+          label Genre
+          input.w3-check(type='checkbox', name ='language')
+          label Language
+          input.w3-check(type='checkbox', name ='writer')
+          label Writer
+          input.w3-check(type='checkbox', name ='plot')
+          label Plot
+          input.w3-check(type='checkbox', name ='director')
+          label Director
+          input.w3-check(type='checkbox', name ='production')
+          label Production
+          p
           input.w3-btn.w3-green(type='submit', value='Enviar')   
