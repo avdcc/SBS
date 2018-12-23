@@ -6,4 +6,7 @@ run:
 	npm start &
 
 check:
-	ps
+	./check.sh
+
+stop:
+	./stop.sh

@@ -5,7 +5,9 @@ correr:
   usar make run
 
 parar:
-  para termianr a execução atualmente(será alterado numa versão futura) tem de se:
-    1- correr make check
-    2- fazer kill dos processos flask e npm
-  
+  usar make stop
+  atenção: é possivel que o programam falhe se houver outro servidor flask 
+  a funcionar em paralelo com o que governa este programa
+  se tal for o caso, terá de ser terminado manulamente pelo utilizador
+  atenção: se houver outro processo node a funcionar em paralelo,
+  ele será terminado por este comando
