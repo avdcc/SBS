@@ -170,9 +170,6 @@ router.get('/contentBased',(req,res)=>{
   res.render('filterMethods/contentBased',{ title: websiteTitle })
 })
 
-//features: title,actors,country,genre,language,writer,plot,director,production
-//valores dos pesos: 0-inf
-//output final[('feature',peso)]
 router.post('/contentBased',(req,res)=>{
   var mainTitle = req.body.mainTitle
 
@@ -227,9 +224,6 @@ router.get('/collaborativeBased',(req,res)=>{
   res.render('filterMethods/collaborativeBased',{ title: websiteTitle })
 })
 
-//features: title,actors,country,genre,language,writer,plot,director,production
-//valores dos pesos: 0-inf
-//output final[('feature',peso)]
 
 router.post('/collaborativeBased',(req,res)=>{
   var user = req.body.user
@@ -276,6 +270,38 @@ router.post('/collaborativeBased',(req,res)=>{
           res.render('index')
        })
 })
+
+
+
+//hibrido
+router.get('/hybrid',(req,res)=>{
+  res.render('filterMethods/hybrid',{ title: websiteTitle })
+})
+
+router.post('/hybrid',(req,res)=>{
+  var user = req.body.user
+
+  axios.get('http://localhost:5000/hybrid/' + user)
+       .then(dataRec =>{
+         var listString = JSON.stringify(dataRec.data)
+         var listData = JSON.parse(listString).result.slice(0,9)
+         var dataProcessed = idListToMovies(listData)
+         //21 campos por cada entrada de listRec
+         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
+         res.render('listDataFromFilms',{
+           films: dataProcessed ,
+           title: websiteTitle
+         })
+       }
+       )
+       .catch(erro =>{
+          console.log('Erro na listagem de utilizadores: ' + erro)
+          res.render('index')
+       })
+})
+
+
+
 
 
 
@@ -377,11 +403,6 @@ router.post('/wsBestRated',(req,res)=>{
 })
 
 
-
-//hibrido
-router.get('/hybrid',(req,res)=>{
-
-})
 
 
 

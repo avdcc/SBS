@@ -271,8 +271,6 @@ def callCbRecommendations(title):
     return res
 
 
-
-
 #Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
 @app.route("/collaborativeBased/<int:user>",methods=['POST'])
 def callCfRecommendations(user):
@@ -285,6 +283,18 @@ def callCfRecommendations(user):
     res = listIDSToJSON(listRecomended)
     return res
 
+
+@app.route("/hybrid/<int:user>")
+def callHibRecomend(user):
+  listRecomended = hibRecomend(user)
+  res = listIDSToJSON(listRecomended)
+  return res
+
+
+
+
+
+#popular
 
 @app.route("/userBestRated")
 def callUserBestRated():
@@ -311,9 +321,3 @@ def callWsBestRated(site):
   res = listIDSToJSON(listRecomended)
   return res
   
-
-@app.route("/hybrid/<int:user>")
-def callHibRecomend(user):
-  listRecomended = hibRecomend(user)
-  res = listIDSToJSON(listRecomended)
-  return res
