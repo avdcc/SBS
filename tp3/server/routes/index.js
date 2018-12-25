@@ -212,7 +212,7 @@ router.post('/contentBased',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
@@ -267,7 +267,7 @@ router.post('/collaborativeBased',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
@@ -297,7 +297,7 @@ router.post('/hybrid',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
@@ -337,7 +337,7 @@ router.post('/userBestRated',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
@@ -369,7 +369,7 @@ router.post('/userMostPopular',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
