@@ -26,11 +26,14 @@ import warnings; warnings.simplefilter('ignore')
 movies = pd.read_csv('filmes_1.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
+regex = re.compile('[^a-zA-Z]')
+stemmer = SnowballStemmer('english')
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
 
 # Build a 1-dimensional array with movie titles
-titles = movies['title']
+titles = movies['imdb_id']
 indices = pd.Series(movies.index, index=movies['title'])
 index = pd.Series(movies.index, index=movies['imdb_id'])
 # print(index)
@@ -48,7 +51,7 @@ ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
 # ------------------------------------------------------------------------
 # Treatment
 
-def index2Name(lista):
+def index2imdbId(lista):
     return(titles.iloc[lista].tolist())
 
 def many2One(listas):
@@ -80,7 +83,11 @@ def cbRecMatrix(feature):
     if (feature in ["actors", "country", "genre", "language", "writer"]):
         movies[feature] = movies[feature].str.split(', ')
     elif ( feature == "plot"):
+        
         movies[feature] = movies[feature].str.split(' ')
+        for x in range(0, len(movies[feature])):
+            # movies[feature][x] = [stemmer.stem(y) for y in movies[feature][x]]
+            pass
 
     movies[feature] = movies[feature].fillna("").astype('str')
     matrix = tfidf_matrixGenre = tf.fit_transform(movies[feature])
@@ -116,7 +123,7 @@ def cbRecFromId(idx, features):
     sim_scores = list(filter(lambda x: x[0] != idx, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
-    return(movie_indices)
+    return(index2imdbId(movie_indices))
 
 def cbRecFromUser(user, features):
 
@@ -130,7 +137,7 @@ def cbRecFromUser(user, features):
     sim_scores = list(filter(lambda x: x[0] not in lista, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
-    return(movie_indices)
+    return(index2imdbId(movie_indices))
 
 
 # ------------------------------------------
@@ -153,9 +160,8 @@ def loadCBMatrix():
         dM[key] = np.load('./cb/' + key + '.npy') 
     print("Load Complete")
 
-#generateCBMatrix()
-
-#print(index2Name(cbRecFromUser(504, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:100]) # 111 514
+generateCBMatrix()
+# print(index2imdbId(cbRecFromId(0, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:10]) # 111 514
 
 # print(cbRecFromUser(1,cb))
 # a = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
@@ -166,7 +172,7 @@ def loadCBMatrix():
 
 # print((a))
 
-# print((index2Name(a))[0:10])
+# print((index2imdbId(a))[0:10])
 
 # ------------------------------------------------------------------------
 # Collaborative Filtering Recommendation
@@ -240,8 +246,6 @@ def wsBestRated(site):
 
 def hibRecomend(user):
     pass    
-
-
 
 
 
