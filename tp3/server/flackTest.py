@@ -280,7 +280,7 @@ def startFeatureMatrixes(features):
         print("Loading Complete")
 
 def index2imdb(lista):
-    return(movies['imdbId'].iloc[lista].toList())
+    return(movies['imdb_id'].iloc[lista].toList())
 
 
 
