@@ -1,15 +1,15 @@
 from flask import Flask,jsonify,request
 
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
+#import sys
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
 
 #start of code from teste.py
 
 
 import pandas as pd
 import numpy as np
-import Tkinter 
+import tkinter 
 import matplotlib.pyplot as plt
 import re
 
@@ -39,7 +39,9 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 
 # Build a 1-dimensional array with movie titles
 titles = movies['title']
+index = pd.Series(movies.index, index=movies['imdbId'])
 indices = pd.Series(movies.index, index=movies['title'])
+# print(index)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
 dM = {} # Dicionario de Content Based
@@ -73,6 +75,9 @@ def utilizador2Vistos(user):
     vistos = ratings.loc[ratings['userId'] == user]
     return(vistos['imdbId'].tolist())
 
+def imdb2index(imdb):
+    return([index[imdb]][0])
+
 # ------------------------------------------------------------------------
 # Content Based
 
@@ -92,26 +97,47 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def cbRecFromMovie(title, features):
-
+def cbRecFromTitle(title, features):
     idx = indices[title]
+    return (cbRecFromId(idx,features))
+
+def cbRecFromImdb(title, features):
+    idx = index[title]
+    
     mx = np.empty([len(titles),len(titles)])
     for f in features:
-        mx[idx] += (dM[f[0]][idx] * f[1])
+        mx[0] += (dM[f[0]][idx] * f[1])
 
-    sim_scores = list(enumerate(mx[idx]))
+    return(mx[0])
+
+
+def cbRecFromId(idx, features):
+
+    mx = np.empty([len(titles),len(titles)])
+    for f in features:
+        mx[0] += (dM[f[0]][idx] * f[1])
+
+    sim_scores = list(enumerate(mx[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
     sim_scores = list(filter(lambda x: x[0] != idx, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
     return(movie_indices)
 
-def cbRecForUser(user, features):
+def cbRecFromUser(user, features):
 
     lista = utilizador2Vistos(user)
+    mx = np.empty([len(titles),len(titles)])
     for x in range(len(lista)):
-        lista[x] = cbRecFromMovie(x, features)
-    return(many2One(lista))
+        mx[0] += cbRecFromImdb(lista[x], features)
+
+    sim_scores = list(enumerate(mx[0]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
+    sim_scores = list(filter(lambda x: x[0] not in lista, sim_scores))
+
+    movie_indices = [i[0] for i in sim_scores]
+    return(movie_indices)
+
 
 # ------------------------------------------
 
@@ -155,6 +181,7 @@ def startPredModel(user,ratings,fileOutput):
     dump.dump(fileOutput,None,svd,1)
 
 def cfRecommendations(user):
+    # ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
     # "userId";"rating";"imdbId"
 
@@ -170,6 +197,7 @@ def cfRecommendations(user):
     res = [ seq[0] for seq in list ]
 
     return(res)
+
 
 # ------------------------------------------------------------------------
 # Os melhores com base nos nossos utilizadores e outros sites
@@ -202,17 +230,13 @@ def wsBestRated(site):
 # Hibrido
 
 def hibRecomend(user):
-    pass
+    pass    
 
 
 
 
-#generateCBMatrix()
-
-
-
-
-
+#cbRecMatrix('imdbId')
+#print(movies.keys())
 
 
 #end of code from teste.py
@@ -279,7 +303,7 @@ def callCfRecommendations(user):
     unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
 
-    listRecomended = cbRecForUser(user,features)
+    listRecomended = cbRecFromUser(user,features)
     res = listIDSToJSON(listRecomended)
     return res
 

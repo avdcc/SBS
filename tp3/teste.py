@@ -23,7 +23,7 @@ import warnings; warnings.simplefilter('ignore')
 
 # ------------------------------------------------------------------------
 
-movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+movies = pd.read_csv('filmes_1.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -153,9 +153,9 @@ def loadCBMatrix():
         dM[key] = np.load('./cb/' + key + '.npy') 
     print("Load Complete")
 
-generateCBMatrix()
+#generateCBMatrix()
 
-print(index2Name(cbRecFromUser(504, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:100]) # 111 514
+#print(index2Name(cbRecFromUser(504, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:100]) # 111 514
 
 # print(cbRecFromUser(1,cb))
 # a = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
@@ -193,7 +193,6 @@ def cfRecommendations(user):
 
     # "userId";"rating";"imdbId"
 
-    # o load retorna um tuplo, mas neste caso o pred não tem nada com significado
     pred,svd = dump.load(fileModel)
     vistosLista = utilizador2Vistos(user)
 
