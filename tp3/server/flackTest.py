@@ -239,9 +239,6 @@ def hibRecomend(user):
 
 
 
-#cbRecMatrix('imdbId')
-#print(movies.keys())
-
 
 #end of code from teste.py
 
@@ -259,10 +256,16 @@ def listIDSToJSON(list):
 def processFeatures(features):
     res = []
     for feature,value in features.items():
-        pair = (str(feature),value)
-        res.append(pair)
+        if(value!=0):
+            pair = (str(feature),value)
+            res.append(pair)
     return res
 
+def startFeatureMatrixes(features):
+    for feature,value in features:
+        print("Generating CBMatrix: " + feature)
+        cbRecMatrix(feature)
+        print("Geration Complete")
 
 
 
@@ -294,7 +297,9 @@ def callCbRecommendations(title):
     unprocessedFeatures = req_data
     features = processFeatures(unprocessedFeatures)
 
-    listRecomended = cbRecFromMovie(str(title),features)
+    startFeatureMatrixes(features)
+
+    listRecomended = cbRecFromTitle(str(title),features)
     res = listIDSToJSON(listRecomended)
     return res
 
@@ -306,6 +311,8 @@ def callCfRecommendations(user):
     req_data = request.get_json()
     unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
+
+    startFeatureMatrixes(features)
 
     listRecomended = cbRecFromUser(user,features)
     res = listIDSToJSON(listRecomended)
