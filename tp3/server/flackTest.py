@@ -39,7 +39,7 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 
 # Build a 1-dimensional array with movie titles
 titles = movies['title']
-index = pd.Series(movies.index, index=movies['imdbId'])
+index = pd.Series(movies.index, index=movies['imdb_id'])
 indices = pd.Series(movies.index, index=movies['title'])
 # print(index)
 
@@ -221,10 +221,14 @@ def wsBestRated(site):
     ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
     if (site == 'meta'):
         result = ratings.sort_values(by=['metascore'], ascending=False)
-    else:    
-        result = ratings.sort_values(by=[site+ '_rating'], ascending=False)
+    elif(site=='imdb'):    
+        result = ratings.sort_values(by=['imdb_rating'], ascending=False)
+    elif(site=='IMD'):    
+        result = ratings.sort_values(by=['Internet Movie Database'], ascending=False)
+    elif(site=='rotten'):    
+        result = ratings.sort_values(by=['Rotten tomatoes'], ascending=False)
 
-    return(list(result['imdbId']))
+    return(list(result['imdb_id']))
 
 # ------------------------------------------------------------------------
 # Hibrido

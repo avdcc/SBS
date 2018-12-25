@@ -326,6 +326,7 @@ router.post('/userBestRated',(req,res)=>{
         
         var dataProcessed = idListToMovies(listData)
         
+        
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
         res.render('listDataFromFilms',{
@@ -381,7 +382,9 @@ router.get('/wsBestRated',(req,res)=>{
 })
 
 router.post('/wsBestRated',(req,res)=>{
-  axios.get('http://localhost:5000/wsBestRated/' + req.body.data)
+  var site = req.body.selected
+
+  axios.get('http://localhost:5000/wsBestRated/' + site)
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
         
