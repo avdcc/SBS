@@ -252,7 +252,6 @@ router.post('/collaborativeBased',(req,res)=>{
 
   axios.post('http://localhost:5000/collaborativeBased/' + user, features,{headers:headers})
        .then(dataRec =>{
-         console.log(dataRec.data)
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
          var dataProcessed = idListToMovies(listData)

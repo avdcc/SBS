@@ -34,11 +34,14 @@ import warnings; warnings.simplefilter('ignore')
 movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
+regex = re.compile('[^a-zA-Z]')
+stemmer = SnowballStemmer('english')
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
 
 # Build a 1-dimensional array with movie titles
-titles = movies['title']
+titles = movies['imdb_id']
 index = pd.Series(movies.index, index=movies['imdb_id'])
 indices = pd.Series(movies.index, index=movies['title'])
 # print(index)
@@ -56,7 +59,7 @@ ratings['rating'] = ratings['rating'].fillna(ratings['rating'].mean())
 # ------------------------------------------------------------------------
 # Treatment
 
-def index2Name(lista):
+def index2imdbId(lista):
     return(titles.iloc[lista].tolist())
 
 def many2One(listas):
@@ -88,7 +91,11 @@ def cbRecMatrix(feature):
     if (feature in ["actors", "country", "genre", "language", "writer"]):
         movies[feature] = movies[feature].str.split(', ')
     elif ( feature == "plot"):
+        
         movies[feature] = movies[feature].str.split(' ')
+        for x in range(0, len(movies[feature])):
+            # movies[feature][x] = [stemmer.stem(y) for y in movies[feature][x]]
+            pass
 
     movies[feature] = movies[feature].fillna("").astype('str')
     matrix = tfidf_matrixGenre = tf.fit_transform(movies[feature])
@@ -122,7 +129,7 @@ def cbRecFromId(idx, features):
     sim_scores = list(filter(lambda x: x[0] != idx, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
-    return(movie_indices)
+    return(index2imdbId(movie_indices))
 
 def cbRecFromUser(user, features):
 
@@ -136,7 +143,7 @@ def cbRecFromUser(user, features):
     sim_scores = list(filter(lambda x: x[0] not in lista, sim_scores))
 
     movie_indices = [i[0] for i in sim_scores]
-    return(movie_indices)
+    return(index2imdbId(movie_indices))
 
 
 # ------------------------------------------
@@ -244,23 +251,38 @@ def hibRecomend(user):
 
 
 
+
 #inicializing dM
+#gera os ficheiros caso não existam
 
 #garbage collector
-import gc
+#existe apenas por causa do meu computador ter memória muito limitada
+#import gc
+#
+#import os
+#
+#for key in cb:
+#    path = './cb/' + key + ".npy"
+#    if not ( os.path.exists(path)):
+#        print("Generating and saving CBMatrix: " + key )
+#        np.save('cb/' + key, cbRecMatrix(key))
+#        print("Releasing memory")
+#        gc.collect()
+#print('done generating matrixes')
+#
+#finishing initialization dM
 
-import os
 
-for key in cb:
-    path = './cb/' + key + ".npy"
-    if not ( os.path.exists(path)):
-        print("Generating and saving CBMatrix: " + key )
-        np.save('cb/' + key, cbRecMatrix(key))
-        print("Releasing memory")
-        gc.collect()
-print('done generating matrixes')
+#inicialização alternativa
+#poe em dM todas as matrizes
+
+#se não se usar o método acima tudo o que se tem de fazer é desomentar isto antes de ligar o servidor
+#generateCBMatrix()
 
 
+
+
+#funções auxiliares
 
 def listIDSToJSON(list):
   return jsonify(result = list)
@@ -273,14 +295,14 @@ def processFeatures(features):
             res.append(pair)
     return res
 
+
+#inicia as matrizes
+#para tal carrega os ficheiros que guardou em cima
 def startFeatureMatrixes(features):
     for feature,value in features:
         print("Loading CBMatrix: " + feature)
         dM[feature] = np.load('./cb/' + feature + '.npy') 
         print("Loading Complete")
-
-def index2imdb(lista):
-    return(movies['imdb_id'].iloc[lista].toList())
 
 
 
@@ -310,10 +332,11 @@ def callCbRecommendations(title):
     unprocessedFeatures = req_data
     features = processFeatures(unprocessedFeatures)
 
-    startFeatureMatrixes(features)
+    #inicia as matrizes
+    #só para o caso de se usar o método de ficheiros em FS
+    #startFeatureMatrixes(features)
 
     listRecomended = cbRecFromTitle(str(title),features)
-    listRecomended = index2imdb(listRecomended)
     res = listIDSToJSON(listRecomended)
 
     dM={}
@@ -328,10 +351,11 @@ def callCfRecommendations(user):
     unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
 
-    startFeatureMatrixes(features)
+    #inicia as matrizes
+    #só para o caso de se usar o método de ficheiros em FS
+    #startFeatureMatrixes(features)
 
     listRecomended = cbRecFromUser(user,features)
-    listRecomended = index2imdb(listRecomended)
     res = listIDSToJSON(listRecomended)
 
     dM={}
