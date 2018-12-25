@@ -297,6 +297,7 @@ def callCbRecommendations(title):
     unprocessedFeatures = req_data
     features = processFeatures(unprocessedFeatures)
 
+    loadCBMatrix()
     startFeatureMatrixes(features)
 
     listRecomended = cbRecFromTitle(str(title),features)
@@ -312,6 +313,7 @@ def callCfRecommendations(user):
     unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
 
+    loadCBMatrix()
     startFeatureMatrixes(features)
 
     listRecomended = cbRecFromUser(user,features)
@@ -321,6 +323,7 @@ def callCfRecommendations(user):
 
 @app.route("/hybrid/<int:user>")
 def callHibRecomend(user):
+  loadCBMatrix()
   listRecomended = hibRecomend(user)
   res = listIDSToJSON(listRecomended)
   return res
