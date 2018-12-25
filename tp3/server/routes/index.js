@@ -198,7 +198,6 @@ router.post('/contentBased',(req,res)=>{
 
   axios.post('http://localhost:5000/contentBased/' + mainTitle, features,{headers:headers})
        .then(dataRec =>{
-         console.log(dataRec)
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
          var dataProcessed = idListToMovies(listData)
@@ -253,7 +252,7 @@ router.post('/collaborativeBased',(req,res)=>{
 
   axios.post('http://localhost:5000/collaborativeBased/' + user, features,{headers:headers})
        .then(dataRec =>{
-         console.log(dataRec)
+         console.log(dataRec.data)
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
          var dataProcessed = idListToMovies(listData)
@@ -320,6 +319,7 @@ router.get('/userBestRated',(req,res)=>{
 router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
        .then(dataRec =>{
+
         var listString = JSON.stringify(dataRec.data)
         
         var listData = JSON.parse(listString).result.slice(0,9)

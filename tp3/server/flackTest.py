@@ -244,9 +244,21 @@ def hibRecomend(user):
 
 
 
+#inicializing dM
 
+#garbage collector
+import gc
 
+import os
 
+for key in cb:
+    path = './cb/' + key + ".npy"
+    if not ( os.path.exists(path)):
+        print("Generating and saving CBMatrix: " + key )
+        np.save('cb/' + key, cbRecMatrix(key))
+        print("Releasing memory")
+        gc.collect()
+print('done generating matrixes')
 
 
 
@@ -263,11 +275,12 @@ def processFeatures(features):
 
 def startFeatureMatrixes(features):
     for feature,value in features:
-        print("Generating CBMatrix: " + feature)
-        cbRecMatrix(feature)
-        print("Geration Complete")
+        print("Loading CBMatrix: " + feature)
+        dM[feature] = np.load('./cb/' + feature + '.npy') 
+        print("Loading Complete")
 
-
+def index2imdb(lista):
+    return(movies['imdbId'].iloc[lista].toList())
 
 
 
@@ -297,11 +310,13 @@ def callCbRecommendations(title):
     unprocessedFeatures = req_data
     features = processFeatures(unprocessedFeatures)
 
-    loadCBMatrix()
     startFeatureMatrixes(features)
 
     listRecomended = cbRecFromTitle(str(title),features)
+    listRecomended = index2imdb(listRecomended)
     res = listIDSToJSON(listRecomended)
+
+    dM={}
     return res
 
 
@@ -313,17 +328,18 @@ def callCfRecommendations(user):
     unprocessedFeatures = req_data    
     features = processFeatures(unprocessedFeatures)
 
-    loadCBMatrix()
     startFeatureMatrixes(features)
 
     listRecomended = cbRecFromUser(user,features)
+    listRecomended = index2imdb(listRecomended)
     res = listIDSToJSON(listRecomended)
+
+    dM={}
     return res
 
 
 @app.route("/hybrid/<int:user>")
 def callHibRecomend(user):
-  loadCBMatrix()
   listRecomended = hibRecomend(user)
   res = listIDSToJSON(listRecomended)
   return res
