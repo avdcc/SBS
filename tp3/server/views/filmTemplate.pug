@@ -6,7 +6,7 @@ block content
       header.w3-container.w3-blue
         h3= title
       .w3-container
-        table.w3-table-all.l4.m6
+        table.w3-responsive.w3-table-all.w3-small
           tr
             th Atores
             th Prémios
@@ -40,7 +40,8 @@ block content
             td= film.language
             td= film.metascore
             td= film.plot
-            td= film.poster
+            td
+              img(src=film.poster)
             td= film.production
             td= film.ratings
             td= film.title
