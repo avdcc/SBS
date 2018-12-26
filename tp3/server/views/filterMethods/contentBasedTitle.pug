@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .w3-container 
+    .w3-card-4
+      header.w3-container.w3-blue
+        h3= title
+      .w3-container
+        p Chose a movie to give a recomendation below
+        form.w3-container(action='/contentBased' method='POST')
+          input.w3-input(type='text',name="selectedTitle" ,placeholder="add your movie title here")
+          p Select your features
+          input.w3-check(type='checkbox', name ='title')
+          label Title
+          input.w3-check(type='checkbox', name ='actors')
+          label Actors
+          input.w3-check(type='checkbox', name ='country')
+          label Country
+          input.w3-check(type='checkbox', name ='genre')
+          label Genre
+          input.w3-check(type='checkbox', name ='language')
+          label Language
+          input.w3-check(type='checkbox', name ='writer')
+          label Writer
+          input.w3-check(type='checkbox', name ='plot')
+          label Plot
+          input.w3-check(type='checkbox', name ='director')
+          label Director
+          input.w3-check(type='checkbox', name ='production')
+          label Production
+          p
+          input.w3-btn.w3-green(type='submit', value='Enviar')   
+

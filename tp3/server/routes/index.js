@@ -171,7 +171,9 @@ router.get('/contentBased',(req,res)=>{
 })
 
 router.post('/contentBased',(req,res)=>{
-  var mainTitle = req.body.mainTitle
+  var user = req.body.user
+
+  var selectedTitle = req.body.selectedTitle
 
   var features = {
     title : req.body.title,
@@ -195,12 +197,21 @@ router.post('/contentBased',(req,res)=>{
     }
   })
 
-  //deve ser utilizador ou site
-  var usage = ""
+  var usage 
+  var titleOrId
+
+  if(user){ 
+    usage = 'user' 
+    titleOrId = user
+  }else if(selectedTitle){ 
+    usage = 'title' 
+    titleOrId = selectedTitle
+  }
+
 
   var headers = {"Content-Type" : "application/json"}
 
-  axios.post('http://localhost:5000/contentBased/' + mainTitle + '/' + usage,
+  axios.post('http://localhost:5000/contentBased/' + titleOrId + '/' + usage,
                                               {features,weights},
                                               {headers:headers}
             )
@@ -221,6 +232,17 @@ router.post('/contentBased',(req,res)=>{
           res.redirect('/')
        })
 })
+
+
+
+router.get('/contentBased/title',(req,res)=>{
+  res.render('filterMethods/contentBasedTitle',{ title: websiteTitle })
+})
+
+router.get('/contentBased/user',(req,res)=>{
+  res.render('filterMethods/contentBasedUser',{ title: websiteTitle })
+})
+
 
 
 

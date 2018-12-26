@@ -45,7 +45,7 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 titles = movies['imdb_id']
 index = pd.Series(movies.index, index=movies['imdb_id'])
 indices = pd.Series(movies.index, index=movies['title'])
-# print(index)
+#print(titles)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
 dM = {} # Dicionario de Content Based
@@ -258,19 +258,18 @@ def hibRecomend(user):
 
 #garbage collector
 #existe apenas por causa do meu computador ter memória muito limitada
-#import gc
-#
-#import os
-#
-#for key in cb:
-#    path = './cb/' + key + ".npy"
-#    if not ( os.path.exists(path)):
-#        print("Generating and saving CBMatrix: " + key )
-#        np.save('cb/' + key, cbRecMatrix(key))
-#        print("Releasing memory")
-#        gc.collect()
-#print('done generating matrixes')
-#
+import gc
+import os
+
+for key in cb:
+    path = './cb/' + key + ".npy"
+    if not ( os.path.exists(path)):
+        print("Generating and saving CBMatrix: " + key )
+        np.save('cb/' + key, cbRecMatrix(key))
+        print("Releasing memory")
+        gc.collect()
+print('done generating matrixes')
+
 #finishing initialization dM
 
 
@@ -302,21 +301,23 @@ def processFeatures(features, weigths = {}):
             'production' : 0.3
          }    
     for feature,value in features.items():
-        if not (weigths[feature]):
-            pair = (str(feature),defaultWeights[feature])
-        else:
-            pair = (str(feature),weigths[feature])
-        res.append(pair)
+        if(value!=0):
+            if not (feature in weigths):
+                pair = (str(feature),defaultWeights[feature])
+            else:
+                pair = (str(feature),weigths[feature])
+            res.append(pair)
     return res
 
 
 #inicia as matrizes
 #para tal carrega os ficheiros que guardou em cima
 def startFeatureMatrixes(features):
-    for feature,value in features:
-        print("Loading CBMatrix: " + feature)
-        dM[feature] = np.load('./cb/' + feature + '.npy') 
-        print("Loading Complete")
+    for feature,value in features.items():
+        if(value == 1):
+            print("Loading CBMatrix: " + feature)
+            dM[feature] = np.load('./cb/' + feature + '.npy') 
+            print("Loading Complete")
 
 
 
@@ -339,21 +340,25 @@ def testCall():
 
 
 #Devido ao facto que podemos ter muitos dados nas features e pesos, vai ser enviado um JSON
-@app.route("/contentBased/<title>/<usage>",  methods=['POST'])
-def callCbRecommendations(title,usage):
-
+@app.route("/contentBased/<titleOrId>/<usage>",  methods=['POST'])
+def callCbRecommendations(titleOrId,usage):
     req_data = request.get_json()
 
-    unprocessedFeatures = req_data.features
-    weigths = req_data.weigths
+    unprocessedFeatures = req_data['features']
+    weigths = req_data['weights']
 
-    features = processFeatures(unprocessedFeatures,weigths)
 
     #inicia as matrizes
     #só para o caso de se usar o método de ficheiros em FS
-    #startFeatureMatrixes(features)
+    startFeatureMatrixes(unprocessedFeatures)
 
-    listRecomended = cbRecFromTitle(str(title),features)
+    features = processFeatures(unprocessedFeatures,weigths)
+
+    if(usage=='title'):
+        listRecomended = cbRecFromTitle(str(titleOrId),features)
+    else:
+        listRecomended = cbRecFromUser(int(titleOrId),features)
+    
     res = listIDSToJSON(listRecomended)
 
     dM={}
