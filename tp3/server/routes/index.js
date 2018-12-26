@@ -185,6 +185,8 @@ router.post('/contentBased',(req,res)=>{
     production : req.body.production
   }
 
+  var weights = {}
+
   Object.keys(features).map((key,index)=>{
     if(features[key]){
       features[key] = (features[key],1)
@@ -193,10 +195,15 @@ router.post('/contentBased',(req,res)=>{
     }
   })
 
+  //deve ser utilizador ou site
+  var usage = ""
 
   var headers = {"Content-Type" : "application/json"}
 
-  axios.post('http://localhost:5000/contentBased/' + mainTitle, features,{headers:headers})
+  axios.post('http://localhost:5000/contentBased/' + mainTitle + '/' + usage,
+                                              {features,weights},
+                                              {headers:headers}
+            )
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
@@ -227,30 +234,7 @@ router.get('/collaborativeBased',(req,res)=>{
 router.post('/collaborativeBased',(req,res)=>{
   var user = req.body.user
 
-  var features = {
-    title : req.body.title,
-    actors : req.body.actors,
-    country : req.body.country,
-    genre : req.body.genre,
-    language : req.body.language,
-    writer : req.body.writer,
-    plot : req.body.plot,
-    director : req.body.director,
-    production : req.body.production
-  }
-
-  Object.keys(features).map((key,index)=>{
-    if(features[key]){
-      features[key] = (features[key],1)
-    }else{
-      features[key] = (features[key],0)
-    }
-  })
-
-
-  var headers = {"Content-Type" : "application/json"}
-
-  axios.post('http://localhost:5000/collaborativeBased/' + user, features,{headers:headers})
+  axios.get('http://localhost:5000/collaborativeBased/' + user)
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
@@ -278,7 +262,6 @@ router.get('/hybrid',(req,res)=>{
 
 router.post('/hybrid',(req,res)=>{
   var user = req.body.user
-
 
   axios.get('http://localhost:5000/hybrid/' + user)
        .then(dataRec =>{

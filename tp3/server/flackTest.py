@@ -1,6 +1,7 @@
 from flask import Flask,jsonify,request
 
 #import sys
+#from importlib import reload
 #reload(sys)
 #sys.setdefaultencoding("utf-8")
 
@@ -192,7 +193,7 @@ def cfRecommendations(user):
 
     # "userId";"rating";"imdbId"
 
-    pred,svd = dump.load(fileModel)
+    pred,svd = dump.load(str(fileModel),encoding='latin1')
     vistosLista = utilizador2Vistos(user)
 
     list = []
@@ -287,12 +288,25 @@ def hibRecomend(user):
 def listIDSToJSON(list):
   return jsonify(result = list)
 
-def processFeatures(features):
+def processFeatures(features, weigths = {}):
     res = []
+    defaultWeights = {
+            'title'      : 1,
+            'actors'     : 0.8,
+            'country'    : 0.1,
+            'genre'      : 1.1,
+            'language'   : 0.5,
+            'writer'     : 0.4,
+            'plot'       : 0.6,
+            'director'   : 0.6, 
+            'production' : 0.3
+         }    
     for feature,value in features.items():
-        if(value!=0):
-            pair = (str(feature),value)
-            res.append(pair)
+        if not (weigths[feature]):
+            pair = (str(feature),defaultWeights[feature])
+        else:
+            pair = (str(feature),weigths[feature])
+        res.append(pair)
     return res
 
 
@@ -324,13 +338,16 @@ def testCall():
 
 
 
-#Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
-@app.route("/contentBased/<title>",  methods=['POST'])
-def callCbRecommendations(title):
+#Devido ao facto que podemos ter muitos dados nas features e pesos, vai ser enviado um JSON
+@app.route("/contentBased/<title>/<usage>",  methods=['POST'])
+def callCbRecommendations(title,usage):
 
     req_data = request.get_json()
-    unprocessedFeatures = req_data
-    features = processFeatures(unprocessedFeatures)
+
+    unprocessedFeatures = req_data.features
+    weigths = req_data.weigths
+
+    features = processFeatures(unprocessedFeatures,weigths)
 
     #inicia as matrizes
     #só para o caso de se usar o método de ficheiros em FS
@@ -343,22 +360,10 @@ def callCbRecommendations(title):
     return res
 
 
-#Devido ao facto que podemos ter muitos dados nas features, vai ser enviado um JSON
-@app.route("/collaborativeBased/<int:user>",methods=['POST'])
+@app.route("/collaborativeBased/<int:user>")
 def callCfRecommendations(user):
-
-    req_data = request.get_json()
-    unprocessedFeatures = req_data    
-    features = processFeatures(unprocessedFeatures)
-
-    #inicia as matrizes
-    #só para o caso de se usar o método de ficheiros em FS
-    #startFeatureMatrixes(features)
-
-    listRecomended = cbRecFromUser(user,features)
+    listRecomended = cfRecommendations(user)
     res = listIDSToJSON(listRecomended)
-
-    dM={}
     return res
 
 
@@ -378,7 +383,6 @@ def callHibRecomend(user):
 def callUserBestRated():
   #get the list of recomendations
   listRecomended = userBestRated()
-
 
   # transform list into JSON to be later used on the other server
   res = listIDSToJSON(listRecomended)
