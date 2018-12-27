@@ -32,7 +32,7 @@ import warnings; warnings.simplefilter('ignore')
 
 # ------------------------------------------------------------------------
 
-movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+movies = pd.read_csv('filmes.csv', sep='§', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
 regex = re.compile('[^a-zA-Z]')
@@ -240,7 +240,7 @@ def userMostPopular():
 
 def wsBestRated(site):
 
-    ratings = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
+    ratings = pd.read_csv('filmes.csv', sep='§', encoding='utf-8')
     if (site == 'meta'):
         result = ratings.sort_values(by=['metascore'], ascending=False)
     elif(site=='imdb'):    

@@ -15,14 +15,40 @@ var file = fs.readFileSync('../filmes.csv', 'utf8')
 var filmes 
 
 parseCSV.parse(file,{
-  delimiter: ";",
-  header: true,
+  delimiter: "§",
   encoding: "utf8",
   newline: "\n",
   complete: (results) => {
     filmes = results.data
   }
 })
+
+
+function parseLineFilmes(line){
+  res = line.split(';')
+  return res
+}
+
+function parseFilmesDatabase(filmes){
+  var result = []
+  var headers = parseLineFilmes(filmes[0][0])
+
+  for(var i=1; i<filmes.length; i++){
+    var line = parseLineFilmes(filmes[i][0])
+    var len = headers.length
+    var aux = {}  
+    for(var k=0;k<len;k++){
+      aux[headers[k]] = line[k]
+    }
+    result.push(aux)
+  }	
+
+  return result
+
+}
+
+filmes = parseFilmesDatabase(filmes)
+
 
 
 //auxiliar functions
@@ -32,7 +58,6 @@ function data_imdbid(id,database){
     if(database[i]['imdb_id']==id){
       return database[i];
     }
-
   }	
 }
 
@@ -44,6 +69,10 @@ function idListToMovies(listItems){
   while(elemAux){
 
     var elem = data_imdbid(elemAux,filmes)
+
+    console.log(elemAux)
+
+    console.log(elem)
 
     res.push(elem)
     
@@ -290,6 +319,9 @@ router.post('/userBestRated',(req,res)=>{
         var listData = JSON.parse(listString).result.slice(0,9)
         
         var dataProcessed = idListToMovies(listData)
+
+
+        console.log(dataProcessed)
 
         
         //21 campos por cada entrada de listRec
