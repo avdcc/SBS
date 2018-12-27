@@ -256,7 +256,13 @@ def wsBestRated(site):
 # Hibrido
 
 def hibRecomend(user):
-    pass    
+    l = []
+    l[0] = cbRecFromUser(user, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+    l[1] = cfRecommendations(user)
+    
+    l[2] = many2One([userBestRated(), userMostPopular()]) # Resto todo das pontuacoes melhores
+
+    return (many2One(l))    
 
 
 
@@ -273,17 +279,17 @@ def hibRecomend(user):
 
 #garbage collector
 #existe apenas por causa do meu computador ter memória muito limitada
-#import gc
-#import os
-#
-#for key in cb:
-#    path = './cb/' + key + ".npy"
-#    if not ( os.path.exists(path)):
-#        print("Generating and saving CBMatrix: " + key )
-#        np.save('cb/' + key, cbRecMatrix(key))
-#        print("Releasing memory")
-#        gc.collect()
-#print('done generating matrixes')
+import gc
+import os
+
+for key in cb:
+    path = './cb/' + key + ".npy"
+    if not ( os.path.exists(path)):
+        print("Generating and saving CBMatrix: " + key )
+        np.save('cb/' + key, cbRecMatrix(key))
+        print("Releasing memory")
+        gc.collect()
+print('done generating matrixes')
 
 #finishing initialization dM
 
@@ -368,7 +374,7 @@ def callCbRecommendations(titleOrId,usage):
 
     #inicia as matrizes
     #só para o caso de se usar o método de ficheiros em FS
-    #startFeatureMatrixes(unprocessedFeatures)
+    startFeatureMatrixes(unprocessedFeatures)
 
     features = processFeatures(unprocessedFeatures,weigths)
 

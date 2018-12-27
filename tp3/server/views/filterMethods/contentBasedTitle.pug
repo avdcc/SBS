@@ -8,7 +8,8 @@ block content
       .w3-container
         p Chose a movie to give a recomendation below
         form.w3-container(action='/contentBased' method='POST')
-          input.w3-input(type='text',name="selectedTitle" ,placeholder="add your movie title here")
+          input.w3-input(id='tags',type='text',name="selectedTitle" ,placeholder="add your movie title here")
+          
           p Select your features
           input.w3-check(type='checkbox', name ='title')
           label Title

@@ -25,36 +25,7 @@ parseCSV.parse(file,{
 })
 
 
-function aux(string){
-	var res;
-  for (var i = 0; i< string.length ; i++){
-  	if(string[i] != "\""){
-    	res.append(string[i]);
-    }
-  }
-  return res;
-}
-
-function stripall(list){
-	return list.map(x => aux(x));
-}
-
-function column(table,ind){
-	var res = [];
-  for(var i =0; i< table.length ; i++){
-  	res += (table[i][ind]);
-  }
-  return res;
-}
-
-function createDic(table){
-	dic = [];
-  for(var i=0; table[0].length; i++){
-  	dic.push({ key: table[0][i],
-               value: column(table,i)})
-  }
-  return dic;
-}
+//auxiliar functions
 
 function data_imdbid(id,database){
 	for(var i=0; i<database.length; i++){
@@ -65,44 +36,7 @@ function data_imdbid(id,database){
   }	
 }
 
-function List_toSet(List){
-	var res = new Set();
-  for(var i=0; i<List.length; i++){
-  	res.add(List[i]);
-  }
-  return res;
-}
 
-function setup() {
-  noCanvas();
-  filmes = filmes.map(x => x.replace(/\"/g,"").split(";"));
-
-  print(filmes[0]);
-  
-  //print(data_imdbid("tt0113326",filmes));
-  //print(createDic(filmes));
-  //print(Array.from(List_toSet(column(filmes,0))));
-  //print(List_toSet(["ola","ole","ola"]));
-  var atores = column(filmes,0);
-   for(var i=0; i<atores.length; i++){
-   	print(atores[i]);
-   }
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-//auxiliar functions
 function idListToMovies(listItems){
   var res = []
   var i=0
@@ -134,6 +68,37 @@ function adjustKeys(movieInfo){
 
   return newinfo
 }
+
+function getTitles(){
+  var result = []
+
+  for(var i=0; i<filmes.length; i++){
+    result.push(filmes[i]['title'])
+  }	
+
+  return result
+}
+
+console.log('hi')
+
+var titles = getTitles()
+var titleFile = '../titulos.txt'
+
+console.log(titles)
+
+
+fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
+  if (err) 
+      return console.error(err); 
+  fs.readFile(titleFile, 'utf-8', function (err, data) {
+      if (err)
+          return console.error(err);
+      console.log(data);
+  });
+});
+
+
+console.log('bye')
 
 
 
@@ -217,7 +182,8 @@ router.post('/contentBased',(req,res)=>{
          //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
          res.render('listDataFromFilms',{
            films: dataProcessed ,
-           title: websiteTitle
+           title: websiteTitle,
+           arrayOptions: []
          })
        }
        )
@@ -230,11 +196,11 @@ router.post('/contentBased',(req,res)=>{
 
 
 router.get('/contentBased/title',(req,res)=>{
-  res.render('filterMethods/contentBasedTitle',{ title: websiteTitle })
+  res.render('filterMethods/contentBasedTitle',{ title: websiteTitle})
 })
 
 router.get('/contentBased/user',(req,res)=>{
-  res.render('filterMethods/contentBasedUser',{ title: websiteTitle })
+  res.render('filterMethods/contentBasedUser',{ title: websiteTitle})
 })
 
 
@@ -243,7 +209,7 @@ router.get('/contentBased/user',(req,res)=>{
 //collaborative filtering
 
 router.get('/collaborativeBased',(req,res)=>{
-  res.render('filterMethods/collaborativeBased',{ title: websiteTitle })
+  res.render('filterMethods/collaborativeBased',{ title: websiteTitle})
 })
 
 
