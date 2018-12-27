@@ -8,47 +8,73 @@ block content
       .w3-container
         table.w3-responsive.w3-table-all.w3-small
           tr
-            th Atores
-            th Prémios
-            th País
-            th Diretor
-            th Género
             th imdbId
-            th Avaliação imdb
-            th Votos imdb
-            th Linguagem
-            th Metascore
-            th Resumo
-            th Poster
-            th Produção
-            th Ratings
-            th Titulo
-            th Escritor
-            th Ano de estreia
-            th Ano de estreia do DVD
-            th Mês de estreia
-            th Duração
+            td= film.imdb_id
           tr
-            td= film.actors
-            td= film.awards
-            td= film.country
-            td= film.director
+            th Titulo
+            td= film.title
+          tr
+            th Género
             td= film.genre
-            td= film.imdbId
-            td= film.imdb_rating
-            td= film.imdb_votes
-            td= film.language
-            td= film.metascore
+          tr
+            th Resumo
             td= film.plot
+          tr
+            th Atores
+            td= film.actors
+          tr
+            th Poster
             td
               img(src=film.poster)
+          tr
+            th Prémios
+            td= film.awards
+          tr
+            th País
+            td= film.country
+          tr
+            th Diretor
+            td= film.director
+          tr
+            th Avaliação imdb
+            td= film.imdb_rating
+          tr
+            th Votos imdb
+            td= film.imdb_votes
+          tr
+            th Linguagem
+            td= film.language
+          tr
+            th Metascore
+            td= film.metascore
+          tr 
+            th Internet Movie Database
+            td= film.IMD
+          tr
+            th Rotten Tomatoes
+            td= film.rotten
+          tr
+            th Metacritic
+            td= film.Metacritic
+          tr
+            th Produção
             td= film.production
-            td= film.ratings
-            td= film.title
+          tr
+            th Escritor
             td= film.writer
+          tr
+            th Ano de estreia
             td= film.year
+          tr
+            th Ano de estreia do DVD
             td= film.dvdYear
+          tr
+            th Mês de estreia
             td= film.releasedMonth
-            td= film.releasedYear
+          tr
+            th Duração
             td= film.duration
+          tr
+            th Ano de lançamento
+            td= film.releasedYear
 

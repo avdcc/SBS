@@ -119,6 +119,21 @@ function idListToMovies(listItems){
   return res
 }
 
+function adjustKeys(movieInfo){
+  newinfo = {}
+
+  for(var key in movieInfo){
+    if(key=='Internet Movie Database' ){
+      newinfo['IMD'] = movieInfo['Internet Movie Database']
+    }else if(key=='Rotten tomatoes'){
+      newinfo['rotten'] = movieInfo['Rotten tomatoes']
+    }else{
+      newinfo[key] = movieInfo[key]
+    }
+  }
+
+  return newinfo
+}
 
 
 
@@ -135,6 +150,7 @@ router.get('/', function(req, res, next) {
 router.get('/movies/:id',(req,res)=>{
   var imdbid = req.params.id
   var movieInfo = data_imdbid(imdbid,filmes)
+  movieInfo = adjustKeys(movieInfo)
   res.render('filmTemplate',{film: movieInfo,title:websiteTitle})
 })
 
