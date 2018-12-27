@@ -267,24 +267,28 @@ def hibRecomend(user):
 
 
 
+
 #inicializing dM
 #gera os ficheiros caso não existam
 
 #garbage collector
 #existe apenas por causa do meu computador ter memória muito limitada
-import gc
-import os
-
-for key in cb:
-    path = './cb/' + key + ".npy"
-    if not ( os.path.exists(path)):
-        print("Generating and saving CBMatrix: " + key )
-        np.save('cb/' + key, cbRecMatrix(key))
-        print("Releasing memory")
-        gc.collect()
-print('done generating matrixes')
+#import gc
+#import os
+#
+#for key in cb:
+#    path = './cb/' + key + ".npy"
+#    if not ( os.path.exists(path)):
+#        print("Generating and saving CBMatrix: " + key )
+#        np.save('cb/' + key, cbRecMatrix(key))
+#        print("Releasing memory")
+#        gc.collect()
+#print('done generating matrixes')
 
 #finishing initialization dM
+
+
+
 
 
 #inicialização alternativa
@@ -364,7 +368,7 @@ def callCbRecommendations(titleOrId,usage):
 
     #inicia as matrizes
     #só para o caso de se usar o método de ficheiros em FS
-    startFeatureMatrixes(unprocessedFeatures)
+    #startFeatureMatrixes(unprocessedFeatures)
 
     features = processFeatures(unprocessedFeatures,weigths)
 
