@@ -108,13 +108,12 @@ function getTitles(){
   return result
 }
 
-/*
-console.log('hi')
+
+
+
 
 var titles = getTitles()
 var titleFile = '../titulos.txt'
-
-console.log(titles)
 
 
 fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
@@ -124,13 +123,11 @@ fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
       if (err)
           return console.error(err);
       console.log(data);
+      
   });
 });
 
 
-console.log('bye')
-
-*/
 
 
 
