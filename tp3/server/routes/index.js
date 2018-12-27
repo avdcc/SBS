@@ -79,6 +79,7 @@ function getTitles(){
   return result
 }
 
+/*
 console.log('hi')
 
 var titles = getTitles()
@@ -100,7 +101,7 @@ fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
 
 console.log('bye')
 
-
+*/
 
 
 
