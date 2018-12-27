@@ -245,9 +245,14 @@ def wsBestRated(site):
 # Hibrido
 
 def hibRecomend(user):
-    pass    
+    l[0] = cbRecFromUser(user, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+    l[1] = cfRecommendations(user)
+    
+    l[2] = many2One([userBestRated(), userMostPopular()]) # Resto todo das pontuacoes melhores
 
+    return (many2One(l)) 
 
+# print(hibRecomend(0))
 
 # ------------------------------------------------------------------------
 # Referencias de Sites?
@@ -267,4 +272,3 @@ def hibRecomend(user):
 # filtros = {'gen':'Romance'}
 
 # ------------------------------------------------------------------------
-# generatezCBMatrix()
