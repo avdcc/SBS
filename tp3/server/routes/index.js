@@ -111,7 +111,7 @@ function getTitles(){
 
 
 
-
+/*
 var titles = getTitles()
 var titleFile = '../titulos.txt'
 
@@ -128,7 +128,7 @@ fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
 });
 
 
-
+*/
 
 
 /* GET home page. */
