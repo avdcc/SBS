@@ -98,38 +98,6 @@ function adjustKeys(movieInfo){
   return newinfo
 }
 
-function getTitles(){
-  var result = []
-
-  for(var i=0; i<filmes.length; i++){
-    result.push(filmes[i]['title'])
-  }	
-
-  return result
-}
-
-
-
-
-/*
-var titles = getTitles()
-var titleFile = '../titulos.txt'
-
-
-fs.writeFile(titleFile, JSON.stringify(titles), { flag: 'w' }, function(err) {
-  if (err) 
-      return console.error(err); 
-  fs.readFile(titleFile, 'utf-8', function (err, data) {
-      if (err)
-          return console.error(err);
-      console.log(data);
-      
-  });
-});
-
-
-*/
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

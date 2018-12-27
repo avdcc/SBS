@@ -11,7 +11,12 @@ $(() => {
       var results = $.ui.autocomplete.filter(availableTags, request.term);
       response(results.slice(0, 10));
     }
-  });
+  }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+    return $( "<div class='w3-menu-item w3-white w3-hover-red'>" )
+        .data( "item.autocomplete", item )
+        .append( "<a class='w3-bar-item' >" + item.label + "</a>" )
+        .appendTo( ul );
+  };
 
   $.ui.autocomplete.filter = function (array, term) {
     var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
