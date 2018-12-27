@@ -245,6 +245,7 @@ def wsBestRated(site):
 # Hibrido
 
 def hibRecomend(user):
+    l = []
     l[0] = cbRecFromUser(user, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
     l[1] = cfRecommendations(user)
     
