@@ -188,12 +188,26 @@ def startPredModel(user,ratings,fileOutput):
 
     dump.dump(fileOutput,None,svd,1)
 
+
+
+def  loadFileModel(file_name, encoding='ASCII'):
+    
+    #this is the method from dump that needed to be modified in config
+    #so i'm puting it here to make it work always
+
+    dump_obj = pickle.load(open(file_name, 'rb'), encoding=encoding)
+
+    return dump_obj['predictions'], dump_obj['algo']
+
+
+
+
 def cfRecommendations(user):
     # ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
     # "userId";"rating";"imdbId"
 
-    pred,svd = dump.load(str(fileModel),encoding='latin1')
+    pred,svd = loadFileModel(str(fileModel),encoding='latin1')
     vistosLista = utilizador2Vistos(user)
 
     list = []
