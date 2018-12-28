@@ -1,10 +1,5 @@
 from flask import Flask,jsonify,request
 
-#import sys
-#from importlib import reload
-#reload(sys)
-#sys.setdefaultencoding("utf-8")
-
 #start of code from teste.py
 
 
