@@ -70,10 +70,6 @@ function idListToMovies(listItems){
 
     var elem = data_imdbid(elemAux,filmes)
 
-    console.log(elemAux)
-
-    console.log(elem)
-
     res.push(elem)
     
     i++
@@ -141,7 +137,17 @@ router.post('/contentBased',(req,res)=>{
     production : req.body.production
   }
 
-  var weights = {}
+  var weights = {
+    title : parseFloat(req.body.titleWeight),
+    actors : parseFloat(req.body.actorsWeight),
+    country : parseFloat(req.body.countryWeight),
+    genre : parseFloat(req.body.genreWeight),
+    language : parseFloat(req.body.languageWeight),
+    writer : parseFloat(req.body.writerWeight),
+    plot : parseFloat(req.body.plotWeight),
+    director : parseFloat(req.body.directorWeight),
+    production : parseFloat(req.body.productionWeigh)
+  }
 
   Object.keys(features).map((key,index)=>{
     if(features[key]){
@@ -285,8 +291,6 @@ router.post('/userBestRated',(req,res)=>{
         
         var dataProcessed = idListToMovies(listData)
 
-
-        console.log(dataProcessed)
 
         
         //21 campos por cada entrada de listRec
