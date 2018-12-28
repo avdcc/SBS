@@ -12,24 +12,60 @@ block content
           .w3-container.w3-button(id='featuresToggle')
               p Advanced settings
           .w3-container(id='features')
-            input.w3-check(type='checkbox', name ='title' checked)
-            label Title
-            input.w3-check(type='checkbox', name ='actors' checked)
-            label Actors
-            input.w3-check(type='checkbox', name ='country' checked)
-            label Country
-            input.w3-check(type='checkbox', name ='genre' checked)
-            label Genre
-            input.w3-check(type='checkbox', name ='language' checked)
-            label Language
-            input.w3-check(type='checkbox', name ='writer' checked)
-            label Writer
-            input.w3-check(type='checkbox', name ='plot' checked)
-            label Plot
-            input.w3-check(type='checkbox', name ='director' checked)
-            label Director
-            input.w3-check(type='checkbox', name ='production' checked)
-            label Production
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='title' checked)
+                label Title
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='titleWeight', value='1')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='actors' checked)
+                label Actors
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='actorsWeight', value='0.8')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='country' checked)
+                label Country
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='countryWeight', value='0.1')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='genre' checked)
+                label Genre
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='genreWeight', value='1.1')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='language' checked)
+                label Language
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='languageWeight', value='0.5')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='writer' checked)
+                label Writer
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='writerWeight', value='0.4')
+            .w3-row
+              .w3-col(style="width:10%")  
+                input.w3-check(type='checkbox', name ='plot' checked)
+                label Plot
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='plotWeight', value='0.6')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='director' checked)
+                label Director
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='directorWeight', value='0.6')
+            .w3-row
+              .w3-col(style="width:10%")
+                input.w3-check(type='checkbox', name ='production' checked)
+                label Production
+              .w3-col(style="width:90%")
+                input.w3-input(type='text',name='productionWeight', value='0.3')
           p
           input.w3-btn.w3-green(type='submit', value='Enviar')   
       footer.w3-container.w3-blue
