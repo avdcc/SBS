@@ -14,26 +14,27 @@ block content
             name="selectedTitle" ,
             placeholder="add your movie title here"
           )
-          
-          p Select your features
-          input.w3-check(type='checkbox', name ='title')
-          label Title
-          input.w3-check(type='checkbox', name ='actors')
-          label Actors
-          input.w3-check(type='checkbox', name ='country')
-          label Country
-          input.w3-check(type='checkbox', name ='genre')
-          label Genre
-          input.w3-check(type='checkbox', name ='language')
-          label Language
-          input.w3-check(type='checkbox', name ='writer')
-          label Writer
-          input.w3-check(type='checkbox', name ='plot')
-          label Plot
-          input.w3-check(type='checkbox', name ='director')
-          label Director
-          input.w3-check(type='checkbox', name ='production')
-          label Production
+          .w3-container.w3-button(id='featuresToggle')
+              p Advanced settings
+          .w3-container(id='features')
+            input.w3-check(type='checkbox', name ='title' checked)
+            label Title
+            input.w3-check(type='checkbox', name ='actors' checked)
+            label Actors
+            input.w3-check(type='checkbox', name ='country' checked)
+            label Country
+            input.w3-check(type='checkbox', name ='genre' checked)
+            label Genre
+            input.w3-check(type='checkbox', name ='language' checked)
+            label Language
+            input.w3-check(type='checkbox', name ='writer' checked)
+            label Writer
+            input.w3-check(type='checkbox', name ='plot' checked)
+            label Plot
+            input.w3-check(type='checkbox', name ='director' checked)
+            label Director
+            input.w3-check(type='checkbox', name ='production' checked)
+            label Production
           p
           input.w3-btn.w3-green(type='submit', value='Enviar')   
       footer.w3-container.w3-blue
