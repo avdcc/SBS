@@ -23,7 +23,7 @@ import warnings; warnings.simplefilter('ignore')
 
 # ------------------------------------------------------------------------
 
-movies = pd.read_csv('filmes_1.csv', sep=';', encoding='utf-8')
+movies = pd.read_csv('filmes.csv', sep=';', encoding='utf-8')
 ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
 regex = re.compile('[^a-zA-Z]')
@@ -39,7 +39,7 @@ index = pd.Series(movies.index, index=movies['imdb_id'])
 # print(index)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
-dM = {} # Dicionario de Content Based
+dM = np.empty([len(titles),len(titles)])
 
 # Fill NaN values in user_id and movie_id column with 0
 ratings['userId'] = ratings['userId'].fillna(0)
@@ -96,25 +96,25 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def cbRecFromTitle(title, features):
-    idx = indices[title]
-    return (cbRecFromId(idx,features))
 
-def cbRecFromImdb(title, features):
+
+
+def cbRecFromTitle(title):
+    idx = indices[title]
+    return (cbRecFromId(idx))
+
+def cbRecFromImdb(title):
     idx = index[title]
-    
     mx = np.empty([len(titles),len(titles)])
-    for f in features:
-        mx[0] += (dM[f[0]][idx] * f[1])
+    mx[0] += (dM[idx])
 
     return(mx[0])
 
 
-def cbRecFromId(idx, features):
+def cbRecFromId(idx):
 
     mx = np.empty([len(titles),len(titles)])
-    for f in features:
-        mx[0] += (dM[f[0]][idx] * f[1])
+    mx[0] = (dM[idx])
         # print(mx)
     # print(mx[0])
 
@@ -125,12 +125,12 @@ def cbRecFromId(idx, features):
     movie_indices = [i[0] for i in sim_scores]
     return(index2imdbId(movie_indices))
 
-def cbRecFromUser(user, features):
+def cbRecFromUser(user):
 
     lista = utilizador2Vistos(user)
     mx = np.empty([len(titles),len(titles)])
     for x in range(len(lista)):
-        mx[0] += cbRecFromImdb(lista[x], features)
+        mx[0] += cbRecFromImdb(lista[x])
 
     sim_scores = list(enumerate(mx[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
@@ -142,29 +142,31 @@ def cbRecFromUser(user, features):
 
 # ------------------------------------------
 
-def generateCBMatrix():
-    for key in cb:
-        print("Generating CBMatrix: " + key)
-        dM[key] = cbRecMatrix(key)
+def generateCBMatrix(att):
+    dM = np.empty([len(titles),len(titles)])
+    for key in att:
+        print("Generating CBMatrix: " + key[0])
+        dM += cbRecMatrix(key[0]) * key[1] 
     print("Geration Complete")
 
-def saveCBMatrix():
-    for key in dM:
-        print("Saving CBMatrix: " + key)
-        np.save('cb/' + key, dM[key])
-    print("Save Complete")
+# def saveCBMatrix():
+#     for key in dM:
+#         print("Saving CBMatrix: " + key)
+#         np.save('cb/' + key, dM[key])
+#     print("Save Complete")
 
-def loadCBMatrix():
-    for key in cb:
-        print("Loading CBMatrix: " + key)
-        dM[key] = np.load('./cb/' + key + '.npy') 
-    print("Load Complete")
+# def loadCBMatrix():
+#     for key in cb:
+#         print("Loading CBMatrix: " + key)
+#         dM[key] = np.load('./cb/' + key + '.npy') 
+#     print("Load Complete")
 
-generateCBMatrix()
+generateCBMatrix([('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
 # print(index2imdbId(cbRecFromId(0, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)]))[0:10]) # 111 514
 
 # print(cbRecFromUser(1,cb))
-# a = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
+# a = cbRecFromTitle('Batman: Mystery of the Batwoman')
+# a = cbRecFromUser(1)
 # b = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
 # c = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
 # d = cbRecFromTitle('Batman: Mystery of the Batwoman', [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
