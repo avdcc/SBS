@@ -122,40 +122,7 @@ router.get('/contentBased',(req,res)=>{
 
 router.post('/contentBased',(req,res)=>{
   var user = req.body.user
-
   var selectedTitle = req.body.selectedTitle
-
-  var features = {
-    title : req.body.title,
-    actors : req.body.actors,
-    country : req.body.country,
-    genre : req.body.genre,
-    language : req.body.language,
-    writer : req.body.writer,
-    plot : req.body.plot,
-    director : req.body.director,
-    production : req.body.production
-  }
-
-  var weights = {
-    title : parseFloat(req.body.titleWeight),
-    actors : parseFloat(req.body.actorsWeight),
-    country : parseFloat(req.body.countryWeight),
-    genre : parseFloat(req.body.genreWeight),
-    language : parseFloat(req.body.languageWeight),
-    writer : parseFloat(req.body.writerWeight),
-    plot : parseFloat(req.body.plotWeight),
-    director : parseFloat(req.body.directorWeight),
-    production : parseFloat(req.body.productionWeigh)
-  }
-
-  Object.keys(features).map((key,index)=>{
-    if(features[key]){
-      features[key] = (features[key],1)
-    }else{
-      features[key] = (features[key],0)
-    }
-  })
 
   var usage 
   var titleOrId
@@ -169,12 +136,7 @@ router.post('/contentBased',(req,res)=>{
   }
 
 
-  var headers = {"Content-Type" : "application/json"}
-
-  axios.post('http://localhost:5000/contentBased/' + titleOrId + '/' + usage,
-                                              {features,weights},
-                                              {headers:headers}
-            )
+  axios.get('http://localhost:5000/contentBased/' + titleOrId + '/' + usage)
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
          var listData = JSON.parse(listString).result.slice(0,9)
@@ -284,15 +246,10 @@ router.get('/userBestRated',(req,res)=>{
 router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
        .then(dataRec =>{
-
         var listString = JSON.stringify(dataRec.data)
-        
         var listData = JSON.parse(listString).result.slice(0,9)
-        
         var dataProcessed = idListToMovies(listData)
 
-
-        
         //21 campos por cada entrada de listRec
         //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
         res.render('listDataFromFilms',{
@@ -368,7 +325,7 @@ router.post('/wsBestRated',(req,res)=>{
        )
        .catch(erro =>{
           console.log('Erro na listagem de utilizadores: ' + erro)
-          res.render('index')
+          res.redirect('/')
        })
 })
 
