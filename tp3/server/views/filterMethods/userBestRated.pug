@@ -15,10 +15,13 @@ block content
             a(href='http://localhost:3000')
               | Main menu
           
-          img(src="https://www.serasaconsumidor.com.br/ensina/wp-content/uploads/2017/10/12181533/vantagens-de-consultar-serasa-score.jpg" alt="filmes")
+          img(
+            src="https://www.serasaconsumidor.com.br/ensina/wp-content/uploads/2017/10/12181533/vantagens-de-consultar-serasa-score.jpg" 
+            alt="filmes"
+            style="width:100%"            
+          )
         form.w3-container(action='/userBestRated' method='POST')
-          
-          input.w3-btn.w3-green(type='submit', value='Enviar')
           p This option allows you to return the best rated movies for all users
           p Just press the button below and enjoy! 
+          input.w3-btn.w3-green(type='submit', value='Enviar')
       

@@ -147,8 +147,7 @@ def cbRecFromUser(user):
 
 import gc
 
-def generateCBMatrix(att):
-    dM = np.empty([len(titles),len(titles)])
+def generateCBMatrix(dM,att):
     for key in att:
         #isto é só por causa de falta de memória no meu portátil
         gc.collect()
@@ -257,9 +256,11 @@ def hibRecomend(user):
 
 #inicialização da matriz
 
-generateCBMatrix([('title',1), ('actors',0.8), ('country',0.1), 
+generateCBMatrix(dM,
+                [('title',1), ('actors',0.8), ('country',0.1), 
                 ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),
-                ('director',0.6), ('production',0.3)])
+                ('director',0.6), ('production',0.3)]
+                )
 
 
 

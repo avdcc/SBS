@@ -14,7 +14,11 @@ block content
             a(href='http://localhost:3000')
               | Main menu
           
-          img(src="https://nit.pt/wp-content/uploads/2018/07/b5229020ad8fb25410e2c6b0c3e4a61e.jpg" alt="filmes")
+          img(
+            src="https://nit.pt/wp-content/uploads/2018/07/b5229020ad8fb25410e2c6b0c3e4a61e.jpg" 
+            alt="filmes"
+            style="width:100%"            
+          )
       .w3-container
         form.w3-container(action='/userMostPopular' method='POST')
           p This option allows you to return the most popular movies for all users
