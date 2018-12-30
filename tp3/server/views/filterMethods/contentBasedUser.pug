@@ -4,17 +4,20 @@ block content
   .w3-container 
     .w3-card-4
       header.w3-container.w3-blue
-        h3= title
+        
       .w3-container
+        #imagem
+          h1 Movies that we recommend
+          p
+            a(href='http://localhost:3000/contentBased')
+              | Back
+          
+            a(href='http://localhost:3000')
+              | Main menu
+          
+          img(src="https://img.icons8.com/color/1600/circled-user-male-skin-type-1-2.png" alt="filmes")
         p Add your user id to give a recomendation below
         form.w3-container(action='/contentBased' method='POST')
           input.w3-input(type='text',name="user" ,placeholder="add your user_id here")
           input.w3-btn.w3-green(type='submit', value='Enviar')   
-      footer.w3-container.w3-blue
-        p
-          a(href='http://localhost:3000/contentBased')
-            | Back
-          a= ' '
-          a(href='http://localhost:3000')
-            | Main menu
-
+      

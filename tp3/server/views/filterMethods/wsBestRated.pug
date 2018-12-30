@@ -4,7 +4,20 @@ block content
   .w3-container 
     .w3-card-4
       header.w3-container.w3-blue
-        h3= title
+        
+      #imagem
+        h1 Movies that we recommend
+        p
+          a(href='http://localhost:3000/popular')
+            | Back
+          
+          a(href='http://localhost:3000')
+            | Main menu
+      div(class="logo") 
+        img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Metacritic.svg/2000px-Metacritic.svg.png" alt="filmes")
+        img(src="https://www.rottentomatoes.com/assets/pizza-pie/head-assets/images/RT_TwitterCard_2018.jpg" alt="filmes")
+        img(src="http://icons.iconarchive.com/icons/danleech/simple/1024/imdb-icon.png" alt="filmes")
+
       .w3-container
         form.w3-container(action='/wsBestRated' method='POST')
           p This option allows you to return the best rated movies for a given site

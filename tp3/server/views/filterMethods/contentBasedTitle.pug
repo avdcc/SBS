@@ -4,8 +4,18 @@ block content
   .w3-container 
     .w3-card-4
       header.w3-container.w3-blue
-        h3= title
+        
       .w3-container
+        #imagem
+          h1 Movies that we recommend
+          p
+            a(href='http://localhost:3000/contentBased')
+              | Back
+          
+            a(href='http://localhost:3000')
+              | Main menu
+          
+          img(src="https://media.unreel.me/prod/popcornflix/home-movie/3b4e61ec-6845-485e-8a4a-3ec1c036700d" alt="filmes")
         p Chose a movie to give a recomendation below
         form.w3-container(action='/contentBased' method='POST')
           input.w3-input.w3-border.w3-dropdown(
@@ -15,11 +25,5 @@ block content
             placeholder="add your movie title here"
           )
           input.w3-btn.w3-green(type='submit', value='Enviar')   
-      footer.w3-container.w3-blue
-        p
-          a(href='http://localhost:3000/contentBased')
-            | Back
-          a= ' '
-          a(href='http://localhost:3000')
-            | Main menu
+    
 

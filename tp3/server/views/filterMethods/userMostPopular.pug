@@ -4,16 +4,20 @@ block content
   .w3-container 
     .w3-card-4
       header.w3-container.w3-blue
-        h3= title
+      .w3-container
+        #imagem
+          h1 Movies that we recommend
+          p
+            a(href='http://localhost:3000/popular')
+              | Back
+          
+            a(href='http://localhost:3000')
+              | Main menu
+          
+          img(src="https://nit.pt/wp-content/uploads/2018/07/b5229020ad8fb25410e2c6b0c3e4a61e.jpg" alt="filmes")
       .w3-container
         form.w3-container(action='/userMostPopular' method='POST')
           p This option allows you to return the most popular movies for all users
           p Just press the button below and enjoy!
           input.w3-btn.w3-green(type='submit', value='Enviar') 
-      footer.w3-container.w3-blue
-        p
-          a(href='http://localhost:3000/popular')
-            | Back
-          a= ' '
-          a(href='http://localhost:3000')
-            | Main menu
+      

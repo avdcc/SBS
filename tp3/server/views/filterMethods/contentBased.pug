@@ -4,19 +4,24 @@ block content
   .w3-container 
     .w3-card-4
       header.w3-container.w3-blue
-        h3= title
+       
       .w3-container
-        p Choose if you want to recomend based on a user id or a title
+        #imagem
+          h1 Movies that we recommend
+          p
+            a(href='http://localhost:3000')
+              | Back
+          
+            a(href='http://localhost:3000')
+              | Main menu
+          
+          img(src="https://previews.123rf.com/images/kentoh/kentoh0910/kentoh091000145/5670167-Movie-Poster-of-Film-Genres-Vintage-Background-Stock-Photo.jpg" alt="filmes")
+        
         p
           a(href='http://localhost:3000/contentBased/user')
             | User Id
-        p
+        
           a(href='http://localhost:3000/contentBased/title')
             | Title
-      footer.w3-container.w3-blue
-        p
-          a(href='http://localhost:3000')
-            | Back
-          a= ' '
-          a(href='http://localhost:3000')
-            | Main menu
+        p Choose if you want to recomend based on a user id or a title
+     
