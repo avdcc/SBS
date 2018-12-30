@@ -3,6 +3,7 @@ from flask import Flask,jsonify,request
 #start of code from teste.py
 
 
+
 import pandas as pd
 import numpy as np
 import tkinter 
@@ -38,12 +39,12 @@ tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='en
 
 # Build a 1-dimensional array with movie titles
 titles = movies['imdb_id']
-index = pd.Series(movies.index, index=movies['imdb_id'])
 indices = pd.Series(movies.index, index=movies['title'])
-#print(titles)
+index = pd.Series(movies.index, index=movies['imdb_id'])
+# print(index)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
-dM = {} # Dicionario de Content Based
+dM = np.empty([len(titles),len(titles)])
 
 # Fill NaN values in user_id and movie_id column with 0
 ratings['userId'] = ratings['userId'].fillna(0)
@@ -80,7 +81,7 @@ def imdb2index(imdb):
 # ------------------------------------------------------------------------
 # Content Based
 
-# Function that get movie recommendations based on the cosine similarity score of movie features
+
 def cbRecMatrix(feature):
     
     # Break up the big genre string into a string array and Convert genres to string value
@@ -100,25 +101,25 @@ def cbRecMatrix(feature):
     cosine_sim = linear_kernel(matrix, matrix)
     return(cosine_sim)
 
-def cbRecFromTitle(title, features):
-    idx = indices[title]
-    return (cbRecFromId(idx,features))
 
-def cbRecFromImdb(title, features):
+
+
+def cbRecFromTitle(title):
+    idx = indices[title]
+    return (cbRecFromId(idx))
+
+def cbRecFromImdb(title):
     idx = index[title]
-    
     mx = np.empty([len(titles),len(titles)])
-    for f in features:
-        mx[0] += (dM[f[0]][idx] * f[1])
+    mx[0] += (dM[idx])
 
     return(mx[0])
 
 
-def cbRecFromId(idx, features):
+def cbRecFromId(idx):
 
     mx = np.empty([len(titles),len(titles)])
-    for f in features:
-        mx[0] += (dM[f[0]][idx] * f[1])
+    mx[0] = (dM[idx])
 
     sim_scores = list(enumerate(mx[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
@@ -127,12 +128,12 @@ def cbRecFromId(idx, features):
     movie_indices = [i[0] for i in sim_scores]
     return(index2imdbId(movie_indices))
 
-def cbRecFromUser(user, features):
+def cbRecFromUser(user):
 
     lista = utilizador2Vistos(user)
     mx = np.empty([len(titles),len(titles)])
     for x in range(len(lista)):
-        mx[0] += cbRecFromImdb(lista[x], features)
+        mx[0] += cbRecFromImdb(lista[x])
 
     sim_scores = list(enumerate(mx[0]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)  
@@ -144,23 +145,17 @@ def cbRecFromUser(user, features):
 
 # ------------------------------------------
 
-def generateCBMatrix():
-    for key in cb:
-        print("Generating CBMatrix: " + key)
-        dM[key] = cbRecMatrix(key)
+import gc
+
+def generateCBMatrix(att):
+    dM = np.empty([len(titles),len(titles)])
+    for key in att:
+        #isto é só por causa de falta de memória no meu portátil
+        gc.collect()
+        print("Generating CBMatrix: " + key[0])
+        dM += cbRecMatrix(key[0]) * key[1] 
     print("Geration Complete")
 
-def saveCBMatrix():
-    for key in dM:
-        print("Saving CBMatrix: " + key)
-        np.save('cb/' + key, dM[key])
-    print("Save Complete")
-
-def loadCBMatrix():
-    for key in cb:
-        print("Loading CBMatrix: " + key)
-        dM[key] = np.load('./cb/' + key + '.npy') 
-    print("Load Complete")
 
 
 # ------------------------------------------------------------------------
@@ -183,8 +178,6 @@ def startPredModel(user,ratings,fileOutput):
 
     dump.dump(fileOutput,None,svd,1)
 
-
-
 def  loadFileModel(file_name, encoding='ASCII'):
     
     #this is the method from dump that needed to be modified in config
@@ -195,12 +188,7 @@ def  loadFileModel(file_name, encoding='ASCII'):
     return dump_obj['predictions'], dump_obj['algo']
 
 
-
-
 def cfRecommendations(user):
-    # ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
-
-    # "userId";"rating";"imdbId"
 
     pred,svd = loadFileModel(str(fileModel),encoding='latin1')
     vistosLista = utilizador2Vistos(user)
@@ -252,12 +240,13 @@ def wsBestRated(site):
 
 def hibRecomend(user):
     l = []
-    l[0] = cbRecFromUser(user, [('title',1), ('actors',0.8), ('country',0.1), ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),('director',0.6), ('production',0.3)])
-    l[1] = cfRecommendations(user)
     
-    l[2] = many2One([userBestRated(), userMostPopular()]) # Resto todo das pontuacoes melhores
+    l.append(cbRecFromUser(user))
+    l.append(cfRecommendations(user))
+    l.append(many2One([userBestRated(), userMostPopular()]))
 
-    return (many2One(l))    
+    return (many2One(l)) 
+
 
 
 
@@ -265,38 +254,11 @@ def hibRecomend(user):
 
 #end of code from teste.py
 
+#inicialização da matriz
 
-
-
-
-#inicializing dM
-#gera os ficheiros caso não existam
-
-#garbage collector
-#existe apenas por causa do meu computador ter memória muito limitada
-#import gc
-#import os
-#
-#for key in cb:
-#    path = './cb/' + key + ".npy"
-#    if not ( os.path.exists(path)):
-#        print("Generating and saving CBMatrix: " + key )
-#        np.save('cb/' + key, cbRecMatrix(key))
-#        print("Releasing memory")
-#        gc.collect()
-#print('done generating matrixes')
-
-#finishing initialization dM
-
-
-
-
-
-#inicialização alternativa
-#poe em dM todas as matrizes
-
-#se não se usar o método acima tudo o que se tem de fazer é desomentar isto antes de ligar o servidor
-#generateCBMatrix()
+generateCBMatrix([('title',1), ('actors',0.8), ('country',0.1), 
+                ('genre',1.1), ('language',0.5), ('writer',0.4),('plot',0.6),
+                ('director',0.6), ('production',0.3)])
 
 
 
@@ -306,39 +268,11 @@ def hibRecomend(user):
 def listIDSToJSON(list):
   return jsonify(result = list)
 
-def processFeatures(features, weigths = {}):
-    res = []
-    defaultWeights = {
-            'title'      : 1,
-            'actors'     : 0.8,
-            'country'    : 0.1,
-            'genre'      : 1.1,
-            'language'   : 0.5,
-            'writer'     : 0.4,
-            'plot'       : 0.6,
-            'director'   : 0.6, 
-            'production' : 0.3
-         }    
-    for feature,value in features.items():
-        if(value!=0):
-            if not (feature in weigths):
-                pair = (str(feature),defaultWeights[feature])
-            else:
-                pair = (str(feature),weigths[feature])
-            res.append(pair)
-    return res
 
 
-#inicia as matrizes
-#para tal carrega os ficheiros que guardou em cima
-def startFeatureMatrixes(features):
-    for feature,value in features.items():
-        if(value == 1):
-            print("Loading CBMatrix: " + feature)
-            dM[feature] = np.load('./cb/' + feature + '.npy') 
-            print("Loading Complete")
 
 
+#caminhos do servidor
 
 app = Flask(__name__)
 
@@ -358,29 +292,16 @@ def testCall():
 
 
 
-#Devido ao facto que podemos ter muitos dados nas features e pesos, vai ser enviado um JSON
-@app.route("/contentBased/<titleOrId>/<usage>",  methods=['POST'])
+@app.route("/contentBased/<titleOrId>/<usage>")
 def callCbRecommendations(titleOrId,usage):
-    req_data = request.get_json()
-
-    unprocessedFeatures = req_data['features']
-    weigths = req_data['weights']
-
-
-    #inicia as matrizes
-    #só para o caso de se usar o método de ficheiros em FS
-    #startFeatureMatrixes(unprocessedFeatures)
-
-    features = processFeatures(unprocessedFeatures,weigths)
 
     if(usage=='title'):
-        listRecomended = cbRecFromTitle(str(titleOrId),features)
+        listRecomended = cbRecFromTitle(str(titleOrId))
     else:
-        listRecomended = cbRecFromUser(int(titleOrId),features)
+        listRecomended = cbRecFromUser(int(titleOrId))
     
     res = listIDSToJSON(listRecomended)
 
-    dM={}
     return res
 
 
@@ -396,8 +317,6 @@ def callHibRecomend(user):
   listRecomended = hibRecomend(user)
   res = listIDSToJSON(listRecomended)
   return res
-
-
 
 
 
