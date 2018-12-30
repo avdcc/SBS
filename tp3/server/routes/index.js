@@ -23,53 +23,6 @@ parseCSV.parse(file,{
   }
 })
 
-var voteFile = fs.readFileSync('../votesMovie.csv', 'utf8')
-var vote
-
-parseCSV.parse(voteFile,{
-  delimiter: "§",
-  encoding: "utf8",
-  newline: "\n",
-  complete: (results) => {
-    vote = results.data
-  }
-})
-
-var movielensFile = fs.readFileSync('../movielens.csv', 'utf8')
-var movielens
-
-parseCSV.parse(movielensFile,{
-  delimiter: "§",
-  encoding: "utf8",
-  newline: "\n",
-  complete: (results) => {
-    movielens = results.data
-  }
-})
-
-var movielensIds = []
-var filmIds = []
-var voteIds = []
-
-for(var i=0;i<movielens.length;i++){
-  movielensIds.push(movielens[i]['imdbId'])
-}
-
-for(var j=0;j<filmes.length;j++){
-  var auxil = filmes[j]['imdb_id']
-  filmIds.push(auxil)
-  if(!movielensIds.includes(auxil)){
-    console.log(auxil)
-  }
-}
-
-for(var k=0;k<vote.length;k++){
-  var auxi = vote[k]['imdbId']
-  voteIds.push(auxi)
-  if((!movielensIds.includes(auxi) ) || (!filmIds.includes(auxi))){
-    console.log(auxi)
-  }
-}
 
 
 function parseLineFilmes(line){
