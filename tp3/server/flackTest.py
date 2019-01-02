@@ -163,7 +163,7 @@ def generateCBMatrix(dM,att):
 
 fileModel = 'testeOutModel'
 
-def startPredModel(user,ratings,fileOutput):
+def startPredModel(ratings,fileOutput):
 
     reader = Reader ()
 
@@ -179,9 +179,6 @@ def startPredModel(user,ratings,fileOutput):
     dump.dump(fileOutput,None,svd,1)
 
 def  loadFileModel(file_name, encoding='ASCII'):
-    
-    #this is the method from dump that needed to be modified in config
-    #so i'm puting it here to make it work always
 
     dump_obj = pickle.load(open(file_name, 'rb'), encoding=encoding)
 
@@ -189,7 +186,6 @@ def  loadFileModel(file_name, encoding='ASCII'):
 
 
 def cfRecommendations(user):
-    #startPredModel(user,ratings,fileModel)
 
     pred,svd = loadFileModel(str(fileModel),encoding='latin1')
     vistosLista = utilizador2Vistos(user)
