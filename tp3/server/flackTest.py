@@ -37,11 +37,10 @@ stemmer = SnowballStemmer('english')
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
 
-# Build a 1-dimensional array with movie titles
+
 titles = movies['imdb_id']
 indices = pd.Series(movies.index, index=movies['title'])
 index = pd.Series(movies.index, index=movies['imdb_id'])
-# print(index)
 
 cb = ['title', 'actors', 'country', 'genre', 'language', 'writer', 'plot', 'director', 'production']
 dM = np.empty([len(titles),len(titles)])
@@ -84,7 +83,6 @@ def imdb2index(imdb):
 
 def cbRecMatrix(feature):
     
-    # Break up the big genre string into a string array and Convert genres to string value
     if (feature in ["actors", "country", "genre", "language", "writer"]):
         movies[feature] = movies[feature].str.split(', ')
     elif ( feature == "plot"):
@@ -104,16 +102,11 @@ def cbRecMatrix(feature):
 
 
 
+
+
 def cbRecFromTitle(title):
     idx = indices[title]
     return (cbRecFromId(idx))
-
-def cbRecFromImdb(title):
-    idx = index[title]
-    mx = np.empty([len(titles),len(titles)])
-    mx[0] += (dM[idx])
-
-    return(mx[0])
 
 
 def cbRecFromId(idx):
@@ -127,6 +120,15 @@ def cbRecFromId(idx):
 
     movie_indices = [i[0] for i in sim_scores]
     return(index2imdbId(movie_indices))
+
+
+def cbRecFromImdb(title):
+    idx = index[title]
+    mx = np.empty([len(titles),len(titles)])
+    mx[0] += (dM[idx])
+
+    return(mx[0])
+
 
 def cbRecFromUser(user):
 
@@ -149,7 +151,6 @@ import gc
 
 def generateCBMatrix(dM,att):
     for key in att:
-        #isto é só por causa de falta de memória no meu portátil
         gc.collect()
         print("Generating CBMatrix: " + key[0])
         dM += cbRecMatrix(key[0]) * key[1] 
