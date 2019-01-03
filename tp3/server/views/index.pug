@@ -77,10 +77,12 @@ block content
           center
             h3.w3-text-teal Popular Based
         .w3-container.w3-light-grey
-          a(href="./userBestRated")
-            //- form.w3-container(action='/userBestRated' method='POST')
-            //- input.w3-btn.w3-green(type='submit', value='Enviar')
-            img.w3-col(style={width: '32%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          form.w3-container(action='/userBestRated' method='POST')
+            input.w3-col.w3-btn(
+              type='image', 
+              style={width: '32%'}, 
+              src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg"
+            )
           label.w3-text-teal.w3-col(style={width: '2%'})
             p
           a(href="./userMostPopular")
