@@ -28,8 +28,6 @@ import warnings; warnings.simplefilter('ignore')
 
 # ------------------------------------------------------------------------
 
-movies = pd.read_csv('filmes.csv', sep='§', encoding='utf-8')
-ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
 regex = re.compile('[^a-zA-Z]')
 stemmer = SnowballStemmer('english')
@@ -37,6 +35,9 @@ stemmer = SnowballStemmer('english')
 from sklearn.feature_extraction.text import TfidfVectorizer
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0, stop_words='english')
 
+
+movies = pd.read_csv('filmes.csv', sep='§', encoding='utf-8')
+ratings = pd.read_csv('movielens.csv', sep=';', encoding='utf-8')
 
 titles = movies['imdb_id']
 indices = pd.Series(movies.index, index=movies['title'])
