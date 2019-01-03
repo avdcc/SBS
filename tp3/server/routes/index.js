@@ -140,7 +140,7 @@ router.post('/contentBased',(req,res)=>{
   axios.get('http://localhost:5000/contentBased/' + titleOrId + '/' + usage)
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
-         var listData = JSON.parse(listString).result.slice(0,9)
+         var listData = JSON.parse(listString).result.slice(0,99)
          var dataProcessed = idListToMovies(listData)
          //21 campos por cada entrada de listRec
          //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
@@ -183,7 +183,7 @@ router.post('/collaborativeBased',(req,res)=>{
   axios.get('http://localhost:5000/collaborativeBased/' + user)
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
-         var listData = JSON.parse(listString).result.slice(0,9)
+         var listData = JSON.parse(listString).result.slice(0,99)
          var dataProcessed = idListToMovies(listData)
          //21 campos por cada entrada de listRec
          //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
@@ -212,7 +212,7 @@ router.post('/hybrid',(req,res)=>{
   axios.get('http://localhost:5000/hybrid/' + user)
        .then(dataRec =>{
          var listString = JSON.stringify(dataRec.data)
-         var listData = JSON.parse(listString).result.slice(0,9)
+         var listData = JSON.parse(listString).result.slice(0,99)
          var dataProcessed = idListToMovies(listData)
          //21 campos por cada entrada de listRec
          //estamos a limitar a 10 entradas do array(caso contrário demora muito tempo)
@@ -248,7 +248,7 @@ router.post('/userBestRated',(req,res)=>{
   axios.get('http://localhost:5000/userBestRated')
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
-        var listData = JSON.parse(listString).result.slice(0,9)
+        var listData = JSON.parse(listString).result.slice(0,99)
         var dataProcessed = idListToMovies(listData)
 
         //21 campos por cada entrada de listRec
@@ -279,7 +279,7 @@ router.post('/userMostPopular',(req,res)=>{
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
         
-        var listData = JSON.parse(listString).result.slice(0,9)
+        var listData = JSON.parse(listString).result.slice(0,99)
         
         var dataProcessed = idListToMovies(listData)
         
@@ -312,7 +312,7 @@ router.post('/wsBestRated',(req,res)=>{
        .then(dataRec =>{
         var listString = JSON.stringify(dataRec.data)
         
-        var listData = JSON.parse(listString).result.slice(0,9)
+        var listData = JSON.parse(listString).result.slice(0,99)
         
         var dataProcessed = idListToMovies(listData)
         

@@ -261,6 +261,8 @@ generateCBMatrix(dM,
 
 
 
+print("  * JS web frontend running on http://127.0.0.1:3000/")
+
 
 #funções auxiliares
 
