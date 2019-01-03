@@ -1,33 +1,63 @@
 extends ../layout
-
 block content
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-        
-      .w3-container
-        #imagem
-          h1 Movies that we recommend
+      link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+      p
+      header.w3-container.w3-light-grey
+        center
+          h1.w3-text-teal SBS - Movie Recommendation System
+
+      .w3-card-4
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Content Based on User
+          center
+            a(href="./hybrid")
+            center
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+              img.w3-col(style={width: '50%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+          hr
           p
-            a(href='http://localhost:3000/contentBased')
-              | Back
-          
-            a(href='http://localhost:3000')
-              | Main menu
-          
-          img(
-            src="https://media.unreel.me/prod/popcornflix/home-movie/3b4e61ec-6845-485e-8a4a-3ec1c036700d" 
-            alt="filmes"
-            style="width:100%"
-          )
-        p Chose a movie to give a recomendation below
-        form.w3-container(action='/contentBased' method='POST')
-          input.w3-input.w3-border.w3-dropdown(
+        p
+
+        .w3-col(style={width: '30%'})
+          p
+        form.w3-container.w3-col(action='/contentBased' method='POST', style={width: '40%'})
+          input.w3-input.w3-dropdown(
             id='tags',
             type='text',
             name="selectedTitle" ,
-            placeholder="add your movie title here"
+            placeholder="Insert A Movie Title Here"
           )
-          input.w3-btn.w3-green(type='submit', value='Enviar')   
-    
+          p
+          center
+            input.w3-btn.w3-green(type='submit', value='Enviar')(style={width: '10%'})
+            p
+        
+        .w3-rest
+          p
 
+        hr
+        hr
+        hr
+        hr
+        hr
+        
+        p
+
+      center                
+        a.w3-button.w3-medium.w3-text-teal.w3-border(type='submit', href='../') Voltar Atraz
+      p
+
+  
+      p
+      p
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p

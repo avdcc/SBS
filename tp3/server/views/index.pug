@@ -1,27 +1,135 @@
 extends layout
 block content
-  link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-      .w3-container
-        h1 Movies that we recommend
-        img(
-          src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg" 
-          alt="filmes" 
-          style="width:100%"
-        )
-        h2 Please select your option for filtering
-        .w3-container
+      link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+      p
+      header.w3-container.w3-light-grey
+        center
+          h1.w3-text-teal SBS - Movie Recommendation System
+
+      .w3-card-4
+        .w3-container.w3-light-grey
           p
-            a(href='http://localhost:3000/popular')
-              | Popular
+          a(href="./#1")
+            img.w3-col(style={width: '24%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '1.3%'})
+            p
+          a(href="./#2")
+            img.w3-col(style={width: '24%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '1.3%'})
+            p
+          a(href="./#3")
+            img.w3-col(style={width: '24%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '1.3%'})
+            p
+          a(href="./#4")
+            img.w3-col(style={width: '24%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+            p
+          hr
           p
-            a(href='http://localhost:3000/contentBased') 
-              | Content Based Filtering
+        hr
+        p
+      p
+
+      .w3-card-4
+        #1
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Content Based
+        .w3-container.w3-light-grey
+          a(href="./contentBased/user")
+            img.w3-col(style={width: '49%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '2%'})
+            p
+          a(href="./contentBased/title")
+            img.w3-col(style={width: '49%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+            p
+          hr
           p
-            a(href='http://localhost:3000/collaborativeBased') 
-              | Collaborative Filtering
+        hr
+        p
+      p
+
+      .w3-card-4
+        #2
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Collaborative Based
+        .w3-container.w3-light-grey
+          center
+            a(href="./collaborativeBased")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+              img.w3-col(style={width: '50%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+          hr
           p
-            a(href='http://localhost:3000/hybrid')
-              | Hybrid Filtering
+        hr
+        p
+      p
+
+      .w3-card-4
+        #3
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Popular Based
+        .w3-container.w3-light-grey
+          a(href="./userBestRated")
+            //- form.w3-container(action='/userBestRated' method='POST')
+            //- input.w3-btn.w3-green(type='submit', value='Enviar')
+            img.w3-col(style={width: '32%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '2%'})
+            p
+          a(href="./userMostPopular")
+            img.w3-col(style={width: '32%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          label.w3-text-teal.w3-col(style={width: '2%'})
+            p
+          a(href="./wsBestRated")
+            img.w3-col(style={width: '32%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+          hr
+          p
+        hr
+        p
+      p
+
+      .w3-card-4
+        #4
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Hybrid
+        .w3-container.w3-light-grey
+          center
+            a(href="./hybrid")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+              img.w3-col(style={width: '50%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+          hr
+          p
+        hr
+        p
+
+
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p
+
+      //- h2 Please select your option for filtering
+      //- .w3-container
+      //-   p
+      //-     a(href='http://localhost:3000/popular')
+      //-       | Popular
+      //-   p
+      //-     a(href='http://localhost:3000/contentBased') 
+      //-       | Content Based Filtering
+      //-   p
+      //-     a(href='http://localhost:3000/collaborativeBased') 
+      //-       | Collaborative Filtering
+      //-   p
+      //-     a(href='http://localhost:3000/hybrid')
+      //-       | Hybrid Filtering

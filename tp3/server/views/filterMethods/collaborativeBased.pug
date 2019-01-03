@@ -1,19 +1,47 @@
 extends ../layout
-
 block content
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-       
-      .w3-container
-        p Add the user id that you wish to predict the preferences of below
-        form.w3-container(action='/collaborativeBased' method='POST')
-          input.w3-input(type='text',name="user" ,placeholder="please insert the user to predict(integer)")
-          input.w3-btn.w3-green(type='submit', value='Enviar')   
-      footer.w3-container.w3-blue
+      link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+      p
+      header.w3-container.w3-light-grey
+        center
+          h1.w3-text-teal SBS - Movie Recommendation System
+
+      .w3-card-4
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Content Based on User
+          center
+            a(href="./hybrid")      
+            center
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+              img.w3-col(style={width: '50%'}, src="https://dollarsandsense.sg/wp-content/uploads/2017/07/singapore-movie-price-guide-header.jpg")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+          hr
+          p
         p
-          a(href='http://localhost:3000')
-            | Back
-          a= ' '
-          a(href='http://localhost:3000')
-            | Main menu
+
+        form.w3-container(action='/collaborativeBased' method='POST')
+          .w3-col(style={width: '40%'})
+            p
+          input.w3-input.w3-col(style={width: '20%'})(type='text',name="user" ,placeholder="Your 'user id' Here")
+          input.w3-btn.w3-green(type='submit', value='Enviar')   
+        .w3-col(style={width: '40%'})
+          p
+        hr
+
+      center                
+        a.w3-button.w3-medium.w3-text-teal.w3-border(type='submit', href='../') Voltar Atraz
+      p
+
+  
+      p
+      p
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p
