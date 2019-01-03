@@ -1,26 +1,36 @@
 extends layout
 
 block content
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-        h3= title
+      header.w3-container
+        center
+          h3.w3-text-teal Filmes que recomendamos:
       .w3-container
-        table.w3-responsive.w3-table-all.w3-small
-          tr
-            th imdbId 
-            th Titulo
-            th Género
-            th Resumo
-          each film in films
-            tr
-              td
-                a(href='http://localhost:3000/movies/' + film.imdb_id) 
-                  p= film.imdb_id
-              td= film.title
-              td= film.genre
-              td= film.plot
-      footer.w3-container.w3-blue
+        .w3-card-4
+          center
+            table.w3-responsive.w3-table-all.w3-small
+              tr
+                th imdbId 
+                th Titulo
+                th Género
+                th Resumo
+              each film in films
+                tr
+                  td
+                    a(href='http://localhost:3000/movies/' + film.imdb_id) 
+                      p= film.imdb_id
+                  td= film.title
+                  td= film.genre
+                  td= film.plot
+                  
         p
-          a(href='http://localhost:3000')
-            | Main menu
+        center                
+          a.w3-button.w3-medium.w3-text-teal.w3-border(type='submit', href='../') Voltar Atraz
+          
+      p
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p
