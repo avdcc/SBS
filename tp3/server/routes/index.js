@@ -5,7 +5,7 @@ var router = express.Router();
 var axios = require('axios')
 
 
-var websiteTitle = 'tp2'
+var websiteTitle = 'SBS - Movie Recommendation System'
 
 var fs = require('fs')
 var parseCSV = require('papaparse')
