@@ -1,84 +1,106 @@
 extends layout
 
 block content
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-        h3= title
+      header.w3-container
+        center
+          h3.w3-text-teal= film.title
       .w3-container
-        table.w3-responsive.w3-table-all.w3-small
-          tr
-            th imdbId
-            td= film.imdb_id
-          tr
-            th Titulo
-            td= film.title
-          tr
-            th Género
-            td= film.genre
-          tr
-            th Resumo
-            td= film.plot
-          tr
-            th Atores
-            td= film.actors
-          tr
-            th Poster
-            td
-              img(src=film.poster)
-          tr
-            th Prémios
-            td= film.awards
-          tr
-            th País
-            td= film.country
-          tr
-            th Diretor
-            td= film.director
-          tr
-            th Avaliação imdb
-            td= film.imdb_rating
-          tr
-            th Votos imdb
-            td= film.imdb_votes
-          tr
-            th Linguagem
-            td= film.language
-          tr
-            th Metascore
-            td= film.metascore
-          tr 
-            th Internet Movie Database
-            td= film.IMD
-          tr
-            th Rotten Tomatoes
-            td= film.rotten
-          tr
-            th Metacritic
-            td= film.Metacritic
-          tr
-            th Produção
-            td= film.production
-          tr
-            th Escritor
-            td= film.writer
-          tr
-            th Ano de estreia
-            td= film.year
-          tr
-            th Ano de estreia do DVD
-            td= film.dvdYear
-          tr
-            th Mês de estreia
-            td= film.releasedMonth
-          tr
-            th Duração
-            td= film.duration
-          tr
-            th Ano de lançamento
-            td= film.releasedYear
-      footer.w3-container.w3-blue
-        p
-          a(href='http://localhost:3000')
-            | Main menu
+        .w3-card-4
+          center
 
+            img.w3-padding-16(src=film.poster)
+            p.w3-padding-small= film.plot
+
+            table.w3-table-all
+              if film.title
+                tr
+                  th.w3-text-teal Titulo
+                  td= film.title + " (" + film.imdb_id + ")"
+              if film.genre
+                tr
+                  th.w3-text-teal Género
+                  td= film.genre
+              if film.actors
+                tr
+                  th.w3-text-teal Atores
+                  td= film.actors
+              if film.awards
+                tr
+                  th.w3-text-teal Prémios
+                  td= film.awards
+              if film.country
+                tr
+                  th.w3-text-teal País
+                  td= film.country
+              if film.director
+                tr
+                  th.w3-text-teal Diretor
+                  td= film.director
+              if film.imdb_rating
+                tr
+                  th.w3-text-teal Avaliação imdb
+                  td= film.imdb_rating
+              if film.imdb_votes
+                tr
+                  th.w3-text-teal Votos imdb
+                  td= film.imdb_votes
+              if film.language
+                tr
+                  th.w3-text-teal Linguagem
+                  td= film.language
+              if film.metascore
+                tr
+                  th.w3-text-teal Metascore
+                  td= film.metascore
+              if film.IMD
+                tr 
+                  th.w3-text-teal Internet Movie Database
+                  td= film.IMD
+              if film.rotten
+                tr
+                  th.w3-text-teal Rotten Tomatoes
+                  td= film.rotten
+              if film.Metacritic
+                tr
+                  th.w3-text-teal Metacritic
+                  td= film.Metacritic
+              if film.production
+                tr
+                  th.w3-text-teal Produção
+                  td= film.production
+              if film.writer
+                tr
+                  th.w3-text-teal Escritor
+                  td= film.writer
+              if film.year
+                tr
+                  th.w3-text-teal Ano de estreia
+                  td= film.year
+              if film.dvdYear
+                tr
+                  th.w3-text-teal Ano de estreia do DVD
+                  td= film.dvdYear
+              if film.teal
+                tr
+                  th.w3-text-teal Mês de estreia
+                  td= film.releasedMonth.w3-text-teal
+              if film.duration
+                tr
+                  th.w3-text-teal Duração
+                  td= film.duration
+              if film.releasedYear
+                tr
+                  th.w3-text-teal Ano de lançamento
+                  td= film.releasedYear
+        p
+        center                
+          a.w3-button.w3-medium.w3-text-teal.w3-border(type='submit', href='../') Voltar Atraz
+          
+      p
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p
