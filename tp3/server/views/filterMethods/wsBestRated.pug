@@ -1,47 +1,54 @@
 extends ../layout
-
 block content
-  .w3-container 
+  .w3-container.w3-light-grey
+    p
     .w3-card-4
-      header.w3-container.w3-blue
-        
-      #imagem
-        h1 Movies that we recommend
-        p
-          a(href='http://localhost:3000/popular')
-            | Back
-          
-          a(href='http://localhost:3000')
-            | Main menu
-      div(class="logo") 
-        img(
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Metacritic.svg/2000px-Metacritic.svg.png" 
-          alt="filmes"
-          style="width:500%"    
-        )
-        img(
-          src="https://www.rottentomatoes.com/assets/pizza-pie/head-assets/images/RT_TwitterCard_2018.jpg" 
-          alt="filmes"
-          style="width:500%"    
-        )
-        img(
-          src="http://icons.iconarchive.com/icons/danleech/simple/1024/imdb-icon.png" 
-          alt="filmes"
-          style="width:500%"    
-        )
+      link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+      p
+      header.w3-container.w3-light-grey
+        center
+          h1.w3-text-teal SBS - Movie Recommendation System
 
-      .w3-container
-        form.w3-container(action='/wsBestRated' method='POST')
-          p This option allows you to return the best rated movies for a given site
-          p Chose from the below options and we'll give you your prediction
-          input.w3-radio(type='radio', name='selected', value='meta', checked) 
-          label Metacritic
-          input.w3-radio(type='radio', name='selected', value='imdb') 
-          label IMBD
-          input.w3-radio(type='radio', name='selected', value='IMD') 
-          label Internet Movie Database
-          input.w3-radio(type='radio', name='selected', value='rotten') 
-          label Rotten tomatoes
+      .w3-card-4
+        header.w3-container.w3-light-grey
+          center
+            h3.w3-text-teal Content Based on Users from other Systems
+          center
+            a(href="./hybrid")      
+            center
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+              img.w3-col(style={width: '50%'}, src="user.png")
+              label.w3-text-teal.w3-col(style={width: '25%'})
+                p
+          hr
           p
-          input.w3-btn.w3-green(type='submit', value='Enviar') 
+        p
 
+        center
+          form.w3-container(action='/wsBestRated' method='POST')
+            input.w3-radio(type='radio', name='selected', value='meta', checked) 
+            label Meta-Critic          
+            input.w3-radio(type='radio', name='selected', value='imdb') 
+            label IMBD           
+            input.w3-radio(type='radio', name='selected', value='IMD') 
+            label Internet Movie Database            
+            input.w3-radio(type='radio', name='selected', value='rotten') 
+            label Rotten Tomatoes            
+            p
+            input.w3-btn.w3-green(type='submit', value='Enviar') 
+          .w3-col(style={width: '40%'})
+            p
+          hr
+
+      center                
+        a.w3-button.w3-medium.w3-text-teal.w3-border(type='submit', href='../') Voltar Atraz
+      p
+
+  
+      p
+      p
+      footer.w3-container.w3-light-grey.w3-text-teal
+        address Gerado por formApp
+        p
+      p
