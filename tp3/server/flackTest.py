@@ -223,13 +223,15 @@ def wsBestRated(site):
 
     ratings = pd.read_csv('filmes.csv', sep='§', encoding='utf-8')
     if (site == 'meta'):
-        result = ratings.sort_values(by=['metascore'], ascending=False)
+        result = ratings.sort_values(by=['Metacritic'], ascending=False)
     elif(site=='imdb'):    
         result = ratings.sort_values(by=['imdb_rating'], ascending=False)
     elif(site=='IMD'):    
         result = ratings.sort_values(by=['Internet Movie Database'], ascending=False)
     elif(site=='rotten'):    
         result = ratings.sort_values(by=['Rotten tomatoes'], ascending=False)
+    elif(site=='metascore'):
+        result = ratings.sort_values(by=['metascore'], ascending=False)
 
     return(list(result['imdb_id']))
 
@@ -241,7 +243,18 @@ def hibRecomend(user):
     
     l.append(cbRecFromUser(user))
     l.append(cfRecommendations(user))
-    l.append(many2One([userBestRated(), userMostPopular()]))
+    l.append(many2One(
+        [
+            userBestRated(), 
+            userMostPopular(),
+            wsBestRated('meta'),
+            wsBestRated('imdb'),
+            wsBestRated('IMD'),
+            wsBestRated('rotten'),
+            wsBestRated('metascore')
+        ]
+    ))
+    
 
     return (many2One(l)) 
 
@@ -260,6 +273,8 @@ generateCBMatrix(dM,
                 ('director',0.6), ('production',0.3)]
                 )
 
+
+startPredModel(ratings,fileModel)
 
 
 print("  * JS web frontend running on http://127.0.0.1:3000/")
