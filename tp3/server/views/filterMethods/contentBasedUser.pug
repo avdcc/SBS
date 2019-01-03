@@ -23,12 +23,12 @@ block content
           p
         p
 
+        form.w3-container(action='/contentBased' method='POST')
+          .w3-col(style={width: '40%'})
+            p
+          input.w3-input.w3-col(style={width: '20%'})(type='text',name="user" ,placeholder="Your 'user id' Here")
+          input.w3-btn.w3-green(type='submit', value='Enviar')   
         .w3-col(style={width: '40%'})
-          p
-        
-        input.w3-input.w3-col(style={width: '20%'})(type='text',name="user" ,placeholder="Your 'user id' Here")
-        input.w3-btn.w3-green(type='submit', value='Enviar')   
-        label.w3-text-teal.w3-col(style={width: '40%'})
           p
         hr
 
