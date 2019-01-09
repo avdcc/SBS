@@ -188,7 +188,7 @@ def  loadFileModel(file_name, encoding='ASCII'):
 
 def cfRecommendations(user):
 
-    pred,svd = loadFileModel(str(fileModel),encoding='latin1')
+    #pred,svd = loadFileModel(str(fileModel),encoding='latin1')
     vistosLista = utilizador2Vistos(user)
 
     list = []
@@ -246,7 +246,11 @@ def hibRecomend(user):
     l.append(many2One(
         [
             userBestRated(), 
-            userMostPopular(),
+            userMostPopular()
+        ]
+    ))
+    l.append(many2One(
+        [            
             wsBestRated('meta'),
             wsBestRated('imdb'),
             wsBestRated('IMD'),
