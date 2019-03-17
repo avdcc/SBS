@@ -68,11 +68,11 @@ for i_episode in range(20):
     #retorno imediato se o passo retornar done como sendo verdadeiro
     if done:
       #debug info
-      print("action: {}".format(action))
-      print("observation: {}".format(observation))
-      print("reward: {}".format(reward))
+      print("last action: {}".format(action))
+      #print("final observation: {}".format(observation))
+      print("final reward: {}".format(reward))
       print("done: {}".format(done))
-      print("info: {}".format(info))
+      print("debug info: {}".format(info))
       print("Episode finished after {} timesteps".format(steps+1))
 
 '''
