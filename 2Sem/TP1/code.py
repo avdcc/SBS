@@ -129,27 +129,36 @@ def build_model(input_size,output_size,input_layers,output_layers,step_size):
 
 '''
 Fit do modelo(colocar os dados no formato correto)
+
+Treinar modelo
 '''
+
+#explicar porque o modelo faz fit e treino ao mesmo tempo
+#deve-se ao facto que a API keras usa o model.fit
+#para treinar o dataset
+#como tal, o fit de dados e o treino ocorrem simultaneamente
+
 
 #TODO: completar tarefas abaixo
 #coisas a fazer neste sitio:
 #definir dados de input/output
-#criar modelo com base neles
+#criar modelo com base neles(chamando build_model)
 #fazer fit do modelo 
+
+
+#TODO: adicionar função de treino do modelo aqui
 
 
 '''
 Avaliação do modelo(calculo de erro)
 '''
 
-#TODO: determinar se é necessária esta secção
+#nesta parte provavelmente apenas teremos
+#de colocar uma mensagem para ver qual a accuracy do modelo 
 
 '''
-Treinar modelo
-
 Fazer previsões(por o modelo a jogar no ambiente)
 '''
-#TODO: adicionar função de treino do modelo aqui
 
 
 
