@@ -1,3 +1,4 @@
+
 #imports
 import gym
 
@@ -6,6 +7,18 @@ from tensorflow import keras
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+
+import os
+import random
+import imageio
+from skimage.transform import resize
+
+import matplotlib.pyplot as plt
+import cv2
+
+
+# ---------------------------------------------------------------------------------
 
 '''
 Pré-processamento(declaração de variáveis necessárias ao modelo)
@@ -28,9 +41,43 @@ step_size = 0.001
 ephocs = 10
 
 
+
+# -------------------------------------------------
+
+#Processa a imagem removendo informacao desnecesaria
+def processImage(observation):
+    observation = cv2.cvtColor(cv2.resize(observation, (84, 110)), cv2.COLOR_BGR2GRAY)
+    observation = observation[17:101,4:80]
+    ret, observation = cv2.threshold(observation,1,255,cv2.THRESH_BINARY)
+    return np.reshape(observation,(84,76,1))
+
+
+# action0 = 0  # do nothing
+# observation0, reward0, terminal, info = env.step(action0)
+# print("Before processing: " + str(np.array(observation0).shape))
+# # plt.imshow(np.array(observation0))
+# # plt.show()
+# observation0 = preprocess(observation0)
+# print("After processing: " + str(np.array(observation0).shape))
+# plt.imshow(np.array(np.squeeze(observation0)))
+# plt.show()
+
+# brain.setInitState(observation0)
+# brain.currentState = np.squeeze(brain.currentState)
+
+# ----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
 '''
 Criação do modelo usando keras
-
 Compilação do modelo
 '''
 
