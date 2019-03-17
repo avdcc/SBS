@@ -45,14 +45,17 @@ Fazer previsões(por o modelo a jogar no ambiente)
 #temporariamente fazemos que ele simplesmente faça movimentos aleatórios
 #TODO: mudar isto para não ser aleatório
 
+
 #tem 20 episodios
 for i_episode in range(20):
+  done = False
+  steps = 0
   #o reset retorna uma observação inicial do ambiente
   observation = env.reset()
   #para cada episodio vamos fazer 100 steps 
   #ou quando done retornar verdade,
   #a que ocorrer primeiro
-  for t in range(100):
+  while not done:
     #fazemos render do ambiente
     env.render()
     #criamos accção(aleatória neste momento)
@@ -60,13 +63,17 @@ for i_episode in range(20):
     #fazemos um passo com a acção que criamos
     #e vemos os dados que  ele retorna
     observation, reward, done, info = env.step(action)
+    #incrementar steps
+    steps = steps + 1 
     #retorno imediato se o passo retornar done como sendo verdadeiro
     if done:
-      #print para debug dos dados do ambiente
-      print(observation)
-      #print para debug
-      print("Episode finished after {} timesteps".format(t+1))
-      break
+      #debug info
+      print("action: {}".format(action))
+      print("observation: {}".format(observation))
+      print("reward: {}".format(reward))
+      print("done: {}".format(done))
+      print("info: {}".format(info))
+      print("Episode finished after {} timesteps".format(steps+1))
 
 '''
 DEBUG
