@@ -33,7 +33,7 @@ Compilação do modelo
 #, e a camada intermédia tem  input_layers/2 camadas(TODO:rever mais tarde)
 #, retornando o modelo compilado usando otimizador Adam
 #com passo step_size, usando sparse_categorical_crossentropy
-#e tendo loss accuracy
+#e tendo métrica accuracy
 def build_model(input_size,output_size,input_layers,output_layers,step_size):
   #iniciar modelo sequencial
   model = keras.Sequential()
