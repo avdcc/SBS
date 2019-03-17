@@ -15,6 +15,14 @@ Pré-processamento(declaração de variáveis necessárias ao modelo)
 env = gym.make('Breakout-v0')
 env.reset()
 
+#número de camadas do modelo que criaremos
+#TODO: determinar números que melhorem o resultado
+input_layers = 64
+output_layers = 10
+
+#tamanho de passo usado para o otimizador na compilação
+#TODO: determinar o valor otimo para esta variável
+step_size = 0.001
 
 
 '''
@@ -56,7 +64,7 @@ def build_model(input_size,output_size,input_layers,output_layers,step_size):
   #nota: o abaixo assume que vamos usar um dense layer
   #, mas em principio será assim para a output, rever depois
   #também assume softmax como ativação, rever depois
-  output_layer = keras.layers.Dense(output_layers,activation='softmax')
+  output_layer = keras.layers.Dense(output_layers,input_dim=output_size,activation='softmax')
   model.add()
 
   #compilar modelo
