@@ -24,6 +24,9 @@ output_layers = 10
 #TODO: determinar o valor otimo para esta variável
 step_size = 0.001
 
+#número de epocas que devem ser usadas
+ephocs = 10
+
 
 '''
 Criação do modelo usando keras
@@ -81,17 +84,27 @@ def build_model(input_size,output_size,input_layers,output_layers,step_size):
 Fit do modelo(colocar os dados no formato correto)
 '''
 
+#TODO: completar tarefas abaixo
+#coisas a fazer neste sitio:
+#definir dados de input/output
+#criar modelo com base neles
+#fazer fit do modelo 
 
 
 '''
 Avaliação do modelo(calculo de erro)
 '''
 
-
+#TODO: determinar se é necessária esta secção
 
 '''
+Treinar modelo
+
 Fazer previsões(por o modelo a jogar no ambiente)
 '''
+#TODO: adicionar função de treino do modelo aqui
+
+
 
 
 #temporariamente fazemos que ele simplesmente faça movimentos aleatórios
