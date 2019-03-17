@@ -40,6 +40,15 @@ step_size = 0.001
 #número de epocas que devem ser usadas
 ephocs = 10
 
+#nome do ficheiro onde será guardado o modelo
+#e depois carregado
+save_filename = "test.h5"
+
+
+
+'''
+Funções auxiliares
+'''
 
 
 # -------------------------------------------------
@@ -69,6 +78,24 @@ def processImage(observation):
 
 
 
+#guardar o modelo model num certo ficheiro de nome filename
+#na subpasta models
+def save_model(model,filename):
+  #ficheiro onde iremos guardar: models/filename
+  file_saved_to = "models/" + filename
+  #guardamos o modelo
+  model.save(file_saved_to)
+
+#carrega o modelo do ficheiro filename da pasta models
+def load_model(filename):
+  model = None
+  #testar se o ficheiro existe
+  try:
+    model = keras.models.load(filename)
+  #se não existir
+  except ValueError:
+    print("CRITICAL ERROR: model not found in models/",filename,". Please check if it exists")
+  return model
 
 
 
