@@ -110,7 +110,7 @@ Compilação do modelo
 
 #TODO: rever esta função mais tarde e adicionar o tipo de camada correto para os dados(quando tivermos definidos)
 
-#cria um modelo linear 
+#cria um modelo linear
 #cujo tamanho dos dados de input é dado por input_size
 #e cujo tamanho dos dados de output é dado por output_size
 #, sendo que o nº de camadas de input é dado por input_layers
@@ -123,7 +123,7 @@ def build_model(input_size,output_size,input_layers,output_layers,step_size):
   #iniciar modelo sequencial
   model = keras.Sequential()
 
-  #adicionar camada de input  
+  #adicionar camada de input
   #nota: o abaixo assume que vamos usar um dense layer
   #é possivel usar outra, e nesse caso temos de rever isto
   #também assume relu como ativação, rever depois
@@ -145,7 +145,7 @@ def build_model(input_size,output_size,input_layers,output_layers,step_size):
   model.add()
 
   #compilar modelo
-  model.compile(optimizer=tf.train.AdamOptimizer(step_size), 
+  model.compile(optimizer=tf.train.AdamOptimizer(step_size),
                 loss=tf.keras.losses.sparse_categorical_crossentropy,
                 metrics=['accuracy'])
 
@@ -170,18 +170,63 @@ Treinar modelo
 #coisas a fazer neste sitio:
 #definir dados de input/output
 #criar modelo com base neles(chamando build_model)
-#fazer fit do modelo 
+#fazer fit do modelo
 
+
+def fit(model, # Modelo
+        gamma, # Penalizacao
+        start_states, # Array com os estados inicais
+        actions, # Acoes
+        rewards, # Reconpensas(Estado Inical + ACOES)
+        next_states, # Estado depois (Estado Inicial + ACOES)
+        is_terminal): # flag se ganhou ou nao
+
+    next_values = model.predict([ next_states, np.opnes(actions.shape) ])
+
+    next_values[ is_terminal ] = 0
+
+    values = rewards + gama * np.max(next_values,axis=1)
+
+    #fazer fit do modelo
+    state = [start_states, actions]
+    reward_value = actions * values[:, None]
+
+    model.fit(state,reward_value, epochs=1,batch_size=len(start_states),verbose=0)
 
 #TODO: adicionar função de treino do modelo aqui
 
+# funcao auxiliar
+def calc_pos(d,i):
+    return np.array(map(lambda x: x[i],d)).reshape(-1, len(d[0][i]))
+
+def train_model(trainig_data):
+    X,Y = [calc_pos(d,i) for i in range(2)]
+
+    #criar o modelo
+    model = build_model(
+            len(x[0]),# input_size
+            len(y[0]),# output_size
+            input_layers,
+            output_layers,
+            step_size)
+
+    #fit(model,
+    #    gamma,
+    #    start_states,
+    #    actions,
+    #    rewards,
+    #    next_states,
+    #    is_terminal)
+
+    model.fit(X, Y, epochs = 10)
+    return model
 
 '''
 Avaliação do modelo(calculo de erro)
 '''
 
 #nesta parte provavelmente apenas teremos
-#de colocar uma mensagem para ver qual a accuracy do modelo 
+#de colocar uma mensagem para ver qual a accuracy do modelo
 
 '''
 Fazer previsões(por o modelo a jogar no ambiente)
@@ -200,7 +245,7 @@ for i_episode in range(20):
   steps = 0
   #o reset retorna uma observação inicial do ambiente
   observation = env.reset()
-  #para cada episodio vamos fazer 100 steps 
+  #para cada episodio vamos fazer 100 steps
   #ou quando done retornar verdade,
   #a que ocorrer primeiro
   while not done:
@@ -212,7 +257,7 @@ for i_episode in range(20):
     #e vemos os dados que  ele retorna
     observation, reward, done, info = env.step(action)
     #incrementar steps
-    steps = steps + 1 
+    steps = steps + 1
     #retorno imediato se o passo retornar done como sendo verdadeiro
     if done:
       #debug info
@@ -229,7 +274,7 @@ DEBUG
 
 #espaço de acções
 #é um array que
-#efetivamente corresponde a acções 
+#efetivamente corresponde a acções
 #para mover no jogo
 print(env.action_space)
 
