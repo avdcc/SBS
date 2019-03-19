@@ -31,8 +31,9 @@ LEARNING_RATE = 0.001
 MEMORY_SIZE = 1000000
 BATCH_SIZE = 20
 
-NUMBER_OF_EPISODES = 25
-
+NUMBER_OF_EPISODES = 2000
+MAX_TIMESTEPS = 1000
+ 
 EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.01
 EXPLORATION_DECAY = 0.995
@@ -283,26 +284,39 @@ Avaliação do modelo(calculo de erro)
 
 def runner():
   env = gym.make(ENV_NAME)
+  env.seed(0)
+
+  scores = []
+  scores_window = deque(maxlen=100)  # last 100 scores
+
+
+  # print('State shape: ', env.observation_space.shape)
+  # print('Number of actions: ', env.action_space.n)
+
+
   observation_space = env.observation_space.shape[0]
   action_space = env.action_space.n
   dqn_solver = DQNSolver(observation_space, action_space)
-  run = 0
-  while True:
-    run += 1
+
+  for episode in range(NUMBER_OF_EPISODES):
+
     state = env.reset()
     state = np.reshape(state, [1, observation_space])
-    step = 0
-    while True:
-      step += 1
+    
+    score = 0
+
+    for step in range(MAX_TIMESTEPS):
       env.render()
       action = dqn_solver.act(state)
       state_next, reward, terminal, info = env.step(action)
-      reward = reward if not terminal else -reward
+
+      score += reward
+
       state_next = np.reshape(state_next, [1, observation_space])
       dqn_solver.remember(state, action, reward, state_next, terminal)
       state = state_next
       if terminal:
-        print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
+        print("Episode: " + str(episode) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(score))
         
         # score_logger.add_score(step, run)
         break
