@@ -31,6 +31,8 @@ LEARNING_RATE = 0.001
 MEMORY_SIZE = 1000000
 BATCH_SIZE = 20
 
+SAVE_EVERY = 10
+
 NUMBER_OF_EPISODES = 2000
 MAX_TIMESTEPS = 1000
  
@@ -306,7 +308,7 @@ def runner():
     score = 0
 
     for step in range(MAX_TIMESTEPS):
-      env.render()
+      # env.render()
       action = dqn_solver.act(state)
       state_next, reward, terminal, info = env.step(action)
 
