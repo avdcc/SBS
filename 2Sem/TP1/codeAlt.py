@@ -122,6 +122,15 @@ def loadProgress(agent):
   except ValueError:
     print("CRITICAL ERROR: model not found in" + SAVED_FILE_LOCATION + ". Please check if it exists")
 
+def plotScores(scores):
+
+  fig = plt.figure()
+  ax = fig.add_subplot(111)
+  plt.plot(np.arange(len(scores)), scores)
+  plt.xlabel('Episodio')
+  plt.ylabel('Score')
+  plt.show()
+
 # ---------------------------------------------------------
 
 def main():
@@ -136,15 +145,21 @@ def main():
 
   agent = DDQL(nS, nA)
 
+  scores = []
+  scores_window = deque(maxlen=100) # Ultimos 100 scores
+
   ep = EPISODES
   if (not TRAIN): 
     agent.epsilon = 0
     ep = 100
 
   # Cumulative reward
-  reward_avg = deque(maxlen=100)
+  scores_window = deque(maxlen=100)
 
   for e in range(ep):
+
+    score = 0
+
     episode_reward = 0
     s = env.reset()
     s = np.reshape(s, [1, nS])
@@ -189,16 +204,23 @@ def main():
     if agent.epsilon > agent.epsilon_min:
       agent.epsilon *= agent.epsilon_decay
 
-    # Running average of past 100 episodes
-    reward_avg.append(episode_reward)
-    texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(reward_avg), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
+    # Save the latest Score
+    scores_window.append(score)
+    scores.append(score)
+
+    texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
 
     print(texto)
     log(texto)
     
+    # Considera-se vencido
+    if np.mean(scores_window)>=200.0:
+      print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(e-100, np.mean(scores_window)))
+      plotScores(scores)
+      return scores
     
     # with open('trained_agent.txt', 'a') as f:
-    #   f.write(str(np.average(reward_avg)) + '\n')
+    #   f.write(str(np.average(scores_window)) + '\n')
 
   env.close()
 
