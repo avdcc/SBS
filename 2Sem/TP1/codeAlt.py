@@ -105,12 +105,22 @@ class DDQL:
 
 # ---------------------------------------------------------
 
+def log(texto):
+  with open("logs.txt", "a") as myfile:
+    myfile.write(log)
+
+
 def saveProgress(agent, e):
   agent.model.save_weights(SAVED_FILE_LOCATION)
   print("Saved: Episode " + str(e))
 
 def loadProgress(agent):
   agent.model.load_weights(SAVED_FILE_LOCATION)
+
+  try:
+    agent.model.load_weights(SAVED_FILE_LOCATION)
+  except ValueError:
+    print("CRITICAL ERROR: model not found in" + SAVED_FILE_LOCATION + ". Please check if it exists")
 
 # ---------------------------------------------------------
 
@@ -126,10 +136,7 @@ def main():
 
   agent = DDQL(nS, nA)
 
-  # Set to true to use saved model
-
   ep = EPISODES
-
   if (not TRAIN): 
     agent.epsilon = 0
     ep = 100
@@ -184,12 +191,18 @@ def main():
 
     # Running average of past 100 episodes
     reward_avg.append(episode_reward)
-    print('Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(reward_avg), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon)
+    texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(reward_avg), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
+
+    print(texto)
+    log(texto)
+    
     
     # with open('trained_agent.txt', 'a') as f:
     #   f.write(str(np.average(reward_avg)) + '\n')
 
   env.close()
+
+
 
 # ---------------------------------------------------------
 
