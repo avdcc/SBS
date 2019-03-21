@@ -10,59 +10,95 @@ from keras.optimizers import Adam
 
 # ---------------------------------------------------------
 
+#nome do ambiente
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
+#flags:
+#
 LOAD = False
+#
 TRAIN = True
+#
 RENDER = False
+#
 SAVE_LOGS = False
 
+#
 SAVE_COUNTER = 100
+#nº de episódios
 EPISODES = 1000
+#máximo de steps por episódio
 TIMESTEPS = 1000
 
+#nome do ficheiro onde será guardado o modelo
 SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5"
+
+
 
 # ---------------------------------------------------------
 
+#classe do modelo de machine learning
 class DDQL:
+  #inicialização de modelo
   def __init__(self, nS, nA):
+    #
     self.nS = nS
+    #
     self.nA = nA
+    #
     self.epsilon = 1
+    #
     self.epsilon_min = 0.01
+    #
     self.epsilon_decay = 0.9993
+    #
     self.gamma = 0.99
+    #
     self.learning_rate = 0.0001
+    #
     self.epochs = 1
+    #
     self.verbose = 0
+    #
     self.minibatch_size = 30
+    #
     self.memory = deque(maxlen=5000)
+    #inicialização do modelo 
     self.model = self.create_model()
+    #
     self.target_model = self.create_model()
 
+  #função de criação do modelo
   def create_model(self):
+    #inicializar modelo
     model = Sequential()
 
     # Add 2 hidden layers with 64 nodes each
     model.add(Dense(64, input_dim=self.nS, activation='relu'))
     model.add(Dense(64, activation='relu'))
+    #camada de output
     model.add(Dense(self.nA, activation='linear'))
+    #compilar modelo com mse e otimizador Adam
     model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+
     return model
 
+  #
   def add_memory(self, s, a, r, s_prime, done):
     self.memory.append((s, a, r, s_prime, done))
 
+  #
   def target_model_update(self):
     self.target_model.set_weights(self.model.get_weights())
 
+  #
   def selectAction(self, s):
     if np.random.rand() <= self.epsilon:
       return np.random.choice(self.nA)
     q = self.model.predict(s)
     return np.argmax(q[0])
 
+  #
   def replay(self):
     # Vectorized method for experience replay
     minibatch = random.sample(self.memory, self.minibatch_size)
@@ -85,6 +121,7 @@ class DDQL:
     y_target[range(self.minibatch_size), actions] = y
     self.model.fit(np.vstack(minibatch[:, 0]), y_target, epochs=self.epochs, verbose=self.verbose)
 
+  #
   def replayIterative(self):
     # Iterative method - this performs the same function as replay() but is not vectorized 
     s_list = []
@@ -103,17 +140,21 @@ class DDQL:
       y_state_list.append(y_state)
     self.model.fit(np.squeeze(s_list), np.squeeze(y_state_list), batch_size=self.minibatch_size, epochs=1, verbose=0)
 
+
 # ---------------------------------------------------------
 
+#fazer log de um texto para logs.txt
 def log(texto):
   with open("logs.txt", "a") as myfile:
     myfile.write(log)
 
 
+#guardar modelo atual(pesos)
 def saveProgress(agent, e):
   agent.model.save_weights(SAVED_FILE_LOCATION)
   print("Saved: Episode " + str(e))
 
+#carregar modelo 
 def loadProgress(agent):
   agent.model.load_weights(SAVED_FILE_LOCATION)
 
@@ -122,21 +163,32 @@ def loadProgress(agent):
   except ValueError:
     print("CRITICAL ERROR: model not found in" + SAVED_FILE_LOCATION + ". Please check if it exists")
 
+
 # ---------------------------------------------------------
 
+#programa principal
 def main():
-
+  
+  #
   np.set_printoptions(precision=2)
+  #
   tdir = tempfile.mkdtemp()
+  #criar ambiente gym
   env = gym.make(ENV_NAME)
+  #
   env = wrappers.Monitor(env, tdir, force=True, video_callable=False)
 
+  #
   nS = env.observation_space.shape[0]
+  #
   nA = env.action_space.n
 
+  #
   agent = DDQL(nS, nA)
 
+  #inicializar episódios
   ep = EPISODES
+  #
   if (not TRAIN): 
     agent.epsilon = 0
     ep = 100
@@ -144,16 +196,23 @@ def main():
   # Cumulative reward
   reward_avg = deque(maxlen=100)
 
+  #loop principal do programa
   for e in range(ep):
+    #
     episode_reward = 0
+    #
     s = env.reset()
+    #
     s = np.reshape(s, [1, nS])
 
+    #
     if (e%SAVE_COUNTER == 0):
       saveProgress(agent, e)
 
+    #
     for time in range(TIMESTEPS):
 
+      #
       if (RENDER):
         env.render()
 
@@ -193,6 +252,7 @@ def main():
     reward_avg.append(episode_reward)
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(reward_avg), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
 
+    #debug
     print(texto)
     log(texto)
     
@@ -205,5 +265,5 @@ def main():
 
 
 # ---------------------------------------------------------
-
+#correr programa
 main()
