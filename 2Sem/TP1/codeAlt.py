@@ -188,6 +188,7 @@ def loadProgress(agent):
   except ValueError:
     print("CRITICAL ERROR: model not found in" + SAVED_FILE_LOCATION + ". Please check if it exists")
 
+#criar gráfico para mostrar os scores do modelo
 def plotScores(scores):
 
   fig = plt.figure()
@@ -196,6 +197,7 @@ def plotScores(scores):
   plt.xlabel('Episodio')
   plt.ylabel('Score')
   plt.show()
+
 
 # ---------------------------------------------------------
 
@@ -219,8 +221,10 @@ def main():
   #
   agent = DDQL(nS, nA)
 
+  #
   scores = []
   scores_window = deque(maxlen=100) # Ultimos 100 scores
+
 
   ep = EPISODES
   #
@@ -287,6 +291,7 @@ def main():
     scores_window.append(episode_reward)
     scores.append(episode_reward)
 
+    #texto de debug 
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
 
     print(texto)
