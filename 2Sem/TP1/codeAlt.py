@@ -93,52 +93,77 @@ class DDQL:
 
   #
   def selectAction(self, s):
+    #
     if np.random.rand() <= self.epsilon:
       return np.random.choice(self.nA)
+    #
     q = self.model.predict(s)
     return np.argmax(q[0])
 
   #
   def replay(self):
     # Vectorized method for experience replay
+    #
     minibatch = random.sample(self.memory, self.minibatch_size)
+    #
     minibatch = np.array(minibatch)
+    #
     not_done_indices = np.where(minibatch[:, 4] == False)
+    #
     y = np.copy(minibatch[:, 2])
 
     # If minibatch contains any non-terminal states, use separate update rule for those states
     if len(not_done_indices[0]) > 0:
+      #
       predict_sprime = self.model.predict(np.vstack(minibatch[:, 3]))
+      #
       predict_sprime_target = self.target_model.predict(np.vstack(minibatch[:, 3]))
       
       # Non-terminal update rule
+      #
       y[not_done_indices] += np.multiply(self.gamma, \
             predict_sprime_target[not_done_indices, \
             np.argmax(predict_sprime[not_done_indices, :][0], axis=1)][0])
 
+    #
     actions = np.array(minibatch[:, 1], dtype=int)
+    #
     y_target = self.model.predict(np.vstack(minibatch[:, 0]))
+    #
     y_target[range(self.minibatch_size), actions] = y
+    #
     self.model.fit(np.vstack(minibatch[:, 0]), y_target, epochs=self.epochs, verbose=self.verbose)
 
   #
   def replayIterative(self):
     # Iterative method - this performs the same function as replay() but is not vectorized 
+    #
     s_list = []
     y_state_list = []
+    #
     minibatch = random.sample(self.memory, self.minibatch_size)
+    #
     for s, a, r, s_prime, done in minibatch:
+      #
       s_list.append(s)
+      #
       y_action = r
+      #
       if not done:
         y_action = r + self.gamma * np.amax(self.model.predict(s_prime)[0])
 
+      #
       print(y_action)
       
+      #
       y_state = self.model.predict(s)
+      #
       y_state[0][a] = y_action
+      #
       y_state_list.append(y_state)
+    #
     self.model.fit(np.squeeze(s_list), np.squeeze(y_state_list), batch_size=self.minibatch_size, epochs=1, verbose=0)
+
 
 
 # ---------------------------------------------------------
@@ -157,7 +182,7 @@ def saveProgress(agent, e):
 #carregar modelo 
 def loadProgress(agent):
   agent.model.load_weights(SAVED_FILE_LOCATION)
-
+  #
   try:
     agent.model.load_weights(SAVED_FILE_LOCATION)
   except ValueError:
