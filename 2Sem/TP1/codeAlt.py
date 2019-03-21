@@ -234,8 +234,6 @@ def main():
   #loop principal do programa
   for e in range(ep):
 
-    score = 0
-
     episode_reward = 0
     #
     s = env.reset()
@@ -286,8 +284,8 @@ def main():
       agent.epsilon *= agent.epsilon_decay
 
     # Save the latest Score
-    scores_window.append(score)
-    scores.append(score)
+    scores_window.append(episode_reward)
+    scores.append(episode_reward)
 
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
 
