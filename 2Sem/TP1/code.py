@@ -23,22 +23,36 @@ import cv2
 # ---------------------------------------------------------------------------------
 # GLOBAIS
 
+#ambiente
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
+#
 GAMMA = 0.95
+#taxa de aprendizagem
 LEARNING_RATE = 0.001
 
+#tamanho da memória
 MEMORY_SIZE = 1000000
+#tamanho batch 
 BATCH_SIZE = 20
 
+#
 SAVE_EVERY = 10
 
+#nº de episódios a correr
 NUMBER_OF_EPISODES = 2000
+#maximo de movimentos que podem ser fetios por episódio
 MAX_TIMESTEPS = 1000
  
+#
 EXPLORATION_MAX = 1.0
+#
 EXPLORATION_MIN = 0.01
+#
 EXPLORATION_DECAY = 0.995
+
+
+
 
 # FLAGS = tf.app.flags.FLAGS
 
@@ -66,11 +80,15 @@ EXPLORATION_DECAY = 0.995
 # ATARI_SHAPE = (84, 84, 4)  # input image size to model
 # ACTION_SIZE = 3
 
+
+
+
 # ---------------------------------------------------------------------------------
 # MODELO
 
+#classe do modelo 
 class DQNSolver:
-
+  #inicialização do modelo
   def __init__(self, observation_space, action_space):
     self.exploration_rate = EXPLORATION_MAX
 
@@ -83,15 +101,18 @@ class DQNSolver:
     self.model.add(Dense(self.action_space, activation="linear"))
     self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 
+  #
   def remember(self, state, action, reward, next_state, done):
     self.memory.append((state, action, reward, next_state, done))
 
+  #
   def act(self, state):
     if np.random.rand() < self.exploration_rate:
       return random.randrange(self.action_space)
     q_values = self.model.predict(state)
     return np.argmax(q_values[0])
 
+  #
   def experience_replay(self):
     if len(self.memory) < BATCH_SIZE:
       return
@@ -105,6 +126,9 @@ class DQNSolver:
       self.model.fit(state, q_values, verbose=0)
     self.exploration_rate *= EXPLORATION_DECAY
     self.exploration_rate = max(EXPLORATION_MIN, self.exploration_rate)
+
+
+
 
 # ---------------------------------------------------------------------------------
 # AUXILIARES
@@ -217,6 +241,8 @@ Treinar modelo
 #fazer fit do modelo
 
 
+#fit do modelo
+
 def fit(model, # Modelo
         gamma, # Penalizacao
         start_states, # Array com os estados inicais
@@ -225,24 +251,33 @@ def fit(model, # Modelo
         next_states, # Estado depois (Estado Inicial + ACOES)
         is_terminal): # flag se ganhou ou nao
 
+    #
     next_values = model.predict([ next_states, np.opnes(actions.shape) ])
 
+    #
     next_values[ is_terminal ] = 0
 
+    #
     values = rewards + gama * np.max(next_values,axis=1)
+
 
     #fazer fit do modelo
     state = [start_states, actions]
     reward_value = actions * values[:, None]
 
+    #
     model.fit(state,reward_value, epochs=1,batch_size=len(start_states),verbose=0)
 
-#TODO: adicionar função de treino do modelo aqui
+
+
+
 
 # funcao auxiliar
 def calc_pos(d,i):
     return np.array(map(lambda x: x[i],d)).reshape(-1, len(d[0][i]))
 
+
+#treinar modelo
 def train_model(trainig_data):
     X,Y = [calc_pos(d,i) for i in range(2)]
 
