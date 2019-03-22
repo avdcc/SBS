@@ -295,6 +295,7 @@ def main():
 
     #texto de debug 
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
+    texto = str(texto)
 
     print(texto)
     log(texto)
