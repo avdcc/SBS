@@ -7,6 +7,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+import keras.backend as K
 
 import matplotlib.pyplot as plt
 
@@ -16,14 +17,18 @@ import matplotlib.pyplot as plt
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
 #flags:
-#
+# se e para continuar no estado anterior
 LOAD = False
 #
 TRAIN = True
-#
+# se mostra a imagem do bot a jogar
 RENDER = False
 #
 SAVE_LOGS = False
+# nossa propria funcao de loss ou mse
+OWN_LOSS_FUNCTION = True
+# funcao de loss usada
+LOSS_FUNCTION = 'mse'
 
 #
 SAVE_COUNTER = 100
@@ -36,8 +41,26 @@ TIMESTEPS = 1000
 SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5"
 
 
+TIME = 0
 
 # ---------------------------------------------------------
+# Criar a nossa funcao de loss
+#         ________________
+# LOSS = v y_true - y_pred + TIME
+
+def own_loss_function():
+    return lambda y_true,y_pred:\
+            K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
+
+# incrementa a variavel global TIME
+def inc_time():
+    global TIME
+    TIME += 1
+
+# reset da varival global TIME
+def reset_time():
+    global TIME
+    TIME = 0
 
 #classe do modelo de machine learning
 class DDQL:
@@ -65,7 +88,7 @@ class DDQL:
     self.minibatch_size = 30
     #
     self.memory = deque(maxlen=5000)
-    #inicialização do modelo 
+    #inicialização do modelo
     self.model = self.create_model()
     #
     self.target_model = self.create_model()
@@ -80,8 +103,11 @@ class DDQL:
     model.add(Dense(64, activation='relu'))
     #camada de output
     model.add(Dense(self.nA, activation='linear'))
-    #compilar modelo com mse e otimizador Adam
-    model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+    if(OWN_LOSS_FUNCTION):
+        model.compile(loss=own_loss_function(), optimizer=Adam(lr=self.learning_rate))
+    else:
+        #compilar modelo com otimizador Adam
+        model.compile(loss=LOSS_FUNCTION, optimizer=Adam(lr=self.learning_rate))
 
     return model
 
@@ -120,7 +146,7 @@ class DDQL:
       predict_sprime = self.model.predict(np.vstack(minibatch[:, 3]))
       #
       predict_sprime_target = self.target_model.predict(np.vstack(minibatch[:, 3]))
-      
+
       # Non-terminal update rule
       #
       y[not_done_indices] += np.multiply(self.gamma, \
@@ -138,7 +164,7 @@ class DDQL:
 
   #
   def replayIterative(self):
-    # Iterative method - this performs the same function as replay() but is not vectorized 
+    # Iterative method - this performs the same function as replay() but is not vectorized
     #
     s_list = []
     y_state_list = []
@@ -156,7 +182,7 @@ class DDQL:
 
       #
       print(y_action)
-      
+
       #
       y_state = self.model.predict(s)
       #
@@ -173,7 +199,7 @@ class DDQL:
 #fazer log de um texto para logs.txt
 def log(texto):
   with open("logs.txt", "a") as myfile:
-    myfile.write(texto)
+    myfile.write(str(texto))
 
 
 #guardar modelo atual(pesos)
@@ -181,7 +207,7 @@ def saveProgress(agent, e):
   agent.model.save_weights(SAVED_FILE_LOCATION)
   print("Saved: Episode " + str(e))
 
-#carregar modelo 
+#carregar modelo
 def loadProgress(agent):
   agent.model.load_weights(SAVED_FILE_LOCATION)
   #
@@ -205,7 +231,7 @@ def plotScores(scores):
 
 #programa principal
 def main():
-  
+
   #
   np.set_printoptions(precision=2)
   #
@@ -229,8 +255,12 @@ def main():
 
 
   ep = EPISODES
+
+  # continuar o treino
+  if (LOAD):
+    loadProgress(agent)
   #
-  if (not TRAIN): 
+  if (not TRAIN):
     agent.epsilon = 0
     ep = 100
 
@@ -243,6 +273,8 @@ def main():
     episode_reward = 0
     #
     s = env.reset()
+    # reset variavel global time
+    reset_time() if (OWN_LOSS_FUNCTION) else None
     #
     s = np.reshape(s, [1, nS])
 
@@ -252,6 +284,7 @@ def main():
 
     #
     for time in range(TIMESTEPS):
+      inc_time() if (OWN_LOSS_FUNCTION) else None
 
       #
       if (RENDER):
@@ -293,19 +326,19 @@ def main():
     scores_window.append(episode_reward)
     scores.append(episode_reward)
 
-    #texto de debug 
+    #texto de debug
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
     texto = str(texto)
 
     print(texto)
     log(texto)
-    
+
     # Considera-se vencido
     if np.mean(scores_window)>=200.0:
       print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(e-100, np.mean(scores_window)))
       plotScores(scores)
       return scores
-    
+
     # with open('trained_agent.txt', 'a') as f:
     #   f.write(str(np.average(scores_window)) + '\n')
 
