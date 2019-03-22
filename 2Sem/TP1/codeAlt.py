@@ -33,7 +33,7 @@ LOSS_FUNCTION = 'mse'
 #
 SAVE_COUNTER = 100
 #nº de episódios
-EPISODES = 1000
+EPISODES = 3000
 #máximo de steps por episódio
 TIMESTEPS = 1000
 
@@ -50,7 +50,8 @@ TIME = 0
 
 def own_loss_function():
     return lambda y_true,y_pred:\
-            K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
+            K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
+            #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
 
 # incrementa a variavel global TIME
 def inc_time():
