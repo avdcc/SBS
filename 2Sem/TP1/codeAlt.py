@@ -173,7 +173,7 @@ class DDQL:
 #fazer log de um texto para logs.txt
 def log(texto):
   with open("logs.txt", "a") as myfile:
-    myfile.write(log)
+    myfile.write(texto)
 
 
 #guardar modelo atual(pesos)
