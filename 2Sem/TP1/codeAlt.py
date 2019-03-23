@@ -19,10 +19,11 @@ ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 #flags:
 # se e para continuar no estado anterior
 LOAD = False
-#
+#se estamos a trreinar o modelo ou não
 TRAIN = True
 # se mostra a imagem do bot a jogar
 RENDER = False
+
 #
 SAVE_LOGS = False
 # nossa propria funcao de loss ou mse
@@ -30,7 +31,7 @@ OWN_LOSS_FUNCTION = True
 # funcao de loss usada
 LOSS_FUNCTION = 'mse'
 
-#
+#nº de episódios para que o modelo seja guardado
 SAVE_COUNTER = 100
 #nº de episódios
 EPISODES = 3000
@@ -210,8 +211,6 @@ def saveProgress(agent, e):
 
 #carregar modelo
 def loadProgress(agent):
-  agent.model.load_weights(SAVED_FILE_LOCATION)
-  #
   try:
     agent.model.load_weights(SAVED_FILE_LOCATION)
   except ValueError:
@@ -279,8 +278,8 @@ def main():
     #
     s = np.reshape(s, [1, nS])
 
-    #
-    if (e%SAVE_COUNTER == 0):
+    #se estivermos para guardar e estivermos em modo de treino
+    if (e%SAVE_COUNTER == 0 and TRAIN):
       saveProgress(agent, e)
 
     #
@@ -328,15 +327,19 @@ def main():
     scores.append(episode_reward)
 
     #texto de debug
-    texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon
-    texto = str(texto)
+    texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon, '\n'
 
     print(texto)
     log(texto)
 
-    # Considera-se vencido
-    if np.mean(scores_window)>=200.0:
-      print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(e-100, np.mean(scores_window)))
+    # Considera-se vencido se tiver média de score superior a 200 e estiver em modo de treino(para evitar sair quando deve estar a mostrar)
+    if (np.mean(scores_window)>=200.0 and TRAIN):
+      end_txt = '\n\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}\tfinal epsilon:{:.2f}\n\n'.format(e-100, np.mean(scores_window),agent.epsilon)
+      
+      print(end_txt)
+      log(end_txt)
+      saveProgress(agent,e)
+      
       plotScores(scores)
       return scores
 
