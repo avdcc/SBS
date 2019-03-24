@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 
 # ---------------------------------------------------------
 
-# ENV_NAME = "LunarLander-v2" # "Breakout-v0"
-ENV_NAME = "CartPole-v1"
+ENV_NAME = "LunarLander-v2" # "Breakout-v0"
+#ENV_NAME = "CartPole-v1"
 
 LOAD = False   # Se e para continuar no estado anterior
 TRAIN = True   # Se estamos a trreinar o modelo ou não
@@ -24,7 +24,7 @@ OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
 LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
 SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
-EPISODES = 10000 # Nº de episódios
+EPISODES = 3000 # Nº de episódios
 TIMESTEPS = 1000 # Máximo de steps por episódio
 
 SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
@@ -63,12 +63,12 @@ class DDQL:
     self.epsilon = 1
     #minimo de epsilon permitido
     self.epsilon_min = 0.01
-    self.epsilon_decay = 0.995
-    self.gamma = 0.999
+    self.epsilon_decay = 0.9993
+    self.gamma = 0.99
     #learning rate do modelo
     self.learning_rate = 0.0001
     #épocas a usar durante o fit do modelo
-    self.epochs = 10
+    self.epochs = 1
     #controlo da verbosidade do fit do modelo
     self.verbose = 0
     #tamamnho de cada batch usado no modelo
