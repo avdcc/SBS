@@ -13,20 +13,18 @@ import matplotlib.pyplot as plt
 
 # ---------------------------------------------------------
 
-#nome do ambiente
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
-#flags:
 LOAD = False   # Se e para continuar no estado anterior
 TRAIN = True   # Se estamos a trreinar o modelo ou não
 RENDER = False # Se mostra a imagem do bot a jogar
 
 SAVE_LOGS = False
-OWN_LOSS_FUNCTION = True # Nossa propria funcao de loss ou mse
+OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
 LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
 SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
-EPISODES = 3000 # Nº de episódios
+EPISODES = 10000 # Nº de episódios
 TIMESTEPS = 1000 # Máximo de steps por episódio
 
 SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
@@ -65,9 +63,7 @@ class DDQL:
     self.epsilon = 1
     #minimo de epsilon permitido
     self.epsilon_min = 0.01
-    #velocidade de redução do epsilon ao longo da execução
-    self.epsilon_decay = 0.9993
-    #gamma do modelo
+    self.epsilon_decay = 0.995
     self.gamma = 0.99
     #learning rate do modelo
     self.learning_rate = 0.0001
@@ -77,9 +73,9 @@ class DDQL:
     self.verbose = 0
     #tamamnho de cada batch usado no modelo
     self.minibatch_size = 30
-    #memória disponivel ao modelo
-    self.memory = deque(maxlen=5000)
-    #
+    self.memory = deque(maxlen=60000)
+    
+    # Inicialização do modelo
     self.model = self.create_model()
     #
     self.target_model = self.create_model()
@@ -96,11 +92,10 @@ class DDQL:
     model.add(Dense(self.nA, activation='linear'))
     #se tiver-mos a usar a nossa função de loss
     if(OWN_LOSS_FUNCTION):
-        model.compile(loss=own_loss_function(), optimizer=Adam(lr=self.learning_rate))
-    #caso contrário
+      model.compile(loss=own_loss_function(), optimizer=Adam(lr=self.learning_rate))
     else:
-        #compilar modelo com otimizador Adam
-        model.compile(loss=LOSS_FUNCTION, optimizer=Adam(lr=self.learning_rate))
+      #compilar modelo com otimizador Adam
+      model.compile(loss=LOSS_FUNCTION, optimizer=Adam(lr=self.learning_rate))
 
     return model
 
@@ -198,29 +193,45 @@ class DDQL:
 
     self.model.fit(np.squeeze(s_list), np.squeeze(y_state_list), batch_size=self.minibatch_size, epochs=1, verbose=0)
 
-
-
 # ---------------------------------------------------------
 
-#fazer log de um texto para logs.txt
+# Fazer log de um texto para logs.txt
 def log(texto):
   with open("logs.txt", "a") as myfile:
     myfile.write(str(texto))
 
+# def logSettings():
+#   with open("logs.txt", "a") as myfile:
+#     myfile.write(str(texto))
 
-#guardar modelo atual(pesos)
+#     ENV_NAME = "LunarLander-v2" # "Breakout-v0"
+
+#     LOAD = False   # Se e para continuar no estado anterior
+#     TRAIN = True   # Se estamos a trreinar o modelo ou não
+#     RENDER = False # Se mostra a imagem do bot a jogar
+
+#     SAVE_LOGS = False
+#     OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
+#     LOSS_FUNCTION = 'mse' # Funcao de loss usada
+
+#     SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
+#     EPISODES = 10000 # Nº de episódios
+#     TIMESTEPS = 1000 # Máximo de steps por episódio
+
+
+# Guardar modelo atual(pesos)
 def saveProgress(agent, e):
   agent.model.save_weights(SAVED_FILE_LOCATION)
   print("Saved: Episode " + str(e))
 
-#carregar modelo
+# Carregar modelo
 def loadProgress(agent):
   try:
     agent.model.load_weights(SAVED_FILE_LOCATION)
   except ValueError:
     print("CRITICAL ERROR: model not found in" + SAVED_FILE_LOCATION + ". Please check if it exists")
 
-#criar gráfico para mostrar os scores do modelo
+# Criar gráfico para mostrar os scores do modelo
 def plotScores(scores):
 
   fig = plt.figure()
@@ -230,10 +241,9 @@ def plotScores(scores):
   plt.ylabel('Score')
   plt.show()
 
-
 # ---------------------------------------------------------
 
-#programa principal
+# Programa principal
 def main():
 
   #fazer setup de como os dados do np serão representados no print
@@ -340,8 +350,10 @@ def main():
     #texto de debug
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon, '\n'
 
+    csv = e + ";" + episode_reward + ";" + np.average(scores_window) + ";" + time + ";" + agent.epsilon + "\n"
+
     print(texto)
-    log(texto)
+    log(csv)
 
     # Considera-se vencido se tiver média de score superior a 200 
     #e estiver em modo de treino(para evitar sair quando deve estar a mostrar)
@@ -352,7 +364,7 @@ def main():
       log(end_txt)
       saveProgress(agent,e)
       
-      plotScores(scores)
+      plotScores(scores_window)
       return scores
 
   #fechar o ambiente no final
