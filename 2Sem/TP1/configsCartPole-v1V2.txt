@@ -1,0 +1,66 @@
+# ENV_NAME = "LunarLander-v2" # "Breakout-v0"
+ENV_NAME = "CartPole-v1"
+
+LOAD = False   # Se e para continuar no estado anterior
+TRAIN = True   # Se estamos a trreinar o modelo ou não
+RENDER = False # Se mostra a imagem do bot a jogar
+
+OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
+LOSS_FUNCTION = 'mse' # Funcao de loss usada
+
+SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
+EPISODES = 10000 # Nº de episódios
+TIMESTEPS = 1000 # Máximo de steps por episódio
+
+SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
+
+TIME = 0
+
+# ---------------------------------------------------------
+# Criar a nossa funcao de loss
+#         ________________
+# LOSS = v y_true - y_pred + TIME
+
+def own_loss_function():
+  return lambda y_true,y_pred:\
+    K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
+    #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
+
+# incrementa a variavel global TIME
+def inc_time():
+  global TIME
+  TIME += 1
+
+# reset da varival global TIME
+def reset_time():
+  global TIME
+  TIME = 0
+
+# ---------------------------------------------------------
+
+
+class DDQL:
+  # Inicialização de modelo
+  def __init__(self, nS, nA):
+    self.nS = nS
+    self.nA = nA
+    #epsilon do modelo
+    self.epsilon = 1
+    #minimo de epsilon permitido
+    self.epsilon_min = 0.01
+    self.epsilon_decay = 0.995
+    self.gamma = 0.999
+    #learning rate do modelo
+    self.learning_rate = 0.0001
+    #épocas a usar durante o fit do modelo
+    self.epochs = 10
+    #controlo da verbosidade do fit do modelo
+    self.verbose = 0
+    #tamamnho de cada batch usado no modelo
+    self.minibatch_size = 30
+    self.memory = deque(maxlen=60000)
+    
+    # Inicialização do modelo
+    self.model = self.create_model()
+    #
+    self.target_model = self.create_model()
