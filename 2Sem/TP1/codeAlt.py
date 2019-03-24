@@ -15,8 +15,8 @@ import matplotlib.pyplot as plt
 
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
-LOAD = False   # Se e para continuar no estado anterior
-TRAIN = True   # Se estamos a trreinar o modelo ou não
+LOAD = True   # Se e para continuar no estado anterior
+TRAIN = False   # Se estamos a trreinar o modelo ou não
 RENDER = False # Se mostra a imagem do bot a jogar
 
 SAVE_LOGS = False
@@ -64,11 +64,11 @@ class DDQL:
     #minimo de epsilon permitido
     self.epsilon_min = 0.01
     self.epsilon_decay = 0.995
-    self.gamma = 0.99
+    self.gamma = 0.999
     #learning rate do modelo
     self.learning_rate = 0.0001
     #épocas a usar durante o fit do modelo
-    self.epochs = 1
+    self.epochs = 10
     #controlo da verbosidade do fit do modelo
     self.verbose = 0
     #tamamnho de cada batch usado no modelo
@@ -298,6 +298,8 @@ def main():
     if (e%SAVE_COUNTER == 0 and TRAIN):
       saveProgress(agent, e)
 
+    ultimoGanho = 0
+    
     #loop para os timesteps em cada episódio
     for time in range(TIMESTEPS):
       #incrementar a variável global se tivermos definida a nossa função de perda
@@ -316,6 +318,8 @@ def main():
       # Add cumulative reward
       #adicionar a reward do passo à reward do episódio
       episode_reward += r
+
+      ultimoGanho = r
 
       # Reshape new state
       #fazer reshape de s_prime com base no nS (de modo a ser compativel com o reshape de s)
@@ -347,25 +351,24 @@ def main():
     scores_window.append(episode_reward)
     scores.append(episode_reward)
 
-    #texto de debug
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon, '\n'
-
-    csv = e + ";" + episode_reward + ";" + np.average(scores_window) + ";" + time + ";" + agent.epsilon + "\n"
-
     print(texto)
+    
+    csv = str(e) + ";" +  str(episode_reward) + ";" +  str(np.average(scores_window)) + ";" +  str(time) + ";" +  str(agent.epsilon) + ";" +  str(ultimoGanho) +"\n"
     log(csv)
+
 
     # Considera-se vencido se tiver média de score superior a 200 
     #e estiver em modo de treino(para evitar sair quando deve estar a mostrar)
-    if (np.mean(scores_window)>=200.0 and TRAIN):
-      end_txt = '\n\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}\tfinal epsilon:{:.2f}\n\n'.format(e-100, np.mean(scores_window),agent.epsilon)
+    # if (np.mean(scores_window)>=200.0 and TRAIN):
+    #   end_txt = '\n\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}\tfinal epsilon:{:.2f}\n\n'.format(e-100, np.mean(scores_window),agent.epsilon)
       
-      print(end_txt)
-      log(end_txt)
-      saveProgress(agent,e)
+    #   print(end_txt)
+    #   log(end_txt)
+    #   saveProgress(agent,e)
       
-      plotScores(scores_window)
-      return scores
+    #   plotScores(scores_window)
+    #   return scores
 
   #fechar o ambiente no final
   env.close()
