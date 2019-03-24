@@ -13,13 +13,13 @@ import matplotlib.pyplot as plt
 
 # ---------------------------------------------------------
 
-ENV_NAME = "LunarLander-v2" # "Breakout-v0"
+# ENV_NAME = "LunarLander-v2" # "Breakout-v0"
+ENV_NAME = "CartPole-v1"
 
-LOAD = True   # Se e para continuar no estado anterior
-TRAIN = False   # Se estamos a trreinar o modelo ou não
+LOAD = False   # Se e para continuar no estado anterior
+TRAIN = True   # Se estamos a trreinar o modelo ou não
 RENDER = False # Se mostra a imagem do bot a jogar
 
-SAVE_LOGS = False
 OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
 LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
@@ -197,7 +197,7 @@ class DDQL:
 
 # Fazer log de um texto para logs.txt
 def log(texto):
-  with open("logs.txt", "a") as myfile:
+  with open(ENV_NAME + ".txt", "a") as myfile:
     myfile.write(str(texto))
 
 # def logSettings():
