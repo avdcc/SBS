@@ -17,30 +17,20 @@ import matplotlib.pyplot as plt
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
 #flags:
-# se e para continuar no estado anterior
-LOAD = False
-#se estamos a trreinar o modelo ou não
-TRAIN = True
-# se mostra a imagem do bot a jogar
-RENDER = False
-#não está a ser usada neste momento, eu acho que era suposto controlar se guardamos logs ou não
+LOAD = False   # Se e para continuar no estado anterior
+TRAIN = True   # Se estamos a trreinar o modelo ou não
+RENDER = False # Se mostra a imagem do bot a jogar
+
 SAVE_LOGS = False
-# nossa propria funcao de loss ou mse
-OWN_LOSS_FUNCTION = True
-# funcao de loss usada
-LOSS_FUNCTION = 'mse'
+OWN_LOSS_FUNCTION = True # Nossa propria funcao de loss ou mse
+LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
-#nº de episódios para que o modelo seja guardado
-SAVE_COUNTER = 100
-#nº de episódios
-EPISODES = 3000
-#máximo de steps por episódio
-TIMESTEPS = 1000
+SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
+EPISODES = 3000 # Nº de episódios
+TIMESTEPS = 1000 # Máximo de steps por episódio
 
-#nome do ficheiro onde será guardado o modelo
-SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5"
+SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
 
-#variável global que controla quantos timesteps estão a ser usados num episódio, para a função de loss que criamos
 TIME = 0
 
 # ---------------------------------------------------------
@@ -49,27 +39,27 @@ TIME = 0
 # LOSS = v y_true - y_pred + TIME
 
 def own_loss_function():
-    return lambda y_true,y_pred:\
-            K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
-            #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
+  return lambda y_true,y_pred:\
+    K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
+    #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
 
 # incrementa a variavel global TIME
 def inc_time():
-    global TIME
-    TIME += 1
+  global TIME
+  TIME += 1
 
 # reset da varival global TIME
 def reset_time():
-    global TIME
-    TIME = 0
+  global TIME
+  TIME = 0
 
-#classe do modelo de machine learning
+# ---------------------------------------------------------
+
+# Classe do modelo de machine learning
 class DDQL:
-  #inicialização de modelo DDQL que jogará o jogo automáticamente
+  # Inicialização de modelo
   def __init__(self, nS, nA):
-    #
     self.nS = nS
-    #
     self.nA = nA
     #epsilon do modelo
     self.epsilon = 1
@@ -94,7 +84,7 @@ class DDQL:
     #
     self.target_model = self.create_model()
 
-  #função de criação do modelo
+  # Função de criação do modelo
   def create_model(self):
     #inicializar modelo sequencial
     model = Sequential()
@@ -133,7 +123,6 @@ class DDQL:
     #e retornar o indice de valor máximo de q[0] 
     return np.argmax(q[0])
 
-  #
   def replay(self):
     # Vectorized method for experience replay
     #obter minibatch_size elementos aleatórios dos valores em memory
