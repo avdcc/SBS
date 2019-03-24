@@ -197,7 +197,7 @@ class DDQL:
 
 # Fazer log de um texto para logs.txt
 def log(texto):
-  with open(ENV_NAME + ".txt", "a") as myfile:
+  with open(ENV_NAME + ".csv", "a") as myfile:
     myfile.write(str(texto))
 
 # def logSettings():
