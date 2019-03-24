@@ -17,30 +17,19 @@ import matplotlib.pyplot as plt
 ENV_NAME = "LunarLander-v2" # "Breakout-v0"
 
 #flags:
-# se e para continuar no estado anterior
-LOAD = False
-#se estamos a trreinar o modelo ou não
-TRAIN = True
-# se mostra a imagem do bot a jogar
-RENDER = False
+LOAD = False   # Se e para continuar no estado anterior
+TRAIN = True   # Se estamos a trreinar o modelo ou não
+RENDER = False # Se mostra a imagem do bot a jogar
 
-#
 SAVE_LOGS = False
-# nossa propria funcao de loss ou mse
-OWN_LOSS_FUNCTION = True
-# funcao de loss usada
-LOSS_FUNCTION = 'mse'
+OWN_LOSS_FUNCTION = True # Nossa propria funcao de loss ou mse
+LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
-#nº de episódios para que o modelo seja guardado
-SAVE_COUNTER = 100
-#nº de episódios
-EPISODES = 3000
-#máximo de steps por episódio
-TIMESTEPS = 1000
+SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
+EPISODES = 3000 # Nº de episódios
+TIMESTEPS = 1000 # Máximo de steps por episódio
 
-#nome do ficheiro onde será guardado o modelo
-SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5"
-
+SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
 
 TIME = 0
 
@@ -50,52 +39,43 @@ TIME = 0
 # LOSS = v y_true - y_pred + TIME
 
 def own_loss_function():
-    return lambda y_true,y_pred:\
-            K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
-            #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
+  return lambda y_true,y_pred:\
+    K.mean((y_pred - y_true)*(y_pred - y_true) + 2*TIME,axis=-1)
+    #K.mean(K.square(y_pred - y_true) + TIME ,axis=-1)
 
 # incrementa a variavel global TIME
 def inc_time():
-    global TIME
-    TIME += 1
+  global TIME
+  TIME += 1
 
 # reset da varival global TIME
 def reset_time():
-    global TIME
-    TIME = 0
+  global TIME
+  TIME = 0
 
-#classe do modelo de machine learning
+# ---------------------------------------------------------
+
+# Classe do modelo de machine learning
 class DDQL:
-  #inicialização de modelo
+  # Inicialização de modelo
   def __init__(self, nS, nA):
-    #
     self.nS = nS
-    #
     self.nA = nA
-    #
     self.epsilon = 1
-    #
     self.epsilon_min = 0.01
-    #
     self.epsilon_decay = 0.9993
-    #
     self.gamma = 0.99
-    #
     self.learning_rate = 0.0001
-    #
     self.epochs = 1
-    #
     self.verbose = 0
-    #
     self.minibatch_size = 30
-    #
     self.memory = deque(maxlen=5000)
-    #inicialização do modelo
+    
+    # Inicialização do modelo
     self.model = self.create_model()
-    #
     self.target_model = self.create_model()
 
-  #função de criação do modelo
+  # Função de criação do modelo
   def create_model(self):
     #inicializar modelo
     model = Sequential()
@@ -113,85 +93,56 @@ class DDQL:
 
     return model
 
-  #
   def add_memory(self, s, a, r, s_prime, done):
     self.memory.append((s, a, r, s_prime, done))
 
-  #
   def target_model_update(self):
     self.target_model.set_weights(self.model.get_weights())
 
-  #
   def selectAction(self, s):
-    #
     if np.random.rand() <= self.epsilon:
       return np.random.choice(self.nA)
-    #
     q = self.model.predict(s)
     return np.argmax(q[0])
 
-  #
   def replay(self):
     # Vectorized method for experience replay
-    #
     minibatch = random.sample(self.memory, self.minibatch_size)
-    #
     minibatch = np.array(minibatch)
-    #
     not_done_indices = np.where(minibatch[:, 4] == False)
-    #
     y = np.copy(minibatch[:, 2])
 
     # If minibatch contains any non-terminal states, use separate update rule for those states
     if len(not_done_indices[0]) > 0:
-      #
       predict_sprime = self.model.predict(np.vstack(minibatch[:, 3]))
-      #
       predict_sprime_target = self.target_model.predict(np.vstack(minibatch[:, 3]))
 
       # Non-terminal update rule
-      #
       y[not_done_indices] += np.multiply(self.gamma, \
             predict_sprime_target[not_done_indices, \
             np.argmax(predict_sprime[not_done_indices, :][0], axis=1)][0])
 
-    #
     actions = np.array(minibatch[:, 1], dtype=int)
-    #
     y_target = self.model.predict(np.vstack(minibatch[:, 0]))
-    #
     y_target[range(self.minibatch_size), actions] = y
-    #
     self.model.fit(np.vstack(minibatch[:, 0]), y_target, epochs=self.epochs, verbose=self.verbose)
 
-  #
   def replayIterative(self):
     # Iterative method - this performs the same function as replay() but is not vectorized
-    #
     s_list = []
     y_state_list = []
-    #
     minibatch = random.sample(self.memory, self.minibatch_size)
-    #
     for s, a, r, s_prime, done in minibatch:
-      #
       s_list.append(s)
-      #
       y_action = r
-      #
       if not done:
         y_action = r + self.gamma * np.amax(self.model.predict(s_prime)[0])
 
-      #
       print(y_action)
 
-      #
       y_state = self.model.predict(s)
-      #
       y_state[0][a] = y_action
-      #
       y_state_list.append(y_state)
-    #
     self.model.fit(np.squeeze(s_list), np.squeeze(y_state_list), batch_size=self.minibatch_size, epochs=1, verbose=0)
 
 
@@ -232,24 +183,17 @@ def plotScores(scores):
 #programa principal
 def main():
 
-  #
   np.set_printoptions(precision=2)
-  #
   tdir = tempfile.mkdtemp()
   #criar ambiente gym
   env = gym.make(ENV_NAME)
-  #
   env = wrappers.Monitor(env, tdir, force=True, video_callable=False)
 
-  #
   nS = env.observation_space.shape[0]
-  #
   nA = env.action_space.n
 
-  #
   agent = DDQL(nS, nA)
 
-  #
   scores = []
   scores_window = deque(maxlen=100) # Ultimos 100 scores
 
@@ -259,7 +203,6 @@ def main():
   # continuar o treino
   if (LOAD):
     loadProgress(agent)
-  #
   if (not TRAIN):
     agent.epsilon = 0
     ep = 100
@@ -271,22 +214,18 @@ def main():
   for e in range(ep):
 
     episode_reward = 0
-    #
     s = env.reset()
     # reset variavel global time
     reset_time() if (OWN_LOSS_FUNCTION) else None
-    #
     s = np.reshape(s, [1, nS])
 
     #se estivermos para guardar e estivermos em modo de treino
     if (e%SAVE_COUNTER == 0 and TRAIN):
       saveProgress(agent, e)
 
-    #
     for time in range(TIMESTEPS):
       inc_time() if (OWN_LOSS_FUNCTION) else None
 
-      #
       if (RENDER):
         env.render()
 
