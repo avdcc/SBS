@@ -74,7 +74,7 @@ class DDQL:
     #tamamnho de cada batch usado no modelo
     self.minibatch_size = 30
     self.memory = deque(maxlen=60000)
-    
+
     # Inicialização do modelo
     self.model = self.create_model()
     #
@@ -115,7 +115,7 @@ class DDQL:
       return np.random.choice(self.nA)
     #caso contrário, prever usando o modelo que temos
     q = self.model.predict(s)
-    #e retornar o indice de valor máximo de q[0] 
+    #e retornar o indice de valor máximo de q[0]
     return np.argmax(q[0])
 
   def replay(self):
@@ -137,7 +137,7 @@ class DDQL:
       predict_sprime_target = self.target_model.predict(np.vstack(minibatch[:, 3]))
 
       # Non-terminal update rule
-      #atualizar os indices não terminais em y 
+      #atualizar os indices não terminais em y
       y[not_done_indices] += np.multiply(self.gamma, \
             predict_sprime_target[not_done_indices, \
             np.argmax(predict_sprime[not_done_indices, :][0], axis=1)][0])
@@ -148,7 +148,7 @@ class DDQL:
     y_target = self.model.predict(np.vstack(minibatch[:, 0]))
     #atualizar o acima criado para que nas linhas 0 até minibatch_size-1 nas colunas das acções tenham o valor de y
     y_target[range(self.minibatch_size), actions] = y
-    
+
     #fazer fit do modelo com base no acima calculado
     #usa-se o stack vertical da primeira coluna como data de treino,
     #o y_target como data target, as epocas do modelo e a verbosidade deste também
@@ -172,7 +172,7 @@ class DDQL:
       y_action = r
       #se o modelo não tiver terminado
       if not done:
-        #atualizar a y_action usando o r, o gamma 
+        #atualizar a y_action usando o r, o gamma
         #e o valor máximo da primeira coluna prevista prlo modelo para s_prime
         y_action = r + self.gamma * np.amax(self.model.predict(s_prime)[0])
 
@@ -189,7 +189,7 @@ class DDQL:
     #tem s_list como data de treino, y_state_list como data target,
     #minibatch_size como tamanho de batch, uma época e verbosidade 0
 
-    #nota: colocar do mesmo modo que o replay o epochs e verbose provelvemente é boa ideia 
+    #nota: colocar do mesmo modo que o replay o epochs e verbose provelvemente é boa ideia
 
     self.model.fit(np.squeeze(s_list), np.squeeze(y_state_list), batch_size=self.minibatch_size, epochs=1, verbose=0)
 
@@ -268,13 +268,13 @@ def main():
   scores = []
   scores_window = deque(maxlen=100) # Ultimos 100 scores
 
-  #colocar em ep o número de episódios que vamos querer que ele faça no máximo 
+  #colocar em ep o número de episódios que vamos querer que ele faça no máximo
   ep = EPISODES
 
   # continuar o treino
   if (LOAD):
     loadProgress(agent)
-  
+
   #se não estivermos a treinar o epsilon deve ser 0 de modo a impedir que o modelo seja alterado
   if (not TRAIN):
     agent.epsilon = 0
@@ -299,7 +299,7 @@ def main():
       saveProgress(agent, e)
 
     ultimoGanho = 0
-    
+
     #loop para os timesteps em cada episódio
     for time in range(TIMESTEPS):
       #incrementar a variável global se tivermos definida a nossa função de perda
@@ -353,20 +353,20 @@ def main():
 
     texto = 'Episode: ', e, ' Score: ', '%.2f' % episode_reward, ' Avg_Score: ', '%.2f' % np.average(scores_window), ' Frames: ', time, ' Epsilon: ', '%.2f' % agent.epsilon, '\n'
     print(texto)
-    
+
     csv = str(e) + ";" +  str(episode_reward) + ";" +  str(np.average(scores_window)) + ";" +  str(time) + ";" +  str(agent.epsilon) + ";" +  str(ultimoGanho) +"\n"
     log(csv)
 
 
-    # Considera-se vencido se tiver média de score superior a 200 
+    # Considera-se vencido se tiver média de score superior a 200
     #e estiver em modo de treino(para evitar sair quando deve estar a mostrar)
     # if (np.mean(scores_window)>=200.0 and TRAIN):
     #   end_txt = '\n\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}\tfinal epsilon:{:.2f}\n\n'.format(e-100, np.mean(scores_window),agent.epsilon)
-      
+
     #   print(end_txt)
     #   log(end_txt)
     #   saveProgress(agent,e)
-      
+
     #   plotScores(scores_window)
     #   return scores
 
