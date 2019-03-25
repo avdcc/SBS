@@ -130,31 +130,35 @@ class DDQL:
     minibatch = np.array(minibatch)
     #obter todas as linhas cuja quarta coluna tenha valor False(i.e., estados não terminais)
     not_done_indices = np.where(minibatch[:, 4] == False)
-    #colocar em y os valores da segunda coluna de cada linha de minibatch
+    #colocar em y os valores da segunda coluna de cada linha de minibatch(i.e., as rewards obtidas no passo)
     y = np.copy(minibatch[:, 2])
 
     # If minibatch contains any non-terminal states, use separate update rule for those states
     if len(not_done_indices[0]) > 0:
       #prever usando o modelo do vertical stack das terceiras colunas de cada linha de minibatch
+      #i.e., com base nas observações do ambiente depois
       predict_sprime = self.model.predict(np.vstack(minibatch[:, 3]))
       #fazer o mesmo para o target model
       predict_sprime_target = self.target_model.predict(np.vstack(minibatch[:, 3]))
 
       # Non-terminal update rule
       #atualizar os indices não terminais em y
+      #i.e, as rewards cuja done não é false
       y[not_done_indices] += np.multiply(self.gamma, \
             predict_sprime_target[not_done_indices, \
             np.argmax(predict_sprime[not_done_indices, :][0], axis=1)][0])
 
     #obter as acções que correspondem à coluna 1 de cada linha do minibatch
+    #i.e, as acções tomadas durante o passo
     actions = np.array(minibatch[:, 1], dtype=int)
     #prever usando o modelo sobre o stack vertical da coluna 0 do minibatch
+    #i.e., o ambiente antes de dar o passo
     y_target = self.model.predict(np.vstack(minibatch[:, 0]))
     #atualizar o acima criado para que nas linhas 0 até minibatch_size-1 nas colunas das acções tenham o valor de y
     y_target[range(self.minibatch_size), actions] = y
 
     #fazer fit do modelo com base no acima calculado
-    #usa-se o stack vertical da primeira coluna como data de treino,
+    #usa-se o stack vertical da primeira coluna como data de treino(ambiente antes da ação),
     #o y_target como data target, as epocas do modelo e a verbosidade deste também
     self.model.fit(np.vstack(minibatch[:, 0]), y_target, epochs=self.epochs, verbose=self.verbose)
 
