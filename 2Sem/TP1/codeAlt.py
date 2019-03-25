@@ -121,6 +121,10 @@ class DDQL:
   def replay(self):
     # Vectorized method for experience replay
     #obter minibatch_size elementos aleatórios dos valores em memory
+
+    #notar que em memória temos os seguintes elementos por coluna:
+    #observação antes, acção tomada, reward obtida, observação depois, done
+
     minibatch = random.sample(self.memory, self.minibatch_size)
     #criar um array deles
     minibatch = np.array(minibatch)
