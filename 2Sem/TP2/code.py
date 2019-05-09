@@ -43,6 +43,10 @@ def tFlow():
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
   data['creation_time'] = data['creation_time'].str.split('.', 1)[0][0]
 
+  data['creation_time'] = data['creation_time'].str.rsplit(':', 1)[0][0] # Tirar Segundos
+  # Arredondar Minutos
+  # ???
+
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
@@ -55,6 +59,22 @@ def tFlow():
 # ------------------------------------------------------------------------
 # WEATHER
 
+def func(descriptions):
+
+  # ['céu pouco nublado','nuvens dispersas','nuvens quebradas', 'algumas nuvens','céu claro','chuva fraca','tempo nublado','chuva moderada','nuvens quebrados','neblina','névoa','chuva leve','garoa fraca','chuva','trovoada','trovoada com chuva leve','trovoada com chuva','chuva de intensidade pesado', 'chuva de intensidade pesada'] 
+  lista = []
+
+  for desc in descriptions:
+    if desc in ['céu pouco nublado','nuvens dispersas','nuvens quebradas', 'algumas nuvens','céu claro','tempo nublado','nuvens quebrados']:
+      lista.append(0)
+    elif desc in ['chuva fraca','tempo nublado','chuva moderada','neblina','névoa','chuva leve','garoa fraca','chuva']:
+      lista.append(1)
+    elif desc in ['trovoada','trovoada com chuva leve','trovoada com chuva','chuva de intensidade pesado', 'chuva de intensidade pesada']:
+      lista.append(2)
+    else:
+      lista.append(-100)
+  return(lista)
+
 def tWeather():
 
   data = pd.read_csv(city + '/w.csv', sep=',', encoding='utf-8')
@@ -63,13 +83,24 @@ def tWeather():
   # Split Data
   data['sunrise_date'], data['sunrise_time'] = data['sunrise'].str.split(' ', 1).str
   data['sunrise_time'] = data['sunrise_time'].str.split('.', 1)[0][0]
+  data['sunrise_time'] = data['sunrise_time'].str.rsplit(':', 1)[0][0]
 
   data['sunset_date'], data['sunset_time'] = data['sunset'].str.split(' ', 1).str
   data['sunset_time'] = data['sunset_time'].str.split('.', 1)[0][0]
+  data['sunset_time'] = data['sunset_time'].str.rsplit(':', 1)[0][0]
 
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
   data['creation_time'] = data['creation_time'].str.split('.', 1)[0][0]
-  
+  data['creation_time'] = data['creation_time'].str.rsplit(':', 1)[0][0]
+
+  del data['sunrise'] # Inutil
+  del data['sunset'] # Inutil
+
+  # ----------
+  # State
+  data['state'] = func(data['weather_description']) 
+  del data['rain'] # Inutil
+
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
@@ -82,14 +113,14 @@ def tWeather():
 # INCIDENTS
 
 def tIncidents():
-
   data = pd.read_csv(city + '/ti.csv', sep=',', encoding='utf-8')
 
   # ----------
   # Split Data
   data['incident_date'], data['incident_time'] = data['incident_date'].str.split(' ', 1).str
   data['incident_time'] = data['incident_time'].str.split('.', 1)[0][0]
-  
+  data['incident_time'] = data['incident_time'].str.rsplit(':', 1)[0][0]
+
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
@@ -116,6 +147,20 @@ def tDatas():
 
   # FALTA ADICIONAR OS FERIADOS
 
+# ------------------------------------------------------------------------
+
+def checkInvalid(dSet='/tf.csv'):
+
+  df = pd.read_csv(city + '/w.csv', sep=',', encoding='utf-8')
+  # data = open(city + dSet)
+  # linhas = data.read()
+
+  # print(linhas)
+
+  null_data = df[df.isnull().any(axis=1)]
+
+  print(null_data)
+  # aux = list(data)
 
 # ------------------------------------------------------------------------
 
@@ -124,38 +169,20 @@ city = "Guimaraes"
 # Transformacoes Necessarias
 
 # tFlow()
-# tWeather()
+tWeather()
 # tIncidents()
+# tDatas()
+# checkInvalid()
 
-tDatas()
+
+
+
+
+
 
 
 
 # ------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # ------------------------------------------------------------------------
