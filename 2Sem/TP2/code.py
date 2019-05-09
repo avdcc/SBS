@@ -27,6 +27,19 @@ import pprint
 # ------------------------------------------------------------------------
 # FLOW
 
+def timeFix(time, sep):
+  return(time.split(sep,1)[0])
+
+def cleanRepeated(file):
+
+  lines_seen = set() # holds lines already seen
+  outfile = open(file+"c", "w")
+  for line in open(file, "r"):
+    if line not in lines_seen: # not a duplicate
+      outfile.write(line)
+      lines_seen.add(line)
+  outfile.close()
+
 def tFlow():
 
   data = pd.read_csv(city + '/tf.csv', sep=',', encoding='utf-8')
@@ -41,7 +54,9 @@ def tFlow():
   # ----------
   # Split de YYYY-MM-DD HH:MM:SS.MMMMMM para colunas separadas
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
-  data['creation_time'] = data['creation_time'].str.split('.', 1)[0][0]
+  data['creation_time'] = data['creation_time'].apply(timeFix, args=('.',))
+
+  print(data['creation_time'])
 
   data['creation_time'] = data['creation_time'].str.rsplit(':', 1)[0][0] # Tirar Segundos
   # Arredondar Minutos
@@ -168,8 +183,10 @@ city = "Guimaraes"
 
 # Transformacoes Necessarias
 
+cleanRepeated("./Guimaraes/modti.csv")
+
 # tFlow()
-tWeather()
+# tWeather()
 # tIncidents()
 # tDatas()
 # checkInvalid()
