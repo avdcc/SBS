@@ -79,8 +79,8 @@ def prepare_data(csv_data,split_percentile):
   y_test = test_data['speed_diff']
 
   #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
-  x_train = train_data.drop('speed_diff',axis=1)
-  x_test = test_data.drop('speed_diff',axis=1)
+  x_train = train_data.drop('speed_diff')
+  x_test = test_data.drop('speed_diff')
 
   #4- returnar os valores que obtivemos sobre forma de pares
   return (x_train,y_train),(x_test,y_test)
@@ -105,6 +105,9 @@ def build_model(input_neurons,input_shape,learning_rate):
 
   #a seguir adicionamos camada(s) escondida(s) ao modelo
   #TODO: definir camada(s) escondida(s) do modelo
+
+  #hidden_layer_1 = Dense(_,activation='relu')
+  #model.add(hidden_layer_1)
 
 
   #finalmente definimos a camada de saida
