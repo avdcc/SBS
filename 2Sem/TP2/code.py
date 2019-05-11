@@ -1,14 +1,20 @@
 
 import datetime
-
 import pandas as pd
 import numpy as np
 import tkinter 
 import matplotlib.pyplot as plt
 import re
 
+import pickle
+import pprint
+import sys
+
+
 import matplotlib.pyplot as plt
 from scipy import stats
+
+# ------------------------------------------------------------------------
 # import seaborn as sns
 
 # from ast import literal_eval
@@ -19,23 +25,73 @@ from scipy import stats
 # from nltk.corpus import wordnet
 # from surprise import Reader, Dataset, SVD, evaluate, dump
 
-import pickle
-
-import pprint
 # import warnings; warnings.simplefilter('ignore')
 
 # ------------------------------------------------------------------------
 # FLOW
 
-def timeFix(time, sep):
-  return(time.split(sep,1)[0])
+def dateTimeFixer(par):
+  print(par)
+  flag = False
+  timeFixer(par[0])
 
-def cleanRepeated(file):
 
-  lines_seen = set() # holds lines already seen
-  outfile = open(file+"c", "w")
-  for line in open(file, "r"):
-    if line not in lines_seen: # not a duplicate
+  if flag:
+    par[1] = acresDate(par[1])
+  print(par)
+  return par[0], par[1]
+
+def acresDate (date):
+
+  datetime_object = datetime.datetime.strptime(date, '%Y-%m-%d')
+  datetime_object += datetime.timedelta(days=1)
+
+  return(str(datetime_object).split(" ")[0])
+
+def timeFixer(time):
+
+  lista = time.split(':')
+
+  lista = list(map(int, lista))
+  flagDia = False
+
+  # Fix Segundos (0/60)
+  if (lista[2] > 30):
+    lista[1] += 1
+  lista[2] = "00"
+
+  # Fix Minutos (0/15/30/45)
+  if (lista[1] < 7):
+    lista[1] = "00"
+  elif (lista[1] < 23):
+    lista[1] = "15"
+  elif (lista[1] < 37):
+    lista[1] = "30"
+  elif (lista[1] < 53):
+    lista[1] = "45"
+  else:
+    lista[1] = "00"
+    lista[0] += 1
+
+  # Fix Horas 
+  if (lista[0] == 0):
+    lista[0] = "00"
+  elif(lista[0] == 24):
+    flagDia = True
+
+  return (str(lista[0]) + ":" + lista[1]), flagDia
+
+def stackSplit(time, sep, rev=False):
+  if rev:
+    return (time.rsplit(sep,1)[0])
+  return (time.split(sep,1)[0])
+
+def cleanRepeated(inputFile, outputFile):
+  lines_seen = set() 
+  outfile = open(inputFile, "w")
+
+  for line in open(outputFile, "r"):
+    if line not in lines_seen:
       outfile.write(line)
       lines_seen.add(line)
   outfile.close()
@@ -46,26 +102,46 @@ def tFlow():
 
   # ----------
   # Verificar se a informacao sobre as estradas faz senso
-  streatNumbers = data.road_num.unique()
-  for i in streatNumbers:
-    print(data.query('road_num==%i' % i)['road_name'].unique())
-    print(data.query('road_num==%i' % i)['functional_road_class_desc'].unique())
+  # streatNumbers = data.road_num.unique()
+  # for i in streatNumbers:
+  #   print(data.query('road_num==%i' % i)['road_name'].unique())
+  #   print(data.query('road_num==%i' % i)['functional_road_class_desc'].unique())
 
   # ----------
   # Split de YYYY-MM-DD HH:MM:SS.MMMMMM para colunas separadas
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
-  data['creation_time'] = data['creation_time'].apply(timeFix, args=('.',))
+  data['creation_time'] = data['creation_time'].apply(stackSplit, args=('.',))
+
+  # data['creation'] = data['creation_time'] + "___" + data['creation_date']
+  # data['creation_time'], data['creation_date'] = data['creation'].apply(dateTimeFixer)
+
+  # data['creation_date'], data['creation_time'] = data[['creation_time','creation_date']].apply(dateTimeFixer)
+
+  for i, row in data.iterrows():
+
+    time, date = dateTimeFixer([row["creation_time"],row["creation_date"]])
+    # print([row["creation_time"],row["creation_date"]])
+
+    print(i)
+    # data.at[i,'ifor'] = ifor_val
+
+    data.at['creation_time',i] = time
+    data.at['creation_date',i] = date
+
+
+    data.at['creation_time',i] = i
+
+    pass
+
 
   print(data['creation_time'])
 
-  data['creation_time'] = data['creation_time'].str.rsplit(':', 1)[0][0] # Tirar Segundos
-  # Arredondar Minutos
-  # ???
+
 
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
-  del data['road_name'] # Inutil
+  del data['road_num'] # Inutil
 
   # ----------
   # Save2File
@@ -183,9 +259,11 @@ city = "Guimaraes"
 
 # Transformacoes Necessarias
 
-cleanRepeated("./Guimaraes/modti.csv")
+# cleanRepeated("./Guimaraes/w.csv")
 
-# tFlow()
+# print(acresDate("2019-02-28"))
+
+tFlow()
 # tWeather()
 # tIncidents()
 # tDatas()
