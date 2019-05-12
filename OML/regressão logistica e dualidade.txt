@@ -1,0 +1,16 @@
+A ideia deste ficheiro é ter a explicação do método de regressão logistica primal
+e seu dual
+
+esboço:
+
+primal:
+  ->evolve do método anterior(one layer non-linar neural network) ao introduzir
+  as probabilidades como sendo valor continuo em vez de discreto
+  (i.e., temos qualquer valor para probabilidade entre 0 e 1 em vez de termos
+  apenas 0 ou 1 como possibilidades)
+  ->em vez da função sgn usa a função logistica/sigmoid( sigm(s) = 1/(1 + e(^-s)) )
+  (NOTA: é possivel usar outras funções, mas geralmente usa-se esta)
+  ->a função de perda associada para (xm,ym) é dado(geralmente) por
+  E(xm,ym) = 1/N * sum(- ym*log(y^m) - (1 - ym)*log(1 - y^m))
+  onde y^m é a previsão dada pelo modelo para xm(y^m = sigm(xm,Wtilde) = sigm(Wtilde_T . xmtilde))
+  
