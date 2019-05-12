@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 import math
 
 # ============ FILE load and write stuff ===========================
-def load_csv(filename):
-    dataset = list()
-    with open(filename, 'r') as file:
-        csv_reader = reader(file)
-        for row in csv_reader:
-            if not row:
-                continue
-            dataset.append(row)
-    return dataset
+#def load_csv(filename):
+#    dataset = list()
+#    with open(filename, 'r') as file:
+#        csv_reader = reader(file)
+#        for row in csv_reader:
+#            if not row:
+#                continue
+#            dataset.append(row)
+#    return dataset
 
 def read_asc_data(filename):    
     f= open(filename,'r') 
@@ -62,13 +62,13 @@ def plot_error(err):
     return 
 
 def confusion(Xeval,Yeval,N,ew):
-    C=np.zeros([2,2]);
+    C=np.zeros([2,2])
     for n in range(N):
-        y=predictor(Xeval[n],ew);
-        if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1;
-        if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1;
-        if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1;
-        if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1;  
+        y=predictor(Xeval[n],ew)
+        if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
+        if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
+        if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
+        if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1
     return C
 
 def sigmoid(s):  
@@ -82,7 +82,7 @@ def sigmoid(s):
 #============== Logistic classifier Stuff ==================
 
 def predictor(x,ew):
-    s=ew[0];
+    s=ew[0]
     s=s+np.dot(x,ew[1:])
     sigma=sigmoid(s)
     return sigma
@@ -90,26 +90,26 @@ def predictor(x,ew):
 def cost(X,Y,N,ew):
     En=0;epsi=1.e-12
     for n in range(N):
-        y=predictor(X[n],ew);
-        if y<epsi: y=epsi;
-        if y>1-epsi:y=1-epsi;
+        y=predictor(X[n],ew)
+        if y<epsi: y=epsi
+        if y>1-epsi:y=1-epsi
         En=En+Y[n]*np.log(y)+(1-Y[n])*np.log(1-y)
     En=-En/N
     return En
 
 def update(x,y,eta,ew):
-    r=predictor(x,ew);
-    s=(y-r);
+    r=predictor(x,ew)
+    s=(y-r)
     #r=2*(r-0.5);
     #s=s*eta/(1+3.7*r*r)
-    new_eta=eta
+    #new_eta=eta
     ew[0]=ew[0]+s
     ew[1:]=ew[1:]+s*x
     return ew
 
 def run_epoch(X,Y,N,eta,MAX_EPOCH,ew,err):
-    epsi=0;
-    nb_epoch=0;
+    epsi=0
+    nb_epoch=0
     while(err[-1]>epsi):
         nb_epoch=nb_epoch+1
         if(nb_epoch>MAX_EPOCH): break
@@ -119,7 +119,7 @@ def run_epoch(X,Y,N,eta,MAX_EPOCH,ew,err):
     return ew, err
 
 def run_stocastic(X,Y,N,eta,MAX_ITER,ew,err):
-    epsi=0;
+    epsi=0
     it=0
     while(err[-1]>epsi):
         n=int(np.random.rand()*N)
@@ -146,11 +146,11 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 #plot_data(10,6,n_row,n_col,data)
 
-Nt=int(N*1);
-I=n_row*n_col;
+Nt=int(N*1)
+I=n_row*n_col
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 ew=np.ones([I+1])
-err=[];err.append(cost(Xt,Yt,Nt,ew));
+err=[];err.append(cost(Xt,Yt,Nt,ew))
 
 ew,err=run_stocastic(Xt,Yt,Nt,0.01,200,ew,err);print("\n")
 ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err);print("\n")
@@ -163,7 +163,7 @@ C =confusion(Xt,Yt,Nt,ew)
 print(C)
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
-Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1];
+Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
 print('out-samples error=%f' % (cost(Xe,Ye,Ne,ew)))
 C =confusion(Xe,Ye,Ne,ew)
 print(C)
