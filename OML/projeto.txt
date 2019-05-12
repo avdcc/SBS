@@ -1,0 +1,20 @@
+tema: versão dual do classificador logistico
+
+coisas a fazer:
+  1-descrever método dual
+  2-implementar e validar dito método
+  3-introduzir kernel
+  4-implementar e fazer benchmarking
+
+documentos auxiliares: ver pasta deste documento
+
+
+notas:
+  -primeiro que tudo devemos explicar o método primal, dando exemplo de implementação
+  (similar ao feito numa das aulas)
+  -ao explicar o método dual devemos primeiro explicar as razões de querermos esta versão
+  em vez da primal que lhe corresponde
+  -a implementação deve ocorrer após estar propriamente explicado o método e 
+  devemos comparar com o que temos do primal
+  -os kerneis que usamos serão ou exponencial ou polinomial
+  -...
