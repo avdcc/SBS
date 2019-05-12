@@ -10,6 +10,8 @@ documentos auxiliares: ver pasta deste documento
 
 
 notas:
+  -material_laboratório6 é a pasta do cocalc da disciplina com o classificador logistico
+  (e cujo conteudo está no ficheiro logistic_classifier.py)
   -primeiro que tudo devemos explicar o método primal, dando exemplo de implementação
   (similar ao feito numa das aulas)
   -ao explicar o método dual devemos primeiro explicar as razões de querermos esta versão
