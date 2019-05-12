@@ -27,19 +27,21 @@ from scipy import stats
 
 # import warnings; warnings.simplefilter('ignore')
 
+city = "Guimaraes"
+
 # ------------------------------------------------------------------------
 # FLOW
 
 def dateTimeFixer(par):
-  print(par)
-  flag = False
-  timeFixer(par[0])
 
+  par = par.split("___")
+  # flag = False
+  par[0], flag = timeFixer(par[0])
 
   if flag:
     par[1] = acresDate(par[1])
-  print(par)
-  return par[0], par[1]
+  # print(par)
+  return (str(par[0]) + "___" + str(par[1]))
 
 def acresDate (date):
 
@@ -109,39 +111,21 @@ def tFlow():
 
   # ----------
   # Split de YYYY-MM-DD HH:MM:SS.MMMMMM para colunas separadas
+  data['dateComplete'] = data['creation_date'].apply(stackSplit, args=('.',))
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
   data['creation_time'] = data['creation_time'].apply(stackSplit, args=('.',))
 
-  # data['creation'] = data['creation_time'] + "___" + data['creation_date']
-  # data['creation_time'], data['creation_date'] = data['creation'].apply(dateTimeFixer)
+  data['creation'] = data['creation_time'] + "___" + data['creation_date']
+  data['creation'] = data['creation'].apply(dateTimeFixer)
 
-  # data['creation_date'], data['creation_time'] = data[['creation_time','creation_date']].apply(dateTimeFixer)
-
-  for i, row in data.iterrows():
-
-    time, date = dateTimeFixer([row["creation_time"],row["creation_date"]])
-    # print([row["creation_time"],row["creation_date"]])
-
-    print(i)
-    # data.at[i,'ifor'] = ifor_val
-
-    data.at['creation_time',i] = time
-    data.at['creation_date',i] = date
-
-
-    data.at['creation_time',i] = i
-
-    pass
-
-
-  print(data['creation_time'])
-
+  data['creation_date'], data['creation_time'] = data['creation'].str.split('___', 1).str
 
 
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
   del data['road_num'] # Inutil
+  del data['creation'] # Inutil
 
   # ----------
   # Save2File
@@ -170,22 +154,34 @@ def tWeather():
 
   data = pd.read_csv(city + '/w.csv', sep=',', encoding='utf-8')
 
+  data['dateComplete'] = data['creation_date'].apply(stackSplit, args=('.',))
+
   # ----------
   # Split Data
   data['sunrise_date'], data['sunrise_time'] = data['sunrise'].str.split(' ', 1).str
-  data['sunrise_time'] = data['sunrise_time'].str.split('.', 1)[0][0]
-  data['sunrise_time'] = data['sunrise_time'].str.rsplit(':', 1)[0][0]
+  data['sunrise_time'] = data['sunrise_time'].apply(stackSplit, args=('.',))
+  # data['sunrise_time'] = data['sunrise_time'].apply(stackSplit, args=(':',True))
 
   data['sunset_date'], data['sunset_time'] = data['sunset'].str.split(' ', 1).str
-  data['sunset_time'] = data['sunset_time'].str.split('.', 1)[0][0]
-  data['sunset_time'] = data['sunset_time'].str.rsplit(':', 1)[0][0]
+  data['sunset_time'] = data['sunset_time'].apply(stackSplit, args=('.',))
+  # data['sunset_time'] = data['sunset_time'].apply(stackSplit, args=(':',True))
 
   data['creation_date'], data['creation_time'] = data['creation_date'].str.split(' ', 1).str
-  data['creation_time'] = data['creation_time'].str.split('.', 1)[0][0]
-  data['creation_time'] = data['creation_time'].str.rsplit(':', 1)[0][0]
+  data['creation_time'] = data['creation_time'].apply(stackSplit, args=('.',))
+  # data['creation_time'] = data['creation_time'].apply(stackSplit, args=(':',True))
+
+  
+  
+  
+  data['creation'] = data['creation_time'] + "___" + data['creation_date']
+  data['creation'] = data['creation'].apply(dateTimeFixer)
+
+  data['creation_date'], data['creation_time'] = data['creation'].str.split('___', 1).str
+
 
   del data['sunrise'] # Inutil
   del data['sunset'] # Inutil
+ 
 
   # ----------
   # State
@@ -195,6 +191,14 @@ def tWeather():
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
+  # del data['weather_description']
+  del data['creation']
+
+
+  del data['sunset_date'] # Inutil
+  del data['sunset_time'] # Inutil
+  del data['sunrise_date'] # Inutil
+  del data['sunrise_time'] # Inutil
 
   # ----------
   # Save2File
@@ -206,15 +210,27 @@ def tWeather():
 def tIncidents():
   data = pd.read_csv(city + '/ti.csv', sep=',', encoding='utf-8')
 
+  data['dateComplete'] = data['incident_date']
   # ----------
   # Split Data
   data['incident_date'], data['incident_time'] = data['incident_date'].str.split(' ', 1).str
   data['incident_time'] = data['incident_time'].str.split('.', 1)[0][0]
-  data['incident_time'] = data['incident_time'].str.rsplit(':', 1)[0][0]
+  # data['incident_time'] = data['incident_time'].str.rsplit(':', 1)[0][0]
+
+
+  data['creation'] = data['incident_time'] + "___" + data['incident_date']
+  data['creation'] = data['creation'].apply(dateTimeFixer)
+
+  data['incident_date'], data['incident_time'] = data['creation'].str.split('___', 1).str
 
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
+
+  del data['creation'] # Inutil
+  del data['incident_time'] # Inutil
+  del data['incident_date'] # Inutil
+
 
   # ----------
   # Save2File
@@ -254,8 +270,36 @@ def checkInvalid(dSet='/tf.csv'):
   # aux = list(data)
 
 # ------------------------------------------------------------------------
+ 
+def joiner():
 
-city = "Guimaraes"
+  datatf = pd.read_csv(city + '/modtf.csv', sep=',', encoding='utf-8')
+  dataw = pd.read_csv(city + '/modw.csv', sep=',', encoding='utf-8')
+
+
+  datatf['dateComplete'] = pd.to_datetime(datatf['dateComplete'])
+  dataw['dateComplete'] = pd.to_datetime(dataw['dateComplete'])
+
+  # datatf.index = datatf['dateComplete']
+  # dataw.index = dataw['dateComplete']
+
+  datatf.sort_values(by=['dateComplete'])
+  dataw.sort_values(by=['dateComplete'])
+
+  # datatf = datatf.dropna() 
+  # dataw = dataw.dropna() 
+
+
+  # print(datatf["dateComplete"].dtype)
+  # print(dataw["dateComplete"].dtype)
+
+  # datatf.join(dataw.set_index('creation_date'), how='right' ,lsuffix='_caller', rsuffix='_other')
+  # merged_df = datatf.merge(dataw, how = 'left', on = ['creation_date', 'creation_time'])
+  tol = pd.Timedelta('30 minute')
+  merged_df = pd.merge_asof(datatf ,dataw, right_index=True,left_index=True, direction='nearest', tolerance=tol)
+  # merged_df = pd.merge_asof(datatf,dataw,right_index=True,left_index=True,direction='nearest',tolerance=tol)
+  merged_df.to_csv(city + "/tfw.csv", sep=',', encoding='utf-8', index=False)
+
 
 # Transformacoes Necessarias
 
@@ -263,12 +307,12 @@ city = "Guimaraes"
 
 # print(acresDate("2019-02-28"))
 
-tFlow()
+# tFlow()
 # tWeather()
 # tIncidents()
 # tDatas()
 # checkInvalid()
-
+joiner()
 
 
 
