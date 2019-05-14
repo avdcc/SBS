@@ -13,4 +13,17 @@ primal:
   ->a função de perda associada para (xm,ym) é dado(geralmente) por
   E(xm,ym) = 1/N * sum(- ym*log(y^m) - (1 - ym)*log(1 - y^m))
   onde y^m é a previsão dada pelo modelo para xm(y^m = sigm(xm,Wtilde) = sigm(Wtilde_T . xmtilde))
-  
+  ->  ...
+
+
+dual:
+  -> diferencia-se do anterior em vários campos, mas a diferença maior tem a ver com o modo como
+  calcula o vetor W.
+  -> W na versão primal é um conjunto de pesos independentes dos valores de X
+  -> W na versão dual é calculado como sendo um sumatório de valores(alphas) multiplicados com os
+    vários elementos de X(W = sum_i(alpha_i * X[i]) )
+  -> assim quando estamos a fazer update do modelo devemos alterar os valores dos alphas associados
+    aos valores de X
+  -> o erro associado é dado pela mesma formula que na primal
+  -> as previsões ainda são feita do mesmo modo(com sigmoid), mas usando o W apropriado à dual
+  -> ...
