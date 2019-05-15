@@ -295,8 +295,9 @@ def joiner():
 
   # datatf.join(dataw.set_index('creation_date'), how='right' ,lsuffix='_caller', rsuffix='_other')
   # merged_df = datatf.merge(dataw, how = 'left', on = ['creation_date', 'creation_time'])
-  tol = pd.Timedelta('30 minute')
-  merged_df = pd.merge_asof(datatf ,dataw, right_index=True,left_index=True, direction='nearest', tolerance=tol)
+  tol = pd.Timedelta('30m')
+  merged_df = pd.merge_asof(datatf ,dataw, right_index=True,left_index=True, direction='nearest',tolerance = pd.Timedelta(minutes=30) )
+
   # merged_df = pd.merge_asof(datatf,dataw,right_index=True,left_index=True,direction='nearest',tolerance=tol)
   merged_df.to_csv(city + "/tfw.csv", sep=',', encoding='utf-8', index=False)
 
