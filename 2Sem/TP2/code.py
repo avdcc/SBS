@@ -280,23 +280,14 @@ def joiner():
   datatf['dateComplete'] = pd.to_datetime(datatf['dateComplete'])
   dataw['dateComplete'] = pd.to_datetime(dataw['dateComplete'])
 
-  # datatf.index = datatf['dateComplete']
-  # dataw.index = dataw['dateComplete']
+  datatf.sort_values(by=['dateComplete'], inplace=True)
+  dataw.sort_values(by=['dateComplete'], inplace=True)
 
-  datatf.sort_values(by=['dateComplete'])
-  dataw.sort_values(by=['dateComplete'])
+  merged_df = pd.merge_asof( datatf, dataw, left_on=['dateComplete'], right_on=['dateComplete'], direction='nearest')
 
-  # datatf = datatf.dropna() 
-  # dataw = dataw.dropna() 
+  merged_df.drop(columns=["creation_date_y","creation_time_y"])
+  merged_df.rename(columns={'creation_date_x':'creation_date', 'creation_time_x':'creation_time'}, inplace=True)
 
-
-  # print(datatf["dateComplete"].dtype)
-  # print(dataw["dateComplete"].dtype)
-
-  # datatf.join(dataw.set_index('creation_date'), how='right' ,lsuffix='_caller', rsuffix='_other')
-  # merged_df = datatf.merge(dataw, how = 'left', on = ['creation_date', 'creation_time'])
-  tol = pd.Timedelta('30m')
-  merged_df = pd.merge_asof(datatf ,dataw, right_index=True,left_index=True, direction='nearest',tolerance = pd.Timedelta(minutes=30) )
 
   # merged_df = pd.merge_asof(datatf,dataw,right_index=True,left_index=True,direction='nearest',tolerance=tol)
   merged_df.to_csv(city + "/tfw.csv", sep=',', encoding='utf-8', index=False)
