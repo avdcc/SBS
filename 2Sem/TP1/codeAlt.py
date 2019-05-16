@@ -20,14 +20,14 @@ LOAD = False   # Se e para continuar no estado anterior
 TRAIN = True   # Se estamos a trreinar o modelo ou não
 RENDER = False # Se mostra a imagem do bot a jogar
 
-OWN_LOSS_FUNCTION = False # Nossa propria funcao de loss ou mse
+OWN_LOSS_FUNCTION = True # Nossa propria funcao de loss ou mse
 LOSS_FUNCTION = 'mse' # Funcao de loss usada
 
 SAVE_COUNTER = 100 # Nº de episódios para que o modelo seja guardado
 EPISODES = 3000 # Nº de episódios
 TIMESTEPS = 1000 # Máximo de steps por episódio
 
-SAVED_FILE_LOCATION = "./" + ENV_NAME + ".h5" # Nome do ficheiro onde será guardado o modelo
+SAVED_FILE_LOCATION = "./" + ENV_NAME +"LOSS"+ ".h5" # Nome do ficheiro onde será guardado o modelo
 
 TIME = 0
 
