@@ -64,13 +64,13 @@ def plot_data(row,col,n_row,n_col,data):
         plt.imshow(img,interpolation='none',cmap='binary')
     plt.show()
     
-def plot_tagged_data(row,col,n_row,n_col,X,Y,ew): 
+def plot_tagged_data(row,col,n_row,n_col,X,Y,al,N): 
     fig=plt.figure(figsize=(row,col))
     for n in range(row*col):
         img=np.reshape(X[n],(n_row,n_col))
         fig.add_subplot(row, col, n+1)
         #if(Y[n]>0):#exact case
-        if(predictor(X[n],ew)>0.5):
+        if(predictor(X[n],al,N)>0.5):
             plt.imshow(img,interpolation='none',cmap='RdPu')
         else:
             plt.imshow(img,interpolation='none',cmap='cool')               
@@ -92,10 +92,10 @@ def plot_error(err):
 
 #============== Confusion matrix ==================
 
-def confusion(Xeval,Yeval,N,ew):
+def confusion(Xeval,Yeval,N,al):
     C=np.zeros([2,2])
     for n in range(N):
-        y=predictor(Xeval[n],ew)
+        y=predictor(Xeval[n],al,N)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -184,17 +184,17 @@ def cost(X,Y,N,al):
   #para cada linha de x
   for n in range(N):
     #prevemos o valor de y associado
-    y=predictor(X[n],al,N)
+    y_n = predictor(X[n],al,N)
     #normalizamos o valor
-    if y<epsi: y=epsi
-    if y>1-epsi:y=1-epsi
+    if y_n < epsi: y_n = epsi
+    if y_n > 1-epsi: y_n = 1-epsi
     #calculamos a perda obtida pelo modelo
     #usando a formula y_n*log(y^_n) + (1-y_n)*log(1-y^_n)
     #note-se que a formula real é o inverso desta na reta real(i.e., multiplicada por -1)
     #, mas isto será resolvido mais abaixo
-    err_n = Y[n]*np.log(y)+(1-Y[n])*np.log(1-y)
+    err_n = Y[n]*np.log(y_n)+(1-Y[n])*np.log(1-y_n)
     En = En + err_n
-  #finalmente ajustaamos aquilo que foi referido acima (do -1 estar em falta)
+  #finalmente ajustasmos aquilo que foi referido acima (do -1 estar em falta)
   #e fazemos a média do valor
   En = - En / N
   #retornamos o valor do custo calculado
@@ -202,38 +202,85 @@ def cost(X,Y,N,al):
 
 
 #versão primal
-def update(x,y,eta,ew):
-    r=predictor(x,ew)
-    s=(y-r)
-    #r=2*(r-0.5);
-    #s=s*eta/(1+3.7*r*r)
-    #new_eta=eta
-    ew[0]=ew[0]+s
-    ew[1:]=ew[1:]+s*x
-    return ew
+#def update(x,y,eta,ew):
+#    r=predictor(x,ew)
+#    s=(y-r)
+#    #r=2*(r-0.5);
+#    #s=s*eta/(1+3.7*r*r)
+#    #new_eta=eta
+#    ew[0]=ew[0]+s
+#    ew[1:]=ew[1:]+s*x
+#    return ew
 
 #versão dual
-#TODO: fazer isto
+#dado um elemento de X e seu correspondente valor em Y, 
+#um learning rate eta, os valores  al e o tamanho N
+#faz update dos valores em al com base em previsões feitas
+#para cada linha da base de dados
+def update(x,y,eta,al,N):
+  #prevermos o valor dado pelo modelo
+  pred = predictor(x,al,N)
+  #calculamos o valor para atualizar o modelo com
+  #como sendo a diferença entre o valor previsto e o real
+  #multiplicado pelo nosso learning rate
+  diff = (y-pred) * eta
+
+  #nota: existem cálculos para melhorar os resultados, mas vão ser ignorados de momento
+  #estes são:
+  #pred = predictor(x,al,N)
+  #diff = y - pred
+  #pred = 2 * (pred - 0.5) 
+  #diff = diff * eta/(1+3.7*pred*pred)
+
+  #atualizamos os pesos de al
+  al[0]=al[0] + diff
+  al[1:]=al[1:] + diff*x
+  #returnamos os novos valores
+  return ew
 
 
 
 #versão primal
-def run_stocastic(X,Y,N,eta,MAX_ITER,ew,err):
-    epsi=0
-    it=0
-    while(err[-1]>epsi):
-        n=int(np.random.rand()*N)
-        #new_eta=eta*math.exp(-it/850) 
-        new_eta=eta
-        ew=update(X[n],Y[n],new_eta,ew)  
-        err.append(cost(X,Y,N,ew))
-        print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
-        it=it+1    
-        if(it>MAX_ITER): break
-    return ew, err
+#def run_stocastic(X,Y,N,eta,MAX_ITER,ew,err):
+#    epsi=0
+#    it=0
+#    while(err[-1]>epsi):
+#        n=int(np.random.rand()*N)
+#        #new_eta=eta*math.exp(-it/850) 
+#        new_eta=eta
+#        ew=update(X[n],Y[n],new_eta,ew)  
+#        err.append(cost(X,Y,N,ew))
+#        print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
+#        it=it+1    
+#        if(it>MAX_ITER): break
+#    return ew, err
 
 #versão dual
-#TODO: fazer isto
+#corre o algoritmo estocástico por MAX_ITER de iterações
+def run_stocastic(X,Y,N,eta,MAX_ITER,al,err):
+  #erro minimo que estamos a tentar chegar no programa
+  epsi=0
+  #número de iterações atual
+  it=0
+  #enquanto o erro é maior do que o que queremos
+  #e ainda não chegamos ao número máximo de iterações
+  while((err[-1]>epsi) and (it< MAX_ITER)):
+    #obtemos um valor aleatório da base de dados
+    n=int(np.random.rand()*N)
+    #nota: podemos ajustar o learning rate com base nas iterações
+    #(e de facto é aconcelhavel), mas por agora ficará comentado
+    #new_eta=eta*math.exp(-it/850) 
+    new_eta = eta
+    #atualizamos o valor dos alphas com base no elemento escolhido
+    ew = update(X[n],Y[n],new_eta,al,N)  
+    #adicionamos o custo atual ao array de custos que estamos a acumular
+    err.append(cost(X,Y,N,ew))
+    #debug
+    #print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
+    #aumentamos as iterações feitas
+    it = it + 1    
+  #no final returnamos os valores que calculamos
+  return al, err
 
 
 
