@@ -236,7 +236,7 @@ def update(x,y,eta,al,N):
   al[0]=al[0] + diff
   al[1:]=al[1:] + diff*x
   #returnamos os novos valores
-  return ew
+  return al
 
 
 
@@ -272,9 +272,9 @@ def run_stocastic(X,Y,N,eta,MAX_ITER,al,err):
     #new_eta=eta*math.exp(-it/850) 
     new_eta = eta
     #atualizamos o valor dos alphas com base no elemento escolhido
-    ew = update(X[n],Y[n],new_eta,al,N)  
+    al = update(X[n],Y[n],new_eta,al,N)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
-    err.append(cost(X,Y,N,ew))
+    err.append(cost(X,Y,N,al))
     #debug
     #print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
     #aumentamos as iterações feitas
@@ -310,26 +310,26 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 Nt=int(N*1)
 I=n_row*n_col
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
-ew=np.ones([I+1])
-err=[];err.append(cost(Xt,Yt,Nt,ew))
+al=np.ones([I+1])
+err=[];err.append(cost(Xt,Yt,Nt,al))
 
-ew,err=run_stocastic(Xt,Yt,Nt,0.01,200,ew,err);print("\n")
-ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err);print("\n")
-ew,err=run_stocastic(Xt,Yt,Nt,0.03,1999,ew,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,0.01,200,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,0.1,1999,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,0.03,1999,al,err);print("\n")
 plot_error(err)
 
 
-print('in-samples error=%f ' % (cost(Xt,Yt,Nt,ew)))
-C =confusion(Xt,Yt,Nt,ew)
+print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
+C =confusion(Xt,Yt,Nt,al)
 print(C)
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
 Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
-print('out-samples error=%f' % (cost(Xe,Ye,Ne,ew)))
-C =confusion(Xe,Ye,Ne,ew)
+print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
+C =confusion(Xe,Ye,Ne,al)
 print(C)
-#TP,TN,FP,FN =confusion(Xe,Ye,Ne,ew)
+#TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
-#plot_tagged_data(10,6,n_row,n_col,Xe,Ye,ew)
+#plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
 
 print('bye')
