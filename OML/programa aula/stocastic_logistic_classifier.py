@@ -70,7 +70,7 @@ def plot_tagged_data(row,col,n_row,n_col,X,Y,al,N):
         img=np.reshape(X[n],(n_row,n_col))
         fig.add_subplot(row, col, n+1)
         #if(Y[n]>0):#exact case
-        if(predictor(X[n],al,N)>0.5):
+        if(predictor(X[n],X,al,N)>0.5):
             plt.imshow(img,interpolation='none',cmap='RdPu')
         else:
             plt.imshow(img,interpolation='none',cmap='cool')               
@@ -95,7 +95,7 @@ def plot_error(err):
 def confusion(Xeval,Yeval,N,al):
     C=np.zeros([2,2])
     for n in range(N):
-        y=predictor(Xeval[n],al,N)
+        y=predictor(Xeval[n],Xeval,al,N)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -128,17 +128,17 @@ def sigmoid(s):
 #    return sigma
 
 #versão dual
-# dado um valor de x da base de dados e um array al de pesos aplicados a cada valor xi 
+# dado X,um x seu elemento e um array al de pesos aplicados a cada valor xi 
 # retorna a previsão feita para dito valor 
 #corresponde a sigmoid da transposta de sum_i(al_i*x_tilde_i) com x_tilde, tendo em conta os tildes
-def predictor(x,al,N):
+def predictor(x,X,al,N):
   #relembrar que x não está em forma tilde quando é passado a esta função
   #assim, começamos a nossa soma tirando o primeiro elemento de al, que está sobre forma tilde
   s=al[0]
   #em seguida calculamos o nosso sumatório de al com x
   #para isto funcionar bem temos de começar o valor do sumatório com 
   #o primeiro passo já calculado(por causa de x0 ser array numpy)
-  x0 = x[0]
+  x0 = X[0]
   al0 = al[1]
   sum_xi_ali = x0 * al0
   #agora sumamos com o resto dos elementos
@@ -146,7 +146,7 @@ def predictor(x,al,N):
     #obter elementos atuais
     #relembrar que cada elemento de x é um array numpy de valores 
     #e que cada elemento de al é uma constante
-    x_i = x[i]
+    x_i = X[i]
     al_i = al[i+1]
     #adicionar valores ao sumatório multiplicados
     sum_xi_ali += x_i * al_i
@@ -184,7 +184,7 @@ def cost(X,Y,N,al):
   #para cada linha de x
   for n in range(N):
     #prevemos o valor de y associado
-    y_n = predictor(X[n],al,N)
+    y_n = predictor(X[n],X,al,N)
     #normalizamos o valor
     if y_n < epsi: y_n = epsi
     if y_n > 1-epsi: y_n = 1-epsi
@@ -217,9 +217,9 @@ def cost(X,Y,N,al):
 #um learning rate eta, os valores  al e o tamanho N
 #faz update dos valores em al com base em previsões feitas
 #para cada linha da base de dados
-def update(x,y,eta,al,N):
+def update(x,X,y,eta,al,N):
   #prevermos o valor dado pelo modelo
-  pred = predictor(x,al,N)
+  pred = predictor(x,X,al,N)
   #calculamos o valor para atualizar o modelo com
   #como sendo a diferença entre o valor previsto e o real
   #multiplicado pelo nosso learning rate
@@ -272,7 +272,7 @@ def run_stocastic(X,Y,N,eta,MAX_ITER,al,err):
     #new_eta=eta*math.exp(-it/850) 
     new_eta = eta
     #atualizamos o valor dos alphas com base no elemento escolhido
-    al = update(X[n],Y[n],new_eta,al,N)  
+    al = update(X[n],X,Y[n],new_eta,al,N)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
     err.append(cost(X,Y,N,al))
     #debug
@@ -308,7 +308,7 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 #plot_data(10,6,n_row,n_col,data)
 
 Nt=int(N*1)
-I=n_row*n_col
+I=Nt
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 al=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,al))
