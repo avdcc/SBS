@@ -224,13 +224,11 @@ def update(x,X,y,eta,al,N):
   diff = y-pred
   #segundo: calcular o sumatório dos valores dos elementos de X
   sum = np.sum(X,axis=0)
-  #terceiro: fazer produto dot de x tilde por sum 
-  x_tilde = np.ones([len(x) + 1])
-  x_tilde[0] = 1
-  x_tilde[1:] = x 
-  dot_x_sum = np.dot(x_tilde,sum)
+  #terceiro: fazer produto dot de x  por sum 
+  dot_x_sum = np.dot(x,sum)
   #quarto: atualizar al
-  al = al + (diff*dot_x_sum)
+  al[0] = al[0] + (diff * np.dot(np.ones([len(sum)]),sum))
+  al[1:] = al[1:] + (diff * dot_x_sum)
   #returnamos os novos valores
   return al
 
