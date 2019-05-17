@@ -134,26 +134,22 @@ def sigmoid(s):
 def predictor(x,X,al,N):
   #relembrar que x não está em forma tilde quando é passado a esta função
   #assim, começamos a nossa soma tirando o primeiro elemento de al, que está sobre forma tilde
-  s=al[0]
+  sum_xi_ali = al[0]
   #em seguida calculamos o nosso sumatório de al com x
   #para isto funcionar bem temos de começar o valor do sumatório com 
   #o primeiro passo já calculado(por causa de x0 ser array numpy)
-  x0 = X[0]
-  al0 = al[1]
-  sum_xi_ali = x0 * al0
+  x1 = X[1]
+  al1 = al[1]
+  sum_xi_ali += x1 * al1
   #agora sumamos com o resto dos elementos
-  for i in range(1,N):
-    #obter elementos atuais
-    #relembrar que cada elemento de x é um array numpy de valores 
-    #e que cada elemento de al é uma constante
-    x_i = X[i]
-    al_i = al[i+1]
-    #adicionar valores ao sumatório multiplicados
-    sum_xi_ali += x_i * al_i
+  arr_xi_ali = [X[i] * al[i+1] for i in range(2,N)]
+  sum_xi_ali += np.sum(arr_xi_ali)
   #finalmente fazemos o produto dot entre x e o sumatório que criamos
-  s=s+np.dot(x,sum_xi_ali)
-  #prevemwa a previsão para o nosso valor
+  s=np.dot(sum_xi_ali,x)
+  #calcular a previsão para o nosso valor
   sigma=sigmoid(s)
+  #calcular aproximação
+  sigma = int(round(sigma))
   #e returnamos a previsão feita
   return sigma
 
@@ -227,8 +223,8 @@ def update(x,X,y,eta,al,N):
   #terceiro: fazer produto dot de x  por sum 
   dot_x_sum = np.dot(x,sum)
   #quarto: atualizar al
-  al[0] = al[0] + (diff * np.dot(np.ones([len(sum)]),sum))
-  al[1:] = al[1:] + (diff * dot_x_sum)
+  al[0] = al[0] + eta * ( diff * np.dot(np.ones([len(sum)]),sum) )
+  al[1:] = al[1:] + eta * (diff * dot_x_sum)
   #returnamos os novos valores
   return al
 
@@ -307,9 +303,9 @@ Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 al=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,al))
 
-al,err=run_stocastic(Xt,Yt,Nt,0.01,200,al,err);print("\n")
-al,err=run_stocastic(Xt,Yt,Nt,0.1,1999,al,err);print("\n")
-al,err=run_stocastic(Xt,Yt,Nt,0.03,1999,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,1,200,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,0.1,199,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,0.03,199,al,err);print("\n")
 plot_error(err)
 
 
