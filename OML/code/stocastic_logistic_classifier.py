@@ -220,21 +220,17 @@ def cost(X,Y,N,al):
 def update(x,X,y,eta,al,N):
   #prevermos o valor dado pelo modelo
   pred = predictor(x,X,al,N)
-  #calculamos o valor para atualizar o modelo com
-  #como sendo a diferença entre o valor previsto e o real
-  #multiplicado pelo nosso learning rate
-  diff = (y-pred) * eta
-
-  #nota: existem cálculos para melhorar os resultados, mas vão ser ignorados de momento
-  #estes são:
-  #pred = predictor(x,al,N)
-  #diff = y - pred
-  #pred = 2 * (pred - 0.5) 
-  #diff = diff * eta/(1+3.7*pred*pred)
-
-  #atualizamos os pesos de al
-  al[0]=al[0] + diff
-  al[1:]=al[1:] + diff*x
+  #primeiro: obter y^_N - y_N
+  diff = y-pred
+  #segundo: calcular o sumatório dos valores dos elementos de X
+  sum = np.sum(X,axis=0)
+  #terceiro: fazer produto dot de x tilde por sum 
+  x_tilde = np.ones([len(x) + 1])
+  x_tilde[0] = 1
+  x_tilde[1:] = x 
+  dot_x_sum = np.dot(x_tilde,sum)
+  #quarto: atualizar al
+  al = al + (diff*dot_x_sum)
   #returnamos os novos valores
   return al
 
