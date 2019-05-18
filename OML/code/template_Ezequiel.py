@@ -192,9 +192,9 @@ Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 ew=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,ew))
 
-ew,err=run_stocastic(Xt,Yt,Nt,1,400,ew,err)
-ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err)
-ew,err=run_stocastic(Xt,Yt,Nt,0.03,1999,ew,err)
+ew,err=run_stocastic(Xt,Yt,Nt,1,200,ew,err);print("\n")
+ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err);print("\n")
+ew,err=run_stocastic(Xt,Yt,Nt,0.03,1999,ew,err);print("\n")
 plot_error(err)
 
 print('in-samples error=%f ' % (cost(Xt,Yt,Nt,ew)))

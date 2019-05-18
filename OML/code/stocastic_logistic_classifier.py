@@ -80,7 +80,7 @@ def plot_error(err):
     plt.plot(range(len(err)), err, marker='o')
     plt.xlabel('Iterations')
     plt.ylabel('Number of misclassifications')
-    plt.ylim([0,5])
+    plt.ylim([0,20])
     plt.show()
     return 
 
@@ -104,6 +104,15 @@ def confusion(Xeval,Yeval,N,al):
 
         
 
+def recall(C):
+    return (C[0,0]) / (C[0,0] + C[1,0])
+
+def accuracy(C):
+    return (C[0,0] + C[1,1])/(C[0,0] + C[0,1] + C[1,0] + C[1,1])
+
+def precision(C):
+    return (C[0,0]) / (C[0,0] + C[0,1])
+
 
 
 #============== Logistic classifier Stuff ==================
@@ -121,11 +130,10 @@ def sigmoid(s):
 
 #retorna o valor de sum(alpha_i * X_tilde_i)
 def calc_v(X,al):
-  #inicializar com o valor alpha[0] * X_tilde[0] = alpha[0]
-  res = al[0]
+  X_tilde = np.concatenate( (X,np.ones((X.shape[0],1)) ),axis=1)
   #agora sumamos com o resto dos elementos
-  arr_res = [X[i] * al[i+1] for i in range(N)]
-  res += np.sum(arr_res,axis=0)
+  arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
+  res = np.sum(arr_res,axis=0)
   #e returnamos
   return res
 
@@ -147,8 +155,11 @@ def calc_v(X,al):
 def predictor(x,X,al,N):
   #calculamos o valor de sum_n(alpha_n * X_tilde_n)
   sum_xi_ali = calc_v(X,al)
-  #finalmente fazemos o produto dot entre x e o sumatório que criamos
-  s=np.matmul(sum_xi_ali,x)
+  #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
+  x_tilde = np.ones([len(x) + 1])
+  x_tilde[0] = 1
+  x_tilde[1:] = x
+  s=np.matmul(sum_xi_ali,x_tilde)
   #calcular a previsão para o nosso valor
   sigma=sigmoid(s)
   #calcular aproximação
@@ -227,10 +238,10 @@ def update(x,X,y,eta,al,N):
   x_tilde[1:] = x
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
-  X_tilde = np.concatenate( (X,np.ones((X.shape[0],1)) ),axis=1)
+  X_tilde = np.concatenate( (np.ones((X.shape[0],1)),X),axis=1)
   X_calc = np.array([ np.dot( X_tilde[i],x_tilde ) for i in range(len(X_tilde)) ])
   #quarto: atualizar al
-  al[0] = al[0] + eta * diff
+  al[0] = al[0] + eta * (np.sum(x_tilde) * diff)
   al[1:] = al[1:] + eta * (X_calc * diff)
   #returnamos os novos valores
   return al
@@ -302,27 +313,30 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 #plot_data(10,6,n_row,n_col,data)
 
-Nt=int(N*1)
+training_percentage = 0.5
+Nt=int(N*training_percentage)
 I=Nt
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 al=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,al))
 
-al,err=run_stocastic(Xt,Yt,Nt,1,400,al,err);print("\n")
+al,err=run_stocastic(Xt,Yt,Nt,1,200,al,err);print("\n")
 al,err=run_stocastic(Xt,Yt,Nt,0.1,1999,al,err);print("\n")
 al,err=run_stocastic(Xt,Yt,Nt,0.03,1999,al,err);print("\n")
 plot_error(err)
 
 
-print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
+#print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
 C =confusion(Xt,Yt,Nt,al)
 print(C)
+print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
 Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
-print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
+#print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
 C =confusion(Xe,Ye,Ne,al)
 print(C)
+print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 #plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
