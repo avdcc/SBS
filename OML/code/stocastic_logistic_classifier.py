@@ -130,7 +130,7 @@ def sigmoid(s):
 
 #retorna o valor de sum(alpha_i * X_tilde_i)
 def calc_v(X,al):
-  X_tilde = np.concatenate( (X,np.ones((X.shape[0],1)) ),axis=1)
+  X_tilde = np.array( [ np.insert(X[i], 0, 1, axis=0) for i in range(len(X))] )
   #agora sumamos com o resto dos elementos
   arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
   res = np.sum(arr_res,axis=0)
@@ -238,11 +238,10 @@ def update(x,X,y,eta,al,N):
   x_tilde[1:] = x
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
-  X_tilde = np.concatenate( (np.ones((X.shape[0],1)),X),axis=1)
+  X_tilde = np.array( [ np.insert(X[i], 0, 1, axis=0) for i in range(len(X))] )
   X_calc = np.array([ np.dot( X_tilde[i],x_tilde ) for i in range(len(X_tilde)) ])
   #quarto: atualizar al
-  al[0] = al[0] + eta * (np.sum(x_tilde) * diff)
-  al[1:] = al[1:] + eta * (X_calc * diff)
+  al = al + eta * (X_calc * diff)
   #returnamos os novos valores
   return al
 
@@ -317,7 +316,7 @@ training_percentage = 0.5
 Nt=int(N*training_percentage)
 I=Nt
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
-al=np.ones([I+1])
+al=np.ones([I])
 err=[];err.append(cost(Xt,Yt,Nt,al))
 
 al,err=run_stocastic(Xt,Yt,Nt,1,200,al,err);print("\n")
