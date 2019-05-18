@@ -264,10 +264,8 @@ def run_stocastic(X,Y,N,eta,MAX_ITER,al,err):
   while((err[-1]>epsi) and (it< MAX_ITER)):
     #obtemos um valor aleatório da base de dados
     n=int(np.random.rand()*N)
-    #nota: podemos ajustar o learning rate com base nas iterações
-    #(e de facto é aconcelhavel), mas por agora ficará comentado
-    #new_eta=eta*math.exp(-it/850) 
-    new_eta = eta
+    #update do eta
+    new_eta = eta * math.exp(-it/850)
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(X[n],X,Y[n],new_eta,al,N)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
