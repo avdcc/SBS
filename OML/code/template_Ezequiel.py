@@ -115,8 +115,8 @@ def cost(X,Y,N,ew):
         #previsto
         y_p_i = predictor(X[i],ew)
         #verificar threashold
-        if y_p_i < epsi : y = epsi
-        if y_p_i > 1 - epsi : y = 1 - epsi
+        if y_p_i < epsi : y_p_i = epsi
+        if y_p_i > 1 - epsi : y_p_i = 1 - epsi
         #calcular primeiro elemento da soma
         sum1 = y_i*np.log(y_p_i)
         #calcular segundo elemento da soma
@@ -192,9 +192,9 @@ Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 ew=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,ew))
 
-ew,err=run_stocastic(Xt,Yt,Nt,1,200,ew,err)
-ew,err=run_stocastic(Xt,Yt,Nt,0.1,199,ew,err)
-ew,err=run_stocastic(Xt,Yt,Nt,0.03,199,ew,err)
+ew,err=run_stocastic(Xt,Yt,Nt,1,400,ew,err)
+ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err)
+ew,err=run_stocastic(Xt,Yt,Nt,0.03,1999,ew,err)
 plot_error(err)
 
 print('in-samples error=%f ' % (cost(Xt,Yt,Nt,ew)))
