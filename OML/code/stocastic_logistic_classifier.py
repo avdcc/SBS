@@ -229,13 +229,12 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 #calcular tamanhos
 training_percentage = 0.8
 Nt=int(N*training_percentage)
-I=Nt
 #inicializar X e Y
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 #inicializar array de pesos
-al=np.ones([I])
+al=np.ones([Nt])
 #calcular X tilde
-Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(len(Xt))] )
+Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
