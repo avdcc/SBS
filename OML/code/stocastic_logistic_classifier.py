@@ -156,9 +156,7 @@ def predictor(x,X,X_tilde,al,N):
   #calculamos o valor de sum_n(alpha_n * X_tilde_n)
   sum_xi_ali = calc_v(X_tilde,al)
   #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
-  x_tilde = np.ones([len(x) + 1])
-  x_tilde[0] = 1
-  x_tilde[1:] = x
+  x_tilde = np.insert(x, 0, 1, axis=0)
   s=np.matmul(sum_xi_ali,x_tilde)
   #calcular a previsão para o nosso valor
   sigma=sigmoid(s)
@@ -233,9 +231,7 @@ def update(x,X,X_tilde,y,eta,al,N):
   #obter y^_N - y_N
   diff = int(y-pred)
   #calcular x tilde
-  x_tilde = np.ones([len(x) + 1])
-  x_tilde[0] = 1
-  x_tilde[1:] = x
+  x_tilde = np.insert(x, 0, 1, axis=0)
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
   X_calc = np.array([ np.dot( X_tilde[i],x_tilde ) for i in range(len(X_tilde)) ])
