@@ -185,7 +185,7 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 #plot_data(10,6,n_row,n_col,data)
 
-training_percentage = 0.5
+training_percentage = 0.8
 Nt=int(N*training_percentage)
 I=n_row*n_col
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
@@ -193,8 +193,8 @@ ew=np.ones([I+1])
 err=[];err.append(cost(Xt,Yt,Nt,ew))
 
 ew,err=run_stocastic(Xt,Yt,Nt,1,200,ew,err);print("\n")
-ew,err=run_stocastic(Xt,Yt,Nt,0.1,1999,ew,err);print("\n")
-ew,err=run_stocastic(Xt,Yt,Nt,0.03,1999,ew,err);print("\n")
+ew,err=run_stocastic(Xt,Yt,Nt,0.1,500,ew,err);print("\n")
+ew,err=run_stocastic(Xt,Yt,Nt,0.03,1000,ew,err);print("\n")
 plot_error(err)
 
 print('in-samples error=%f ' % (cost(Xt,Yt,Nt,ew)))
