@@ -161,7 +161,7 @@ def cost(X_tilde,Y,N,al):
 #um learning rate eta, os valores  al e o tamanho N
 #faz update dos valores em al com base em previsões feitas
 #para cada linha da base de dados
-def update(n,X_tilde,y,eta,al,N):
+def update(n,X_tilde,X_calc_mat,y,eta,al):
   #prevermos o valor dado pelo modelo
   pred = predictor(n,X_tilde,al)
   #obter y^_N - y_N
@@ -169,11 +169,11 @@ def update(n,X_tilde,y,eta,al,N):
   #calculos para melhorar previsão
   #pred = 2*(pred - 0.5)
   #diff = diff * eta/(1+3.7*pred*pred)
-  #calcular x tilde
-  x_tilde = X_tilde[n]
+  
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
-  X_calc = np.matmul(X_tilde,x_tilde)
+  #este valor corresponde a X_calc_mat[n]
+  X_calc = X_calc_mat[n] #np.matmul(X_tilde,x_tilde)
   #quarto: atualizar al
   al += eta * diff * X_calc
   #returnamos os novos valores
@@ -184,7 +184,7 @@ def update(n,X_tilde,y,eta,al,N):
 
 #versão dual
 #corre o algoritmo estocástico por MAX_ITER de iterações
-def run_stocastic(X_tilde,Y,N,eta,MAX_ITER,al,err):
+def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
   #erro minimo que estamos a tentar chegar no programa
   epsi=0
   #número de iterações atual
@@ -197,7 +197,7 @@ def run_stocastic(X_tilde,Y,N,eta,MAX_ITER,al,err):
     #update do eta
     new_eta = eta * math.exp(-it/850)
     #atualizamos o valor dos alphas com base no elemento escolhido
-    al = update(n,X_tilde,Y[n],new_eta,al,N)  
+    al = update(n,X_tilde,X_calc_mat,Y[n],new_eta,al)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
     err.append(cost(X_tilde,Y,N,al))
     #debug
@@ -235,13 +235,16 @@ Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 al=np.ones([Nt])
 #calcular X tilde
 Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
+#calculamos uma matriz 3D contendo todos os valores
+#que podemos calcular para usar durante o update
+X_calc_mat = np.array( [ np.matmul(Xt_tilde,Xt_tilde[i]) for i in range(Nt)] )
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(Xt_tilde,Yt,Nt,1,200,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,Yt,Nt,0.1,500,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,Yt,Nt,0.03,1000,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.1,500,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.03,1000,al,err);print("\n")
 #mostrar gráfico de erro
 plot_error(err)
 
