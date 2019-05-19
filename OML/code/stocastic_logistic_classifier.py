@@ -173,7 +173,7 @@ def update(n,X_tilde,y,eta,al,N):
   x_tilde = X_tilde[n]
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
-  X_calc = np.array([ np.dot( X_tilde[i],x_tilde ) for i in range(len(X_tilde)) ])
+  X_calc = np.matmul(X_tilde,x_tilde)
   #quarto: atualizar al
   al += eta * diff * X_calc
   #returnamos os novos valores
