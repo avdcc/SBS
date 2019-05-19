@@ -115,8 +115,12 @@ def predictor(n,X_tilde,al):
   x_tilde = X_tilde[n]
   s = np.dot(sum_xi_ali,x_tilde)
   #calcular a previsão para o nosso valor
+  sigma = sigmoid(s)
   #, arredondado para 0 ou 1
-  sigma = int(sigmoid(s))
+  if(sigma > 0.5):
+    sigma = 1
+  else:
+    sigma = 0
   #e returnamos a previsão feita
   return sigma
 
