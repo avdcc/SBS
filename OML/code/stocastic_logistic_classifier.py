@@ -184,7 +184,7 @@ def update(n,X_tilde,y,eta,al,N):
 
 #versão dual
 #corre o algoritmo estocástico por MAX_ITER de iterações
-def run_stocastic(X,X_tilde,Y,N,eta,MAX_ITER,al,err):
+def run_stocastic(X_tilde,Y,N,eta,MAX_ITER,al,err):
   #erro minimo que estamos a tentar chegar no programa
   epsi=0
   #número de iterações atual
@@ -240,9 +240,9 @@ Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(len(Xt))] )
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(Xt,Xt_tilde,Yt,Nt,1,200,al,err);print("\n")
-al,err=run_stocastic(Xt,Xt_tilde,Yt,Nt,0.1,500,al,err);print("\n")
-al,err=run_stocastic(Xt,Xt_tilde,Yt,Nt,0.03,1000,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,Yt,Nt,1,200,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,Yt,Nt,0.1,500,al,err);print("\n")
+al,err=run_stocastic(Xt_tilde,Yt,Nt,0.03,1000,al,err);print("\n")
 #mostrar gráfico de erro
 plot_error(err)
 
