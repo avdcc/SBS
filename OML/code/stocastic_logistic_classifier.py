@@ -165,7 +165,10 @@ def update(n,X_tilde,y,eta,al,N):
   #prevermos o valor dado pelo modelo
   pred = predictor(n,X_tilde,al)
   #obter y^_N - y_N
-  diff = int(y - pred)
+  diff = y - pred
+  #calculos para melhorar previsão
+  pred = 2*(pred - 0.5)
+  diff = diff * eta/(1+3.7*pred*pred)
   #calcular x tilde
   x_tilde = X_tilde[n]
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
