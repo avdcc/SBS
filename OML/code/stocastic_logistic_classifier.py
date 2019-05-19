@@ -48,7 +48,7 @@ def plot_tagged_data(row,col,n_row,n_col,X,X_tilde,Y,al,N):
         img=np.reshape(X[n],(n_row,n_col))
         fig.add_subplot(row, col, n+1)
         #if(Y[n]>0):#exact case
-        if(predictor(n,X_tilde,al,N)>0.5):
+        if(predictor(n,X_tilde,al)>0.5):
             plt.imshow(img,interpolation='none',cmap='RdPu')
         else:
             plt.imshow(img,interpolation='none',cmap='cool')               
@@ -70,7 +70,7 @@ def confusion(Xeval,Yeval,N,al):
     C=np.zeros([2,2])
     Xeval_tilde = np.array( [ np.insert(Xeval[i], 0, 1, axis=0) for i in range(len(Xeval))] )
     for n in range(N):
-        y=predictor(n,Xeval_tilde,al,N)
+        y=predictor(n,Xeval_tilde,al)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -117,7 +117,7 @@ def calc_v(X_tilde,al):
 # dado X,um x seu elemento e um array al de pesos aplicados a cada valor xi 
 # retorna a previsão feita para dito valor 
 #corresponde a sigmoid da transposta de sum_i(al_i*x_tilde_i) com x_tilde, tendo em conta os tildes
-def predictor(n,X_tilde,al,N):
+def predictor(n,X_tilde,al):
   #calculamos o valor de sum_n(alpha_n * X_tilde_n)
   sum_xi_ali = calc_v(X_tilde,al)
   #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
@@ -146,7 +146,7 @@ def cost(X_tilde,Y,N,al):
   #para cada linha de x
   for n in range(N):
     #prevemos o valor de y associado
-    y_n = predictor(n,X_tilde,al,N)
+    y_n = predictor(n,X_tilde,al)
     #normalizamos o valor
     if y_n < epsi: y_n = epsi
     if y_n > 1-epsi: y_n = 1-epsi
@@ -172,7 +172,7 @@ def cost(X_tilde,Y,N,al):
 #para cada linha da base de dados
 def update(n,X_tilde,y,eta,al,N):
   #prevermos o valor dado pelo modelo
-  pred = predictor(n,X_tilde,al,N)
+  pred = predictor(n,X_tilde,al)
   #obter y^_N - y_N
   diff = int(y - pred)
   #calcular x tilde
