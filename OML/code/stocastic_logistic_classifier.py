@@ -110,13 +110,12 @@ def sigmoid(s):
 def predictor(n,X_tilde,al):
   #calculamos o valor de sum_n(alpha_n * X_tilde_n)
   arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
-  sum_xi_ali = np.sum(arr_res,axis=0)
+  v = np.sum(arr_res,axis=0)
   #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
-  x_tilde = X_tilde[n]
-  s = np.dot(sum_xi_ali,x_tilde)
+  s = np.dot(v,X_tilde[n])
   #calcular a previsão para o nosso valor
   sigma = sigmoid(s)
-  #, arredondado para 0 ou 1
+  #arredondado para 0 ou 1
   if(sigma > 0.5):
     sigma = 1
   else:
@@ -177,7 +176,7 @@ def update(n,X_tilde,X_calc_mat,y,eta,al):
   #para cada linha x_n em X calculamos x_n_tilde tranposto dot x_tilde
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
   #este valor corresponde a X_calc_mat[n]
-  X_calc = X_calc_mat[n] #np.matmul(X_tilde,x_tilde)
+  X_calc = X_calc_mat[n] #np.matmul(X_tilde,X_tilde[n]) 
   #quarto: atualizar al
   al += eta * diff * X_calc
   #returnamos os novos valores
