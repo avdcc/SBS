@@ -102,16 +102,6 @@ def sigmoid(s):
   return (1 / (1 + np.exp(-s)))
 
 
-#retorna o valor de sum(alpha_i * X_tilde_i)
-def calc_v(X_tilde,al):
-  #agora sumamos com o resto dos elementos
-  arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
-  res = np.sum(arr_res,axis=0)
-  #e returnamos
-  return res
-
-
-
 
 #versão dual
 # dado X,um x seu elemento e um array al de pesos aplicados a cada valor xi 
@@ -119,7 +109,8 @@ def calc_v(X_tilde,al):
 #corresponde a sigmoid da transposta de sum_i(al_i*x_tilde_i) com x_tilde, tendo em conta os tildes
 def predictor(n,X_tilde,al):
   #calculamos o valor de sum_n(alpha_n * X_tilde_n)
-  sum_xi_ali = calc_v(X_tilde,al)
+  arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
+  sum_xi_ali = np.sum(arr_res,axis=0)
   #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
   x_tilde = X_tilde[n]
   s = np.dot(sum_xi_ali,x_tilde)
