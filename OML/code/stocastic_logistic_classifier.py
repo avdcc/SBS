@@ -175,8 +175,7 @@ def update(n,X_tilde,y,eta,al,N):
   #e colocamos num array (porque o produto dot entre x_n_tilde e x_tilde dá um valor)
   X_calc = np.array([ np.dot( X_tilde[i],x_tilde ) for i in range(len(X_tilde)) ])
   #quarto: atualizar al
-  factor = diff * eta
-  al = al + (X_calc * factor)
+  al = al + eta * diff * X_calc
   #returnamos os novos valores
   return al
 
