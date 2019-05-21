@@ -108,12 +108,14 @@ def sigmoid(s):
 # dado X,um x seu elemento e um array al de pesos aplicados a cada valor xi 
 # retorna a previsão feita para dito valor 
 #corresponde a sigmoid da transposta de sum_i(al_i*x_tilde_i) com x_tilde, tendo em conta os tildes
-def predictor(n,X_tilde,al):
-  #calculamos o valor de sum_n(alpha_n * X_tilde_n)
-  arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
-  v = np.sum(arr_res,axis=0)
-  #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
-  s = np.dot(v,X_tilde[n])
+def predictor(n,X_calc_mat,al):
+  #calculamos o valor de sum_n(alpha_n * X_tilde_n).x_tilde
+  #para tal começamos por obter o elemento n de X_calc_mat
+  X_calc = X_calc_mat[n]
+  #, depois multiplica-se cada linha desse elemento pelos valores em al
+  X_calc_mult = np.array( [ X_calc[i] * al[i] for i in range(len(X_calc)) ] )
+  #e finalmente faz-se o sumatório dos elementos
+  s = np.sum(X_calc_mult,axis = 0)
   #calcular a previsão para o nosso valor
   sigma = sigmoid(s)
   #e returnamos a previsão feita
@@ -126,7 +128,7 @@ def predictor(n,X_tilde,al):
 #dado a matriz X de features ,o array Y de valores que queremos obter
 #, o número de linhas N da matriz X e a lista de valores alpha al
 #calcula o custo associado(i.e., a perda que o modelo atual tem)
-def cost(X_tilde,Y,N,al):
+def cost(X_calc_mat,Y,N,al):
   #variaveis auxiliares
   #valor da perda, inicializado a 0
   En = 0
@@ -136,7 +138,7 @@ def cost(X_tilde,Y,N,al):
   #para cada linha de x
   for n in range(N):
     #prevemos o valor de y associado
-    y_n = predictor(n,X_tilde,al)
+    y_n = predictor(n,X_calc_mat,al)
     #normalizamos o valor
     if y_n < epsi: y_n = epsi
     if y_n > 1-epsi: y_n = 1-epsi
@@ -160,9 +162,9 @@ def cost(X_tilde,Y,N,al):
 #um learning rate eta, os valores  al e o tamanho N
 #faz update dos valores em al com base em previsões feitas
 #para cada linha da base de dados
-def update(n,X_tilde,X_calc_mat,y,eta,al):
+def update(n,X_calc_mat,y,eta,al):
   #prevermos o valor dado pelo modelo
-  pred = predictor(n,X_tilde,al)
+  pred = predictor(n,X_calc_mat,al)
   #obter y^_N - y_N
   diff = y - pred
   #calculos para melhorar previsão
@@ -183,7 +185,7 @@ def update(n,X_tilde,X_calc_mat,y,eta,al):
 
 #versão dual
 #corre o algoritmo estocástico por MAX_ITER de iterações
-def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
+def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
   #erro minimo que estamos a tentar chegar no programa
   epsi=0
   #número de iterações atual
@@ -196,12 +198,12 @@ def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     #update do eta
     new_eta = eta * math.exp(-it/850)
     #atualizamos o valor dos alphas com base no elemento escolhido
-    al = update(n,X_tilde,X_calc_mat,Y[n],new_eta,al)  
+    al = update(n,X_calc_mat,Y[n],new_eta,al)  
     if(it%20 == 0):
       #renormalizar eta
       pass
     #adicionamos o custo atual ao array de custos que estamos a acumular
-    err.append(cost(X_tilde,Y,N,al))
+    err.append(cost(X_calc_mat,Y,N,al))
     #debug
     print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
     #aumentamos as iterações feitas
@@ -244,11 +246,11 @@ X_calc_mat = np.array( [ np.matmul(Xt_tilde,Xt_tilde[i]) for i in range(Nt)] )
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
 print("\n",al,"\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
 print("\n",al,"\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
 print("\n",al,"\n")
 #mostrar gráfico de erro
 plot_error(err)
