@@ -71,6 +71,7 @@ def confusion(Xeval,Yeval,N,al):
     Xeval_tilde = np.array( [ np.insert(Xeval[i], 0, 1, axis=0) for i in range(len(Xeval))] )
     for n in range(N):
         y=predictor(n,Xeval_tilde,al)
+        print(n,y)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -115,11 +116,6 @@ def predictor(n,X_tilde,al):
   s = np.dot(v,X_tilde[n])
   #calcular a previsão para o nosso valor
   sigma = sigmoid(s)
-  #arredondado para 0 ou 1
-  if(sigma > 0.5):
-    sigma = 1
-  else:
-    sigma = 0
   #e returnamos a previsão feita
   return sigma
 
@@ -201,6 +197,9 @@ def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     new_eta = eta * math.exp(-it/850)
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_tilde,X_calc_mat,Y[n],new_eta,al)  
+    if(it%20 == 0):
+      #renormalizar eta
+      pass
     #adicionamos o custo atual ao array de custos que estamos a acumular
     err.append(cost(X_tilde,Y,N,al))
     #debug
@@ -218,11 +217,11 @@ def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 
 #=========== MAIN CODE ===============
 # read the data file
-#N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line1500.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/my_digit.txt');np.place(data[:,-1], data[:,-1]!=1, [-1])
 print('find %d images of %d X %d pixels' % (N,n_row,n_col))
@@ -230,7 +229,7 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 #plot_data(10,6,n_row,n_col,data)
 
 #calcular tamanhos
-training_percentage = 0.8
+training_percentage = 1
 Nt=int(N*training_percentage)
 #inicializar X e Y
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
@@ -246,8 +245,11 @@ err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
 al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.1,500,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.03,1000,al,err);print("\n")
+print("\n",al,"\n")
+al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
+print("\n",al,"\n")
+al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
+print("\n",al,"\n")
 #mostrar gráfico de erro
 plot_error(err)
 
