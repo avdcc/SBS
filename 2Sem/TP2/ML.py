@@ -171,7 +171,54 @@ def evaluate_model(model,test_data):
 
 #programa principal
 def main():
-  pass
+  #1º passo: preparar dados
+
+  #nome do csv com os dados
+  input_csv = ""
+  #percentagem de dados que serão para treino
+  training_percentile = 0.8
+  #ler data do csv
+  data = read_from_csv_file(input_csv)
+  #preparar dados
+  dataset = prepare_data(data,training_percentile)
+
+
+  #2º passo: inicializar modelo
+
+  #nº de neurónios de entrada do modelo
+  #TODO: colocar isto direito
+  input_neurons = None
+  #forma dos dados de entrada
+  #TODO: colocar isto direito
+  input_shape = None
+  #learning rate do modelo
+  #TODO: verificar se o valor é apropriado
+  learning_rate = 0.0001
+  #construir modelo
+  model = build_model(input_neurons,input_shape,learning_rate)
+
+
+  #3ª passo: treinar modelo com os dados
+
+  #batch size
+  #TODO: ver se o tamanho de batch é apropriado
+  batch_size = 32
+  #nº de épocas que o modelo deve ser treinado
+  #TODO: ajustar se necessário
+  epochs = 1
+  #treinar modelo
+  train_model(model,dataset,batch_size,epochs)
+
+
+  #4º passo: avaliar modelo
+  #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
+  #e a atualizar o modelo, mas ve-se isso depois
+  evaluate_model(model,dataset[1])
+
+  #terminado
+  print("Training terminated")
+
+
 
 
 
