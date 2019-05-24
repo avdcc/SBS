@@ -6,6 +6,7 @@ import pandas as pd
 
 import sklearn
 from sklearn import preprocessing
+from sklearn.preprocessing import LabelEncoder
 
 import tensorflow as tf
 from tensorflow import keras
@@ -58,6 +59,7 @@ def split_matrix(matrix,percentile):
 #requer como parametros os dados do csv do qual lemos dados para usar no nosso modelo
 #e a percentagem de dados que usaremos como dados de treino
 def prepare_data(csv_data,split_percentile):
+
   #nesta função devemos tratar dos dados que temos
   #de modo a que possa ser usado durante o treino do modelo
 
@@ -70,17 +72,32 @@ def prepare_data(csv_data,split_percentile):
   #no nosso caso, queremos prever a coluna "speed_diff" dos dados que nos foram passados
   #assim esta função fará as seguintes coisas:
 
+  #0 - transformar dados não numéricos em classes numéricas
+
+  #para cada coluna
+  for col in csv_data:
+    #processamos as que têm valores não inteiros
+    if(not isinstance(csv_data[col][0],np.int64)):
+      #codificamos usando LabelEncoder, que codifica em inteiros
+      #únicos para cada classe diferente
+      encoder = LabelEncoder()
+      transformed = encoder.fit_transform(csv_data[col])
+      csv_data[col] = transformed
+  
+
   #1- separar os dados em 2:treino e teste
   #,sendo a divisão dada pela split_percentile dos argumentos
   train_data,test_data = split_matrix(csv_data,split_percentile)
+
   
   #2- obter das matrizes a coluna speed_diff e colocar em y_train e y_test os seus valores
   y_train = train_data['speed_diff']
   y_test = test_data['speed_diff']
 
+
   #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
-  x_train = train_data.drop('speed_diff')
-  x_test = test_data.drop('speed_diff')
+  x_train = train_data.drop('speed_diff', axis=1)
+  x_test = test_data.drop('speed_diff', axis=1)
 
   #4- returnar os valores que obtivemos sobre forma de pares
   return (x_train,y_train),(x_test,y_test)
@@ -174,7 +191,7 @@ def main():
   #1º passo: preparar dados
 
   #nome do csv com os dados
-  input_csv = ""
+  input_csv = "/home/iamtruth/mestrado/repositórios/SBS/2Sem/TP2/Guimaraes/tfw.csv"
   #percentagem de dados que serão para treino
   training_percentile = 0.8
   #ler data do csv
@@ -195,7 +212,7 @@ def main():
   #TODO: verificar se o valor é apropriado
   learning_rate = 0.0001
   #construir modelo
-  model = build_model(input_neurons,input_shape,learning_rate)
+  #model = build_model(input_neurons,input_shape,learning_rate)
 
 
   #3ª passo: treinar modelo com os dados
@@ -207,13 +224,13 @@ def main():
   #TODO: ajustar se necessário
   epochs = 1
   #treinar modelo
-  train_model(model,dataset,batch_size,epochs)
+  #train_model(model,dataset,batch_size,epochs)
 
 
   #4º passo: avaliar modelo
   #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
   #e a atualizar o modelo, mas ve-se isso depois
-  evaluate_model(model,dataset[1])
+  #evaluate_model(model,dataset[1])
 
   #terminado
   print("Training terminated")
