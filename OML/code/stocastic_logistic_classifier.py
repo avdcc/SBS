@@ -210,7 +210,8 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     #obtemos um valor aleatório da base de dados
     n=int(np.random.rand()*N)
     #update do eta
-    new_eta = eta * math.exp(-it/850)
+    new_eta = eta* math.exp(-it/850)
+    #new_eta = eta/(2*(it + 1)) 
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_calc_mat,Y[n],new_eta,al)  
     if(it%20 == 0):
@@ -260,12 +261,12 @@ X_calc_mat = calc_linear_kernel(Xt_tilde,1)
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,1,20000,al,err);print("\n")
 print("\n",al,"\n")
-al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
-print("\n",al,"\n")
-al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
-print("\n",al,"\n")
+#al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
+#print("\n",al,"\n")
+#al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
+#print("\n",al,"\n")
 #mostrar gráfico de erro
 plot_error(err)
 
