@@ -6,6 +6,7 @@ import pandas as pd
 
 import sklearn
 from sklearn import preprocessing
+from sklearn.preprocessing import LabelEncoder
 
 import tensorflow as tf
 from tensorflow import keras
@@ -58,6 +59,7 @@ def split_matrix(matrix,percentile):
 #requer como parametros os dados do csv do qual lemos dados para usar no nosso modelo
 #e a percentagem de dados que usaremos como dados de treino
 def prepare_data(csv_data,split_percentile):
+
   #nesta função devemos tratar dos dados que temos
   #de modo a que possa ser usado durante o treino do modelo
 
@@ -70,17 +72,43 @@ def prepare_data(csv_data,split_percentile):
   #no nosso caso, queremos prever a coluna "speed_diff" dos dados que nos foram passados
   #assim esta função fará as seguintes coisas:
 
+
+  #-1 - remover a coluna dateComplete, visto que é-nos inutel 
+  #pois temos creation_date e creation_time
+  #outra coisa: também vamos remover creation_time_y, visto que o creation_date parece ter sempre
+  #os mesmos dados, e o mesmo para creation_date_y
+  csv_data = csv_data.drop('dateComplete', axis=1)
+  csv_data = csv_data.drop('creation_date_y', axis=1)
+  csv_data = csv_data.drop('creation_time_y', axis=1)
+
+  #0 - transformar dados não numéricos em classes numéricas
+
+  #para cada coluna
+  for col in csv_data:
+    #processamos as que têm valores não inteiros
+    if(not isinstance(csv_data[col][0],np.int64)):
+      #codificamos usando LabelEncoder, que codifica em inteiros
+      #únicos para cada classe diferente
+      encoder = LabelEncoder()
+      transformed = encoder.fit_transform(csv_data[col])
+      csv_data[col] = transformed
+  
+  
+
   #1- separar os dados em 2:treino e teste
   #,sendo a divisão dada pela split_percentile dos argumentos
   train_data,test_data = split_matrix(csv_data,split_percentile)
+
   
   #2- obter das matrizes a coluna speed_diff e colocar em y_train e y_test os seus valores
   y_train = train_data['speed_diff']
   y_test = test_data['speed_diff']
 
+
   #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
-  x_train = train_data.drop('speed_diff')
-  x_test = test_data.drop('speed_diff')
+  x_train = train_data.drop('speed_diff', axis=1)
+  x_test = test_data.drop('speed_diff', axis=1)
+
 
   #4- returnar os valores que obtivemos sobre forma de pares
   return (x_train,y_train),(x_test,y_test)
@@ -100,14 +128,17 @@ def build_model(input_neurons,input_shape,learning_rate):
 
   #começamos por adicionar a camada de input do modelo
   #com número de neurónios e forma dados nos argumentos da função
-  input_layer = Dense(input_neurons,input_shape=input_shape)
+  input_layer = Dense(input_neurons,input_shape=input_shape, activation='relu')
   model.add(input_layer)
 
   #a seguir adicionamos camada(s) escondida(s) ao modelo
   #TODO: definir camada(s) escondida(s) do modelo
 
-  #hidden_layer_1 = Dense(_,activation='relu')
-  #model.add(hidden_layer_1)
+  hidden_layer_1 = Dense(int(input_neurons/2),activation='relu')
+  model.add(hidden_layer_1)
+
+  hidden_layer_2 = Dense(int(input_neurons/4),activation='relu')
+  model.add(hidden_layer_2)
 
 
   #finalmente definimos a camada de saida
@@ -147,7 +178,7 @@ def train_model(model,data,batch_size,epochs):
   #de erro do modelo em cada epoca, e não influencia os dados de treino
   model.fit(x_train, y_train, batch_size=batch_size, \
             epochs=epochs, validation_data=(x_test, y_test), \
-            shuffle=True, verbose=0)
+            shuffle=True, verbose=1)
 
 
 
@@ -171,7 +202,54 @@ def evaluate_model(model,test_data):
 
 #programa principal
 def main():
-  pass
+  #1º passo: preparar dados
+
+  #nome do csv com os dados
+  input_csv = "/home/iamtruth/mestrado/repositórios/SBS/2Sem/TP2/Guimaraes/tfw.csv"
+  #percentagem de dados que serão para treino
+  training_percentile = 0.8
+  #ler data do csv
+  data = read_from_csv_file(input_csv)
+  #preparar dados
+  #dataset = (x_train,y_train),(x_test,y_test)
+  dataset = prepare_data(data,training_percentile)
+
+  #2º passo: inicializar modelo
+
+  #nº de neurónios de entrada do modelo
+  #TODO: colocar isto direito
+  input_neurons = 64
+  #forma dos dados de entrada
+  #TODO: colocar isto direito
+  input_shape = (int(len(dataset[0][0].columns)),)
+  #learning rate do modelo
+  #TODO: verificar se o valor é apropriado
+  learning_rate = 0.0001
+  #construir modelo
+  model = build_model(input_neurons,input_shape,learning_rate)
+
+
+  #3ª passo: treinar modelo com os dados
+
+  #batch size
+  #TODO: ver se o tamanho de batch é apropriado
+  batch_size = 32
+  #nº de épocas que o modelo deve ser treinado
+  #TODO: ajustar se necessário
+  epochs = 32
+  #treinar modelo
+  train_model(model,dataset,batch_size,epochs)
+
+
+  #4º passo: avaliar modelo
+  #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
+  #e a atualizar o modelo, mas ve-se isso depois
+  #evaluate_model(model,dataset[1])
+
+  #terminado
+  print("Training terminated")
+
+
 
 
 

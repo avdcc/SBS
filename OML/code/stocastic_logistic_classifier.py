@@ -64,6 +64,20 @@ def plot_error(err):
 
 
 
+#============== Kernel stuff ==================
+
+#calcula kernel linear n para todos os elementos de X_tilde
+def calc_linear_kernel(X_tilde,n):
+  base = np.array( [ np.matmul(X_tilde,X_tilde[i]) for i in range(len(X_tilde)) ] )
+  return np.power( base,n )
+
+#calcular kernel exponencial para todos os elementos de X_tilde
+def calc_exponential_kernel(X_tilde):
+  return np.array( [ np.exp( np.matmul(X_tilde,X_tilde[i]) )  for i in range(X_tilde) ] )
+
+
+
+
 #============== Confusion matrix ==================
 
 def confusion(Xeval,Yeval,N,al):
@@ -71,6 +85,7 @@ def confusion(Xeval,Yeval,N,al):
     Xeval_tilde = np.array( [ np.insert(Xeval[i], 0, 1, axis=0) for i in range(len(Xeval))] )
     for n in range(N):
         y=predictor(n,Xeval_tilde,al)
+        #print(n,y)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -107,19 +122,16 @@ def sigmoid(s):
 # dado X,um x seu elemento e um array al de pesos aplicados a cada valor xi 
 # retorna a previsão feita para dito valor 
 #corresponde a sigmoid da transposta de sum_i(al_i*x_tilde_i) com x_tilde, tendo em conta os tildes
-def predictor(n,X_tilde,al):
-  #calculamos o valor de sum_n(alpha_n * X_tilde_n)
-  arr_res = np.array( [X_tilde[i] * al[i] for i in range(len(X_tilde))] )
-  v = np.sum(arr_res,axis=0)
-  #finalmente fazemos o produto dot entre x_tilde e o sumatório que criamos
-  s = np.dot(v,X_tilde[n])
+def predictor(n,X_calc_mat,al):
+  #calculamos o valor de sum_n(alpha_n * X_tilde_n).x_tilde
+  #para tal começamos por obter o elemento n de X_calc_mat
+  X_calc = X_calc_mat[n]
+  #, depois multiplica-se cada linha desse elemento pelos valores em al
+  X_calc_mult = np.array( [ X_calc[i] * al[i] for i in range(len(X_calc)) ] )
+  #e finalmente faz-se o sumatório dos elementos
+  s = np.sum(X_calc_mult,axis = 0)
   #calcular a previsão para o nosso valor
   sigma = sigmoid(s)
-  #arredondado para 0 ou 1
-  if(sigma > 0.5):
-    sigma = 1
-  else:
-    sigma = 0
   #e returnamos a previsão feita
   return sigma
 
@@ -130,7 +142,7 @@ def predictor(n,X_tilde,al):
 #dado a matriz X de features ,o array Y de valores que queremos obter
 #, o número de linhas N da matriz X e a lista de valores alpha al
 #calcula o custo associado(i.e., a perda que o modelo atual tem)
-def cost(X_tilde,Y,N,al):
+def cost(X_calc_mat,Y,N,al):
   #variaveis auxiliares
   #valor da perda, inicializado a 0
   En = 0
@@ -140,7 +152,7 @@ def cost(X_tilde,Y,N,al):
   #para cada linha de x
   for n in range(N):
     #prevemos o valor de y associado
-    y_n = predictor(n,X_tilde,al)
+    y_n = predictor(n,X_calc_mat,al)
     #normalizamos o valor
     if y_n < epsi: y_n = epsi
     if y_n > 1-epsi: y_n = 1-epsi
@@ -164,9 +176,9 @@ def cost(X_tilde,Y,N,al):
 #um learning rate eta, os valores  al e o tamanho N
 #faz update dos valores em al com base em previsões feitas
 #para cada linha da base de dados
-def update(n,X_tilde,X_calc_mat,y,eta,al):
+def update(n,X_calc_mat,y,eta,al):
   #prevermos o valor dado pelo modelo
-  pred = predictor(n,X_tilde,al)
+  pred = predictor(n,X_calc_mat,al)
   #obter y^_N - y_N
   diff = y - pred
   #calculos para melhorar previsão
@@ -187,7 +199,7 @@ def update(n,X_tilde,X_calc_mat,y,eta,al):
 
 #versão dual
 #corre o algoritmo estocástico por MAX_ITER de iterações
-def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
+def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
   #erro minimo que estamos a tentar chegar no programa
   epsi=0
   #número de iterações atual
@@ -198,11 +210,13 @@ def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     #obtemos um valor aleatório da base de dados
     n=int(np.random.rand()*N)
     #update do eta
-    new_eta = eta * math.exp(-it/850)
+    new_eta = eta* math.exp(-it/850)
+    #new_eta = eta/( 2 * (it + 1) )
+    #new_eta = eta/( (int(it/850) + 2) * (it + 1)) 
     #atualizamos o valor dos alphas com base no elemento escolhido
-    al = update(n,X_tilde,X_calc_mat,Y[n],new_eta,al)  
+    al = update(n,X_calc_mat,Y[n],new_eta,al)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
-    err.append(cost(X_tilde,Y,N,al))
+    err.append(cost(X_calc_mat,Y,N,al))
     #debug
     print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
     #aumentamos as iterações feitas
@@ -218,11 +232,11 @@ def run_stocastic(X_tilde,X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 
 #=========== MAIN CODE ===============
 # read the data file
-#N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line1500.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/my_digit.txt');np.place(data[:,-1], data[:,-1]!=1, [-1])
 print('find %d images of %d X %d pixels' % (N,n_row,n_col))
@@ -230,7 +244,7 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 #plot_data(10,6,n_row,n_col,data)
 
 #calcular tamanhos
-training_percentage = 0.8
+training_percentage = 1
 Nt=int(N*training_percentage)
 #inicializar X e Y
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
@@ -239,15 +253,18 @@ al=np.ones([Nt])
 #calcular X tilde
 Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
-#que podemos calcular para usar durante o update
-X_calc_mat = np.array( [ np.matmul(Xt_tilde,Xt_tilde[i]) for i in range(Nt)] )
+#que podemos calcular para usar durante o update usando o kernel
+X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,1,200,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.1,500,al,err);print("\n")
-al,err=run_stocastic(Xt_tilde,X_calc_mat,Yt,Nt,0.03,1000,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,1,20000,al,err);print("\n")
+#print("\n",al,"\n")
+#al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
+#print("\n",al,"\n")
+#al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
+#print("\n",al,"\n")
 #mostrar gráfico de erro
 plot_error(err)
 
@@ -258,13 +275,14 @@ print(C)
 print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
-Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
-#print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
-C =confusion(Xe,Ye,Ne,al)
-print(C)
-print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
-#TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
-#print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
-#plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
+if(training_percentage < 1):
+  Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
+  #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
+  C =confusion(Xe,Ye,Ne,al)
+  print(C)
+  print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
+  #TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
+  #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
+  #plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
 
 print('bye')
