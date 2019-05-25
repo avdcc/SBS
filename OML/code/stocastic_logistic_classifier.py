@@ -85,7 +85,7 @@ def confusion(Xeval,Yeval,N,al):
     Xeval_tilde = np.array( [ np.insert(Xeval[i], 0, 1, axis=0) for i in range(len(Xeval))] )
     for n in range(N):
         y=predictor(n,Xeval_tilde,al)
-        print(n,y)
+        #print(n,y)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
         if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
@@ -211,12 +211,10 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     n=int(np.random.rand()*N)
     #update do eta
     new_eta = eta* math.exp(-it/850)
-    #new_eta = eta/(2*(it + 1)) 
+    #new_eta = eta/( 2 * (it + 1) )
+    #new_eta = eta/( (int(it/850) + 2) * (it + 1)) 
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_calc_mat,Y[n],new_eta,al)  
-    if(it%20 == 0):
-      #renormalizar eta
-      pass
     #adicionamos o custo atual ao array de custos que estamos a acumular
     err.append(cost(X_calc_mat,Y,N,al))
     #debug
@@ -262,7 +260,7 @@ err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
 al,err=run_stocastic(X_calc_mat,Yt,Nt,1,20000,al,err);print("\n")
-print("\n",al,"\n")
+#print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
 #print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
@@ -277,13 +275,14 @@ print(C)
 print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
-Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
-#print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
-C =confusion(Xe,Ye,Ne,al)
-print(C)
-print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
-#TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
-#print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
-#plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
+if(training_percentage < 1):
+  Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
+  #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
+  C =confusion(Xe,Ye,Ne,al)
+  print(C)
+  print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
+  #TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
+  #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
+  #plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
 
 print('bye')
