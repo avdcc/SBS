@@ -64,6 +64,20 @@ def plot_error(err):
 
 
 
+#============== Kernel stuff ==================
+
+#calcula kernel linear n para todos os elementos de X_tilde
+def calc_linear_kernel(X_tilde,n):
+  base = np.array( [ np.matmul(X_tilde,X_tilde[i]) for i in range(len(X_tilde)) ] )
+  return np.power( base,n )
+
+#calcular kernel exponencial para todos os elementos de X_tilde
+def calc_exponential_kernel(X_tilde):
+  return np.array( [ np.exp( np.matmul(X_tilde,X_tilde[i]) )  for i in range(X_tilde) ] )
+
+
+
+
 #============== Confusion matrix ==================
 
 def confusion(Xeval,Yeval,N,al):
@@ -240,8 +254,8 @@ al=np.ones([Nt])
 #calcular X tilde
 Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
-#que podemos calcular para usar durante o update
-X_calc_mat = np.array( [ np.matmul(Xt_tilde,Xt_tilde[i]) for i in range(Nt)] )
+#que podemos calcular para usar durante o update usando o kernel
+X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
