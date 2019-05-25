@@ -134,11 +134,11 @@ def build_model(input_neurons,input_shape,learning_rate):
   #a seguir adicionamos camada(s) escondida(s) ao modelo
   #TODO: definir camada(s) escondida(s) do modelo
 
-  #hidden_layer_1 = Dense(int(input_neurons/2),activation='relu')
-  #model.add(hidden_layer_1)
+  hidden_layer_1 = Dense(int(input_neurons/2),activation='relu')
+  model.add(hidden_layer_1)
 
-  #hidden_layer_2 = Dense(int(input_neurons/4),activation='relu')
-  #model.add(hidden_layer_2)
+  hidden_layer_2 = Dense(int(input_neurons/4),activation='relu')
+  model.add(hidden_layer_2)
 
 
   #finalmente definimos a camada de saida
@@ -218,10 +218,10 @@ def main():
 
   #nº de neurónios de entrada do modelo
   #TODO: colocar isto direito
-  input_neurons = len(dataset[0][0].columns)
+  input_neurons = 64
   #forma dos dados de entrada
   #TODO: colocar isto direito
-  input_shape = None
+  input_shape = (int(len(dataset[0][0].columns)),)
   #learning rate do modelo
   #TODO: verificar se o valor é apropriado
   learning_rate = 0.0001
