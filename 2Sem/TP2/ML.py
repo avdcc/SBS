@@ -72,6 +72,15 @@ def prepare_data(csv_data,split_percentile):
   #no nosso caso, queremos prever a coluna "speed_diff" dos dados que nos foram passados
   #assim esta função fará as seguintes coisas:
 
+
+  #-1 - remover a coluna dateComplete, visto que é-nos inutel 
+  #pois temos creation_date e creation_time
+  #outra coisa: também vamos remover creation_time_y, visto que o creation_date parece ter sempre
+  #os mesmos dados, e o mesmo para creation_date_y
+  csv_data = csv_data.drop('dateComplete', axis=1)
+  csv_data = csv_data.drop('creation_date_y', axis=1)
+  csv_data = csv_data.drop('creation_time_y', axis=1)
+
   #0 - transformar dados não numéricos em classes numéricas
 
   #para cada coluna
@@ -83,6 +92,7 @@ def prepare_data(csv_data,split_percentile):
       encoder = LabelEncoder()
       transformed = encoder.fit_transform(csv_data[col])
       csv_data[col] = transformed
+  
   
 
   #1- separar os dados em 2:treino e teste
@@ -98,6 +108,7 @@ def prepare_data(csv_data,split_percentile):
   #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
   x_train = train_data.drop('speed_diff', axis=1)
   x_test = test_data.drop('speed_diff', axis=1)
+
 
   #4- returnar os valores que obtivemos sobre forma de pares
   return (x_train,y_train),(x_test,y_test)
@@ -117,14 +128,17 @@ def build_model(input_neurons,input_shape,learning_rate):
 
   #começamos por adicionar a camada de input do modelo
   #com número de neurónios e forma dados nos argumentos da função
-  input_layer = Dense(input_neurons,input_shape=input_shape)
+  input_layer = Dense(input_neurons,input_shape=input_shape, activation='relu')
   model.add(input_layer)
 
   #a seguir adicionamos camada(s) escondida(s) ao modelo
   #TODO: definir camada(s) escondida(s) do modelo
 
-  #hidden_layer_1 = Dense(_,activation='relu')
+  #hidden_layer_1 = Dense(int(input_neurons/2),activation='relu')
   #model.add(hidden_layer_1)
+
+  #hidden_layer_2 = Dense(int(input_neurons/4),activation='relu')
+  #model.add(hidden_layer_2)
 
 
   #finalmente definimos a camada de saida
@@ -164,7 +178,7 @@ def train_model(model,data,batch_size,epochs):
   #de erro do modelo em cada epoca, e não influencia os dados de treino
   model.fit(x_train, y_train, batch_size=batch_size, \
             epochs=epochs, validation_data=(x_test, y_test), \
-            shuffle=True, verbose=0)
+            shuffle=True, verbose=1)
 
 
 
@@ -197,14 +211,14 @@ def main():
   #ler data do csv
   data = read_from_csv_file(input_csv)
   #preparar dados
+  #dataset = (x_train,y_train),(x_test,y_test)
   dataset = prepare_data(data,training_percentile)
-
 
   #2º passo: inicializar modelo
 
   #nº de neurónios de entrada do modelo
   #TODO: colocar isto direito
-  input_neurons = None
+  input_neurons = len(dataset[0][0].columns)
   #forma dos dados de entrada
   #TODO: colocar isto direito
   input_shape = None
@@ -212,7 +226,7 @@ def main():
   #TODO: verificar se o valor é apropriado
   learning_rate = 0.0001
   #construir modelo
-  #model = build_model(input_neurons,input_shape,learning_rate)
+  model = build_model(input_neurons,input_shape,learning_rate)
 
 
   #3ª passo: treinar modelo com os dados
@@ -222,9 +236,9 @@ def main():
   batch_size = 32
   #nº de épocas que o modelo deve ser treinado
   #TODO: ajustar se necessário
-  epochs = 1
+  epochs = 32
   #treinar modelo
-  #train_model(model,dataset,batch_size,epochs)
+  train_model(model,dataset,batch_size,epochs)
 
 
   #4º passo: avaliar modelo
