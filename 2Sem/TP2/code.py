@@ -118,7 +118,7 @@ def tFlow():
   data['creation'] = data['creation_time'] + "___" + data['creation_date']
   data['creation'] = data['creation'].apply(dateTimeFixer)
 
-  data['creation_date'], data['creation_time'] = data['creation'].str.split('___', 1).str
+  data['creation_time'], data['creation_date'] = data['creation'].str.split('___', 1).str
 
 
   # ----------
@@ -176,7 +176,7 @@ def tWeather():
   data['creation'] = data['creation_time'] + "___" + data['creation_date']
   data['creation'] = data['creation'].apply(dateTimeFixer)
 
-  data['creation_date'], data['creation_time'] = data['creation'].str.split('___', 1).str
+  data['creation_time'], data['creation_date'] = data['creation'].str.split('___', 1).str
 
 
   del data['sunrise'] # Inutil
@@ -221,15 +221,15 @@ def tIncidents():
   data['creation'] = data['incident_time'] + "___" + data['incident_date']
   data['creation'] = data['creation'].apply(dateTimeFixer)
 
-  data['incident_date'], data['incident_time'] = data['creation'].str.split('___', 1).str
+  data['incident_time'], data['incident_date'] = data['creation'].str.split('___', 1).str
 
   # ----------
   # Eliminar Inutil
   del data['city_name'] # Inutil
 
   del data['creation'] # Inutil
-  del data['incident_time'] # Inutil
-  del data['incident_date'] # Inutil
+  # del data['incident_time'] # Inutil
+  # del data['incident_date'] # Inutil
 
 
   # ----------
@@ -276,6 +276,8 @@ def joiner():
   datatf = pd.read_csv(city + '/modtf.csv', sep=',', encoding='utf-8')
   dataw = pd.read_csv(city + '/modw.csv', sep=',', encoding='utf-8')
 
+  datas = pd.read_csv(city + '/datas.csv', sep=',', encoding='utf-8')
+
 
   datatf['dateComplete'] = pd.to_datetime(datatf['dateComplete'])
   dataw['dateComplete'] = pd.to_datetime(dataw['dateComplete'])
@@ -285,8 +287,13 @@ def joiner():
 
   merged_df = pd.merge_asof( datatf, dataw, left_on=['dateComplete'], right_on=['dateComplete'], direction='nearest')
 
-  merged_df.drop(columns=["creation_date_y","creation_time_y"])
+  # merged_df.drop(columns=["creation_date_y","creation_time_y"])
+  del merged_df["creation_date_y"]
+  del merged_df["creation_time_y"]
   merged_df.rename(columns={'creation_date_x':'creation_date', 'creation_time_x':'creation_time'}, inplace=True)
+
+
+  merged_df = pd.merge(merged_df, datas, left_on=['creation_date'], right_on=['data'])
 
 
   # merged_df = pd.merge_asof(datatf,dataw,right_index=True,left_index=True,direction='nearest',tolerance=tol)
