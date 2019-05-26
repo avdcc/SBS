@@ -12,7 +12,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import models,layers,metrics,losses
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense,LSTM,Dropout
 import keras.backend as K
 
 
@@ -105,8 +105,14 @@ def prepare_data(csv_data,split_percentile):
 
 
   #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
-  x_train = train_data.drop('speed_diff', axis=1)
-  x_test = test_data.drop('speed_diff', axis=1)
+  x_train = np.array(train_data.drop('speed_diff', axis=1))
+  x_test = np.array(test_data.drop('speed_diff', axis=1))
+
+  #3.5- alterar a forma para estar de acordo com LSMT
+  #(que quer um array (nº elementos total,nº elementos a testar de cada vez, features))
+  #como nós queremos colocar os dadis elemento a elemento, temos de colocar 1
+  x_train = np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1]))
+  x_test = np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))
 
 
   #4- returnar os valores que obtivemos sobre forma de pares
@@ -117,7 +123,15 @@ def prepare_data(csv_data,split_percentile):
 #usa como parametros o número de neurónios de entrada,
 #a forma do input usado e o valor do learning rate do modelo
 #inspiração: https://www.kaggle.com/umerfarooq807/prediction-model-in-keras
-def build_model(input_neurons,input_dim,learning_rate):
+def build_model(input_neurons,input_shape,learning_rate):
+  #dimensão de retorno
+  #como estamos a prever 1 valor numa coluna deve ter valor 1
+  out_dim = 1
+  #número de neurónios a usar na primeira camada escondida
+  hidden_neurons = 500
+  #número a usar na segunda
+  hidden_neurons_2 = int(hidden_neurons/2)
+
   #nesta função devemos criar um modelo usando keras
   #e retornar dito modelo após estar compilado usando Adam
 
@@ -126,27 +140,36 @@ def build_model(input_neurons,input_dim,learning_rate):
   model = Sequential()
 
   #começamos por adicionar a camada de input do modelo
-  #com número de neurónios e forma dados nos argumentos da função
-  input_layer = Dense(input_neurons,input_dim=input_dim, activation='relu')
+  #esta será uma camada LSTM
+  input_layer = LSTM(hidden_neurons,input_shape = (1,input_shape), return_sequences=True)
   model.add(input_layer)
 
-  #a seguir adicionamos camada(s) escondida(s) ao modelo
-  #TODO: definir camada(s) escondida(s) do modelo
+  #em seguida adicionamos uma camada de dropout
+  drop_layer_1 = Dropout(0.2)
+  model.add(drop_layer_1)
 
-  hidden_layer_1 = Dense(int(input_neurons/2),activation='relu')
+
+  #a seguir adicionamos 2 camadas escondidas ao modelo
+  #1ª escondida
+  hidden_layer_1 = LSTM(hidden_neurons_2, return_sequences = True)
   model.add(hidden_layer_1)
 
-  hidden_layer_2 = Dense(int(input_neurons/4),activation='relu')
+  #dropout 2
+  drop_layer_2 = Dropout(0.2)
+  model.add(drop_layer_2)
+
+  #2ª escondida
+  hidden_layer_2 = LSTM(hidden_neurons_2, return_sequences = False)
   model.add(hidden_layer_2)
 
+  #dropout 3
+  drop_layer_3 = Dropout(0.2)
+  model.add(drop_layer_3)
 
   #finalmente definimos a camada de saida
-  #note-se que estamos a calcular um único valor no final(a coluna)
-  #pelo que apenas haverá um neuronio de saida
-  #TODO: verificar se isto é verdade mais tarde
-  #TODO: verificar se está bem a ativação mais tarde
-  output_layer = Dense(1,activation='softmax')
+  output_layer = Dense(out_dim,input_dim = hidden_neurons_2,activation = 'relu')
   model.add(output_layer)
+
 
   #após termos definido o modelo, devemos compilar usando o Adam e o
   #learning rate definido nos argumentos da função
@@ -183,14 +206,14 @@ def train_model(model,data,batch_size,epochs):
 
 #avalia o modelo com base em dados de teste
 #TODO: adicionar parametros e completar a função e estes comentários
-def evaluate_model(model,test_data):
+def evaluate_model(model,test_data,batch_size):
   #nesta função queremos avaliar o modelo dado
   
   #para isso começamos por separar os dados de teste
   x_test,y_test = test_data
 
   #depois avaliamos o modelo
-  finalEval = model.evaluate(x_test,y_test)
+  finalEval = model.evaluate(x_test,y_test,batch_size=batch_size)
   print(finalEval)
 
 
@@ -221,10 +244,10 @@ def main():
   input_neurons = 64
   #forma dos dados de entrada
   #TODO: colocar isto direito
-  input_dim = len(dataset[0][0].columns)
+  input_dim = dataset[0][0].shape[2]
   #learning rate do modelo
   #TODO: verificar se o valor é apropriado
-  learning_rate = 0.01
+  learning_rate = 0.001
   #construir modelo
   model = build_model(input_neurons,input_dim,learning_rate)
 
@@ -233,7 +256,7 @@ def main():
 
   #batch size
   #TODO: ver se o tamanho de batch é apropriado
-  batch_size = 64
+  batch_size = 96
   #nº de épocas que o modelo deve ser treinado
   #TODO: ajustar se necessário
   epochs = 32
@@ -244,7 +267,7 @@ def main():
   #4º passo: avaliar modelo
   #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
   #e a atualizar o modelo, mas ve-se isso depois
-  evaluate_model(model,dataset[1])
+  evaluate_model(model,dataset[1],batch_size)
 
   #terminado
   print("Training terminated")
