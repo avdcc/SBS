@@ -68,8 +68,7 @@ def plot_error(err):
 
 #calcula kernel linear n para todos os elementos de X_tilde
 def calc_linear_kernel(X_tilde,n):
-  base = np.array( [ np.matmul(X_tilde,X_tilde[i]) for i in range(len(X_tilde)) ] )
-  return np.power( base,n )
+  return np.array( [ np.power( np.matmul(X_tilde,X_tilde[i]),n ) for i in range(len(X_tilde)) ] ) 
 
 #calcular kernel exponencial para todos os elementos de X_tilde
 def calc_exponential_kernel(X_tilde):
@@ -255,6 +254,7 @@ Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
 #que podemos calcular para usar durante o update usando o kernel
 X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
+#X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
