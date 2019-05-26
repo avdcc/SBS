@@ -14,7 +14,11 @@ from numpy import round
 #####################
 #     DEFINES       #
 #####################
-OUTPUT = ''
+OUTPUT = 'Guimaraes/modtf.csv'
+NUM_PARAMETROS_SEM_RUAS = 11
+DATA_ind = 9 
+#####################
+
 
 def readFile(name_file):
     with open(name_file,'r') as fd:
@@ -77,16 +81,16 @@ affected_roads = list(map(lambda x: list(map(lambda y: trata_rua(y),x[5:-5])) if
 #print(affected_roads)
 
 def rename_mag(string):
-    if(string == 'Minor'): return 1
-    if(string == 'Moderate'): return 2
-    if(string == 'Major'): return 3
+    if(string == 'minor'): return 1
+    if(string == 'moderate'): return 2
+    if(string == 'major'): return 3
     else: return 0
 
 # -6 5
 # -5 6
 # -4 7
-#magnitude_of_delay_desc = list(map(lambda x: rename_mag(x[-4]),lista))
-magnitude_of_delay_desc = list(map(lambda x: x[-4],lista))
+magnitude_of_delay_desc = list(map(lambda x: rename_mag(x[-4]),lista))
+#magnitude_of_delay_desc = list(map(lambda x: x[-4],lista))
 #print(len(magnitude_of_delay_desc))
 #print(magnitude_of_delay_desc)
 #print(set(magnitude_of_delay_desc))
@@ -140,7 +144,7 @@ def lltl(ll):
     return f.reduce(lambda x,y: x + y , ll)
 # todas as ruas
 #def ruas(): return list(set( from_road + to_road + affected_roads ))
-def ruas(): return filter(lambda x: x!='',list(set( from_road + to_road + lltl(affected_roads) )))
+def ruas(): return list(filter(lambda x: x!='',list(set( from_road + to_road + lltl(affected_roads) ))))
 
 def create_graph():
     graph = {}
@@ -195,7 +199,10 @@ def date_to_tuple(date):
 
 
 def date_to_datetime(date):
-    return datetime.strptime(date,'%Y-%m-%d %H:%M:%S.%f')
+    try:
+        return datetime.strptime(date,'%Y-%m-%d %H:%M:%S.%f')
+    except:
+        return datetime.strptime(date,'%Y-%m-%d %H:%M:%S')
 
 #'2018-07-24 14:58:54.118000'
 def menor_date(date1, date2):
@@ -212,7 +219,7 @@ def ordena(l):
            from_road[i],
            to_road[i],
            affected_roads[i],
-           magnitude_of_delay_desc[i]] for i in l],key= lambda x: x[0])
+           magnitude_of_delay_desc[i]] for i in l],key= lambda x: x[0],reverse=True)
 
 
 def new_date(date,range_date =12):
@@ -298,6 +305,38 @@ def print_conect():
         print(x + '---> ' + str( len(list(g[x])) ))
         #res.add()
 
+def calc_weight(date1,date2,mag):
+    #date1 = date_to_datetime(date1)
+    # diff hours
+    #print(date2)
+    diff = date1 - date2
+    diff = diff.total_seconds()
+    diff = round(float(diff)/(60*60))
+    return max( round(mag - (diff/2)) ,0)
+
+def street_weight(l,ruas,date):
+    calculadas = []
+    res = []
+    for row in l:
+        if(len(calculadas)==len(ruas)):
+            break
+        else:
+            weight = calc_weight(date,row[0],row[-1])
+            if(row[1] not in calculadas):
+                calculadas.append(row[1])
+                res.append((row[1],weight))
+            if(row[2] not in calculadas):
+                calculadas.append(row[2])
+                res.append((row[1],weight))
+            for street in row[3]:
+                if(street not in calculadas):
+                    calculadas.append(street)
+                    res.append((street,weight))
+
+    return res
+            
+
+
 #print('numero de ruas: ' + str(len(list(ruas()))))
 #show_graph()
 #print_conect()
@@ -308,10 +347,43 @@ def print_conect():
 #print(max(acidentes_menor_date('2018-07-24 14:58:54.118000')))
 #print(len(lista))
 
-DataSet = filter_date(ordena(range(len(incident_date))),'2019-02-28 19:45:01.855000',12)
-#Output = readFile(OUTPUT)
-#if(len(Output[1]) == NUM_PARAMETROS_SEM_RUAS):
+# date from_road to_road affected_roads magnitude_of_delay_desc
+#DataSet = filter_date(ordena(range(len(incident_date))),'2019-02-28 19:45:01.855000',12)
+#['road_name', 'functional_road_class_desc', 'current_speed', 'free_flow_speed', 'speed_diff', 'current_travel_time', 'free_flow_travel_time', 'time_diff', 'creation_date', 'datecomplete', 'creation_time']
+Output = readFile(OUTPUT) 
+print(len(Output[0]))
+l_ruas = ruas()
+ruas_ind = dict(list(map(lambda x : (x[1],x[0]),list(enumerate(l_ruas)))))
+#print(ruas_ind)
+if(len(Output[1]) == NUM_PARAMETROS_SEM_RUAS):
     # criar uma 
+    Output[0] += l_ruas
+    Output[1:] = list(map(lambda x: x + len(l_ruas)*[0],Output[1:]))
+#print(len(Output[1]))
+#print(Output[1])
+#print(DataSet[1])
+data_DATASET = {}
+for i,row in enumerate(Output):
+    if(i == 0) or (i == len(Output)-1): continue
+    try:
+        data = row[DATA_ind]
+        #print(data)
+        if(data not in data_DATASET.keys()):
+            DataSet = filter_date(ordena(range(len(incident_date))),data,10)
+            data_DATASET[data] = DataSet
+        else:
+            DataSet = data_DATASET[data]
+        date = date_to_datetime(data)
+        #print(date)
+        # [(street,weight) , ...]
+        sw = street_weight(DataSet,l_ruas,date)
+        for x in sw:
+            Output[ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = x[1]
+    except:
+        None
+
+writeFile('testeout.csv',Output)
+
 
 #for x in DataSet:
 
