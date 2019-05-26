@@ -79,8 +79,6 @@ def prepare_data(csv_data,split_percentile):
   #outra coisa: também vamos remover creation_time_y, visto que o creation_date parece ter sempre
   #os mesmos dados, e o mesmo para creation_date_y
   csv_data = csv_data.drop('dateComplete', axis=1)
-  csv_data = csv_data.drop('creation_date_y', axis=1)
-  csv_data = csv_data.drop('creation_time_y', axis=1)
 
   #0 - transformar dados não numéricos em classes numéricas
 
@@ -207,7 +205,7 @@ def main():
   #1º passo: preparar dados
 
   #nome do csv com os dados
-  input_csv = "/home/iamtruth/mestrado/repositórios/SBS/2Sem/TP2/Guimaraes/tfw.csv"
+  input_csv = "./Guimaraes/tfw.csv"
   #percentagem de dados que serão para treino
   training_percentile = 0.8
   #ler data do csv
