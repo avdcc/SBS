@@ -321,7 +321,8 @@ def street_weight(l,ruas,date):
         if(len(calculadas)==len(ruas)):
             break
         else:
-            weight = calc_weight(date,row[0],row[-1])
+            #weight = calc_weight(date,row[0],row[-1])
+            weight = row[-1]
             if(row[1] not in calculadas):
                 calculadas.append(row[1])
                 res.append((row[1],weight))
@@ -351,38 +352,49 @@ def street_weight(l,ruas,date):
 #DataSet = filter_date(ordena(range(len(incident_date))),'2019-02-28 19:45:01.855000',12)
 #['road_name', 'functional_road_class_desc', 'current_speed', 'free_flow_speed', 'speed_diff', 'current_travel_time', 'free_flow_travel_time', 'time_diff', 'creation_date', 'datecomplete', 'creation_time']
 Output = readFile(OUTPUT) 
-print(len(Output[0]))
+DataSet = ordena(range(len(incident_date)))
+#print(len(Output[0]))
 l_ruas = ruas()
 ruas_ind = dict(list(map(lambda x : (x[1],x[0]),list(enumerate(l_ruas)))))
 #print(ruas_ind)
 if(len(Output[1]) == NUM_PARAMETROS_SEM_RUAS):
     # criar uma 
     Output[0] += l_ruas
-    Output[1:] = list(map(lambda x: x + len(l_ruas)*[0],Output[1:]))
+    Output[1:] = list(map(lambda x: x + len(l_ruas)*['0'],Output[1:]))
 #print(len(Output[1]))
 #print(Output[1])
 #print(DataSet[1])
-data_DATASET = {}
+data_sw = {}
+#DataSet = ordena(range(len(incident_date)))
+#print(DataSet)
+#table_res = Output
 for i,row in enumerate(Output):
     if(i == 0) or (i == len(Output)-1): continue
-    try:
-        data = row[DATA_ind]
-        #print(data)
-        if(data not in data_DATASET.keys()):
-            DataSet = filter_date(ordena(range(len(incident_date))),data,10)
-            data_DATASET[data] = DataSet
-        else:
-            DataSet = data_DATASET[data]
-        date = date_to_datetime(data)
-        #print(date)
-        # [(street,weight) , ...]
-        sw = street_weight(DataSet,l_ruas,date)
-        for x in sw:
-            Output[ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = x[1]
-    except:
-        None
+    if(len(row) < DATA_ind): continue
+    #print(DataSet)
+    data = row[DATA_ind]
+    date = date_to_datetime(data)
 
-writeFile('testeout.csv',Output)
+    if(data not in data_sw.keys()):
+        #print(DataSet)
+        sw = street_weight(DataSet,l_ruas,date)
+        data_sw[data] = sw
+    else:
+        sw = data_sw[data]
+    #print(date)
+    # [(street,weight) , ...]
+
+    #print(sw)
+    for x in sw:
+        if(x[0] != ''):
+            Output[i][ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
+            #table_res[ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
+            #print(x[0])
+            #print('----')
+
+#forEach(lambda x: print(';'.join(x)),table_res)
+#writeFile('testeout.csv',Output)
+writeFile(OUTPUT,Output)
 
 
 #for x in DataSet:
