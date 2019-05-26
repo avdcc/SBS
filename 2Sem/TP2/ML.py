@@ -13,6 +13,7 @@ from tensorflow import keras
 from keras import models,layers,metrics,losses
 from keras.models import Sequential
 from keras.layers import Dense
+import keras.backend as K
 
 
 
@@ -47,7 +48,7 @@ def split_matrix(matrix,percentile):
   #determinar quantas linhas temos na primeira matriz
   num_lines = int(percentile * matriz_len)
   #dividir usando np.split
-  splits = np.split(matrix, [num_lines,matriz_len-num_lines])
+  splits = np.vsplit(matrix, [num_lines])
   first_div = splits[0]
   secound_div = splits[1]
   #returnar ambas as matrizes
@@ -118,7 +119,7 @@ def prepare_data(csv_data,split_percentile):
 #usa como parametros o número de neurónios de entrada,
 #a forma do input usado e o valor do learning rate do modelo
 #inspiração: https://www.kaggle.com/umerfarooq807/prediction-model-in-keras
-def build_model(input_neurons,input_shape,learning_rate):
+def build_model(input_neurons,input_dim,learning_rate):
   #nesta função devemos criar um modelo usando keras
   #e retornar dito modelo após estar compilado usando Adam
 
@@ -128,7 +129,7 @@ def build_model(input_neurons,input_shape,learning_rate):
 
   #começamos por adicionar a camada de input do modelo
   #com número de neurónios e forma dados nos argumentos da função
-  input_layer = Dense(input_neurons,input_shape=input_shape, activation='relu')
+  input_layer = Dense(input_neurons,input_dim=input_dim, activation='relu')
   model.add(input_layer)
 
   #a seguir adicionamos camada(s) escondida(s) ao modelo
@@ -151,7 +152,7 @@ def build_model(input_neurons,input_shape,learning_rate):
 
   #após termos definido o modelo, devemos compilar usando o Adam e o
   #learning rate definido nos argumentos da função
-  loss_func = losses.mean_absolute_error
+  loss_func = 'mse'
   optimizer_used = tf.train.AdamOptimizer(learning_rate)
   metrics_used = ['accuracy']
   model.compile(loss=loss_func, optimizer=optimizer_used,metrics=metrics_used)
@@ -191,7 +192,8 @@ def evaluate_model(model,test_data):
   x_test,y_test = test_data
 
   #depois avaliamos o modelo
-  model.evaluate(x_test,y_test)
+  finalEval = model.evaluate(x_test,y_test)
+  print(finalEval)
 
 
 
@@ -221,19 +223,19 @@ def main():
   input_neurons = 64
   #forma dos dados de entrada
   #TODO: colocar isto direito
-  input_shape = (int(len(dataset[0][0].columns)),)
+  input_dim = len(dataset[0][0].columns)
   #learning rate do modelo
   #TODO: verificar se o valor é apropriado
-  learning_rate = 0.0001
+  learning_rate = 0.01
   #construir modelo
-  model = build_model(input_neurons,input_shape,learning_rate)
+  model = build_model(input_neurons,input_dim,learning_rate)
 
 
   #3ª passo: treinar modelo com os dados
 
   #batch size
   #TODO: ver se o tamanho de batch é apropriado
-  batch_size = 32
+  batch_size = 64
   #nº de épocas que o modelo deve ser treinado
   #TODO: ajustar se necessário
   epochs = 32
@@ -244,7 +246,7 @@ def main():
   #4º passo: avaliar modelo
   #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
   #e a atualizar o modelo, mas ve-se isso depois
-  #evaluate_model(model,dataset[1])
+  evaluate_model(model,dataset[1])
 
   #terminado
   print("Training terminated")
