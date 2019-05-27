@@ -30,7 +30,7 @@ def read_asc_data(filename):
         tmp_str=f.readline()
         tmp_arr=tmp_str[:-1].split(' ')       
         for i in range(n_row*n_col+1):
-            data[n][i]=int(tmp_arr[i])
+            data[n][i]=float(tmp_arr[i])
     f.close() 
     return N,n_row,n_col,data
 
@@ -79,11 +79,10 @@ def calc_exponential_kernel(X_tilde):
 
 #============== Confusion matrix ==================
 
-def confusion(Xeval,Yeval,N,al):
+def confusion(X_calc_mat,Yeval,N,al):
     C=np.zeros([2,2])
-    Xeval_tilde = np.array( [ np.insert(Xeval[i], 0, 1, axis=0) for i in range(len(Xeval))] )
     for n in range(N):
-        y=predictor(n,Xeval_tilde,al)
+        y=predictor(n,X_calc_mat,al)
         #print(n,y)
         if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
         if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
@@ -200,9 +199,9 @@ def update(n,X_calc_mat,y,eta,al):
 #corre o algoritmo estocástico por MAX_ITER de iterações
 def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
   #erro minimo que estamos a tentar chegar no programa
-  epsi=0
+  epsi = 1e-8
   #número de iterações atual
-  it=0
+  it = 0
   #enquanto o erro é maior do que o que queremos
   #e ainda não chegamos ao número máximo de iterações
   while((err[-1]>epsi) and (it< MAX_ITER)):
@@ -210,8 +209,13 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     n=int(np.random.rand()*N)
     #update do eta
     new_eta = eta* math.exp(-it/850)
+
     #new_eta = eta/( 2 * (it + 1) )
     #new_eta = eta/( (int(it/850) + 2) * (it + 1)) 
+
+    #TODO: colcoar a ter em conta a variância do erro
+    #new_eta = eta 
+
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_calc_mat,Y[n],new_eta,al)  
     #adicionamos o custo atual ao array de custos que estamos a acumular
@@ -231,7 +235,8 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 
 #=========== MAIN CODE ===============
 # read the data file
-N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
@@ -242,8 +247,16 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 #plot_data(10,6,n_row,n_col,data)
 
+
+#transformação base de dados quadratica
+#(x1,x2) -> (sqrt(2)*x1,sqrt(2)*x2,x1*x1,x2*x2,sqrt(2)*x1*x2)
+
+
+#shuffle dos dados
+np.random.shuffle(data)
+
 #calcular tamanhos
-training_percentage = 1
+training_percentage = 0.8
 Nt=int(N*training_percentage)
 #inicializar X e Y
 Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
@@ -259,7 +272,7 @@ X_calc_mat = calc_linear_kernel(Xt_tilde,1)
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(X_calc_mat,Yt,Nt,1,20000,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,1,10000,al,err);print("\n")
 #print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
 #print("\n",al,"\n")
@@ -270,7 +283,7 @@ plot_error(err)
 
 
 #print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
-C =confusion(Xt,Yt,Nt,al)
+C =confusion(X_calc_mat,Yt,Nt,al)
 print(C)
 print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
