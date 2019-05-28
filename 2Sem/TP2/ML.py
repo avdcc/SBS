@@ -76,8 +76,6 @@ def prepare_data(csv_data,split_percentile):
 
   #-1 - remover a coluna dateComplete, visto que é-nos inutel 
   #pois temos creation_date e creation_time
-  #outra coisa: também vamos remover creation_time_y, visto que o creation_date parece ter sempre
-  #os mesmos dados, e o mesmo para creation_date_y
   csv_data = csv_data.drop('dateComplete', axis=1)
 
   #0 - transformar dados não numéricos em classes numéricas
@@ -183,7 +181,7 @@ def build_model(input_neurons,input_shape,learning_rate):
 
 
 #treina o modelo que lhe é dado com base nos dados que temos
-#TODO: adicionar parametros e completar a função e estes comentários
+#efetivamente corresponde a um fit do modelo com dados apropriados
 def train_model(model,data,batch_size,epochs):
   #nesta função queremos treinar o modelo usando os dados que nos foram dados
   
@@ -204,8 +202,7 @@ def train_model(model,data,batch_size,epochs):
 
 
 
-#avalia o modelo com base em dados de teste
-#TODO: adicionar parametros e completar a função e estes comentários
+#avalia o modelo com base em dados de teste, tendo em conta o tamanho de batch
 def evaluate_model(model,test_data,batch_size):
   #nesta função queremos avaliar o modelo dado
   
@@ -240,13 +237,10 @@ def main():
   #2º passo: inicializar modelo
 
   #nº de neurónios de entrada do modelo
-  #TODO: colocar isto direito
   input_neurons = 64
   #forma dos dados de entrada
-  #TODO: colocar isto direito
   input_dim = dataset[0][0].shape[2]
   #learning rate do modelo
-  #TODO: verificar se o valor é apropriado
   learning_rate = 0.001
   #construir modelo
   model = build_model(input_neurons,input_dim,learning_rate)
@@ -255,18 +249,14 @@ def main():
   #3ª passo: treinar modelo com os dados
 
   #batch size
-  #TODO: ver se o tamanho de batch é apropriado
   batch_size = 96
   #nº de épocas que o modelo deve ser treinado
-  #TODO: ajustar se necessário
   epochs = 32
   #treinar modelo
   train_model(model,dataset,batch_size,epochs)
 
 
   #4º passo: avaliar modelo
-  #TODO: provavelmente neste passo e no anterior estaremos a fazer loop
-  #e a atualizar o modelo, mas ve-se isso depois
   evaluate_model(model,dataset[1],batch_size)
 
   #terminado

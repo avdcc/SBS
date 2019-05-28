@@ -212,9 +212,23 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 
     #new_eta = eta/( 2 * (it + 1) )
     #new_eta = eta/( (int(it/850) + 2) * (it + 1)) 
+    
+    #ideia: observamos uma janela de certo tamanho de erros e calculamos a média
+    #depois vemos se essa média está próxima dos últimos valores de erro calculados
+    #se estiver, reduzimos o eta
 
-    #TODO: colcoar a ter em conta a variância do erro
-    #new_eta = eta 
+    #tamanho da janela: MAX_ITER/10
+    window_size = int(MAX_ITER/10)
+    #se tivermos elementos suficientes em err(equivalente a dizer que já valor superior a window_size em it)
+    if(it > window_size):
+      #obtemos os elementos da nossa janela
+      #e calculamos a média
+      med_err_window = np.mean(err[-window_size])
+      #vemos se a média dos últimos window_size/10 elementos está perto de med_err_window
+      sub_window_size = int(window_size/10)
+      med_sub_window = np.mean(err[-sub_window_size])
+      #perto significa: med_sub_window = +/- 10% med_err_window
+      if()
 
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_calc_mat,Y[n],new_eta,al)  
