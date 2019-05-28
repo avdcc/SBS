@@ -7,6 +7,7 @@ import pandas as pd
 import sklearn
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import StratifiedKFold
 
 import tensorflow as tf
 from tensorflow import keras
@@ -42,17 +43,17 @@ def read_from_csv_file(filename,seperator=None):
 #, retornando 2 matrizes: uma com percentagem % de linhas da matriz
 #e a outra com (100-percentagem)% de linhas da matriz
 #nota: as linhas são para a mesma percentagem e mesma matriz sempre as mesmas
-def split_matrix(matrix,percentile):
-  #tamanho da matriz
-  matriz_len = len(matrix)
-  #determinar quantas linhas temos na primeira matriz
-  num_lines = int(percentile * matriz_len)
-  #dividir usando np.split
-  splits = np.vsplit(matrix, [num_lines])
-  first_div = splits[0]
-  secound_div = splits[1]
-  #returnar ambas as matrizes
-  return first_div,secound_div
+#def split_matrix(matrix,percentile):
+#  #tamanho da matriz
+#  matriz_len = len(matrix)
+#  #determinar quantas linhas temos na primeira matriz
+#  num_lines = int(percentile * matriz_len)
+#  #dividir usando np.split
+#  splits = np.vsplit(matrix, [num_lines])
+#  first_div = splits[0]
+#  secound_div = splits[1]
+#  #returnar ambas as matrizes
+#  return first_div,secound_div
 
 
 
@@ -67,8 +68,6 @@ def prepare_data(csv_data,split_percentile):
   #temos portanto que retornar os dados de treino separados nas colunas
   #que estamos a usar para criar a previsão(x_train)
   #e a coluna que queremos prever(y_train)
-  #e retornar o equivalente para os dados de teste
-  #(x_test e y_test, respetivamente)
 
   #no nosso caso, queremos prever a coluna "speed_diff" dos dados que nos foram passados
   #assim esta função fará as seguintes coisas:
@@ -94,27 +93,23 @@ def prepare_data(csv_data,split_percentile):
 
   #1- separar os dados em 2:treino e teste
   #,sendo a divisão dada pela split_percentile dos argumentos
-  train_data,test_data = split_matrix(csv_data,split_percentile)
+  #train_data,test_data = split_matrix(csv_data,split_percentile)
 
   
-  #2- obter das matrizes a coluna speed_diff e colocar em y_train e y_test os seus valores
-  y_train = train_data['speed_diff']
-  y_test = test_data['speed_diff']
+  #2- obter das matrizes a coluna speed_diff e colocar em y_train os seus valores
+  y_train = csv_data['speed_diff']
 
-
-  #3 - retirar das matrizes a coluna que obtivemos atrás e colocar o resultado em x_train e x_test
-  x_train = np.array(train_data.drop('speed_diff', axis=1))
-  x_test = np.array(test_data.drop('speed_diff', axis=1))
+  #3 - retirar das matriz a coluna que obtivemos atrás e colocar o resultado em x_train
+  x_train = np.array(csv_data.drop('speed_diff', axis=1))
 
   #3.5- alterar a forma para estar de acordo com LSMT
   #(que quer um array (nº elementos total,nº elementos a testar de cada vez, features))
   #como nós queremos colocar os dadis elemento a elemento, temos de colocar 1
   x_train = np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1]))
-  x_test = np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))
 
 
   #4- returnar os valores que obtivemos sobre forma de pares
-  return (x_train,y_train),(x_test,y_test)
+  return (x_train,y_train)
 
 
 #cria o modelo com base em vários parametros e retorna-o compilado com Adam
@@ -205,13 +200,13 @@ def train_model(model,data,batch_size,epochs):
 #avalia o modelo com base em dados de teste, tendo em conta o tamanho de batch
 def evaluate_model(model,test_data,batch_size):
   #nesta função queremos avaliar o modelo dado
-  
   #para isso começamos por separar os dados de teste
   x_test,y_test = test_data
-
   #depois avaliamos o modelo
   finalEval = model.evaluate(x_test,y_test,batch_size=batch_size)
-  print(finalEval)
+  #returnar valor
+  return finalEval
+  
 
 
 
@@ -232,32 +227,64 @@ def main():
   data = read_from_csv_file(input_csv)
   #preparar dados
   #dataset = (x_train,y_train),(x_test,y_test)
-  dataset = prepare_data(data,training_percentile)
+  train_set = prepare_data(data,training_percentile)
 
-  #2º passo: inicializar modelo
 
+  #metadados dos modelos
   #nº de neurónios de entrada do modelo
   input_neurons = 64
-  #forma dos dados de entrada
-  input_dim = dataset[0][0].shape[2]
   #learning rate do modelo
   learning_rate = 0.001
-  #construir modelo
-  model = build_model(input_neurons,input_dim,learning_rate)
-
-
-  #3ª passo: treinar modelo com os dados
-
+  
+  #metadados para treino
   #batch size
   batch_size = 96
   #nº de épocas que o modelo deve ser treinado
-  epochs = 32
-  #treinar modelo
-  train_model(model,dataset,batch_size,epochs)
+  epochs = 8
 
 
-  #4º passo: avaliar modelo
-  evaluate_model(model,dataset[1],batch_size)
+  #k-fold cross-validation:
+  #criar 5/10 "folds"(correspondem a partes do dataset diferentes que devem ser treinadas individualmente)
+  #que são avaliadas, sendo depois calculada a média destas avaliações
+
+  #para isto funcionar, vamos para além de precisar de separar os dados
+  #criar 5/10 modelos diferentes, para garantir que não temos contaminação
+  #entre os folds
+
+  #seed para o split da base de dados
+  seed = 1024
+  np.random.seed(seed)
+  #número de folds que serão usados
+  kfold_num = 10
+  #lista dos vários scores dados nos folds
+  fold_score_list = []
+  #iniciar o separador k-fold da base de dados usando sklearn  
+  kfold = StratifiedKFold(n_splits=kfold_num,shuffle=True,random_state=seed)
+  #para cada fold
+  for train,test in kfold.split(train_set[0],train_set[1]):
+    #datasets deste fold
+    x_train_fold = train_set[0][train]
+    y_train_fold = train_set[1][train]
+    x_test_fold = train_set[0][test]
+    y_test_fold = train_set[1][test]
+    dataset_fold = ((x_train_fold,y_train_fold),(x_test_fold,y_test_fold))
+    #forma dos dados de entrada
+    input_dim = x_train_fold.shape[2]
+    #criamos o modelo
+    model = build_model(input_neurons,input_dim,learning_rate)
+    #treinamos o modelo
+    train_model(model,dataset_fold,batch_size,epochs)
+    #avaliamos o modelo
+    fold_score = evaluate_model(model,dataset_fold[1],batch_size)
+    #score 
+    score_acc = fold_score[1]
+    #debug
+    print(model.metrics_names[1],": ",score_acc)
+    #adicionar à lista com os scores
+    fold_score_list.append(score_acc)
+  #no final apresentamos a média e a variação
+  print("average acc: ",np.mean(fold_score_list),"; standard deviation: +/- ",np.std(fold_score_list))
+
 
   #terminado
   print("Training terminated")
