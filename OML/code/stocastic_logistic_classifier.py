@@ -208,13 +208,37 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     #obtemos um valor aleatório da base de dados
     n=int(np.random.rand()*N)
     #update do eta
-    new_eta = eta* math.exp(-it/850)
+    new_eta = eta
+    #new_eta = eta* math.exp(-it/850)
 
     #new_eta = eta/( 2 * (it + 1) )
     #new_eta = eta/( (int(it/850) + 2) * (it + 1)) 
 
-    #TODO: colcoar a ter em conta a variância do erro
-    #new_eta = eta 
+    #ideia: observamos uma janela de certo tamanho de erros e calculamos a média
+    #depois vemos se essa média está próxima dos últimos valores de erro calculados
+    #se estiver, reduzimos o eta
+
+    #tamanho da janela: MAX_ITER/10
+    window_size = int(MAX_ITER/10)
+    #se tivermos elementos suficientes em err(equivalente a dizer que já valor superior a window_size em it)
+    if((it > window_size) and (it%25 == 0) ):
+      #obtemos os elementos da nossa janela
+      #e calculamos a média
+      med_err_window = np.mean(err[-window_size])
+      #vemos se a média dos últimos window_size/10 elementos está perto de med_err_window
+      sub_window_size = int(window_size/10)
+      med_sub_window = np.mean(err[-sub_window_size])
+      #perto significa: med_sub_window está entre +/- 10% med_err_window
+      if((med_sub_window >= med_err_window * 0.9) and (med_sub_window <= med_err_window * 1.1)):
+        #enquanto isto se verifica, reduzimos o eta
+        #note-se que quando chegar aqui vai chegar várias vezes
+        eta = eta * 0.75
+      #TODO: neste momento tem um problema: ainda não está bem ajustado
+      #e eventualmente o eta é demasiado pequeno
+      #ideia para melhorar: ajustar o eta pelo algarismo mais significativo
+      #do erro
+      #i.e, em vez de fazer eta*0.75 alteramos o eta de modo a conseguir ajustar
+      #o algarismo mais significativo E ser menor que o que tinha antes
 
     #atualizamos o valor dos alphas com base no elemento escolhido
     al = update(n,X_calc_mat,Y[n],new_eta,al)  
@@ -236,11 +260,11 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 #=========== MAIN CODE ===============
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
-#N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line1500.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/my_digit.txt');np.place(data[:,-1], data[:,-1]!=1, [-1])
 print('find %d images of %d X %d pixels' % (N,n_row,n_col))

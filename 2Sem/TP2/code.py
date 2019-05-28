@@ -275,29 +275,32 @@ def joiner():
 
   datatf = pd.read_csv(city + '/modtf.csv', sep=',', encoding='utf-8')
   dataw = pd.read_csv(city + '/modw.csv', sep=',', encoding='utf-8')
+  datai = pd.read_csv(city + '/i.csv', sep=',', encoding='utf-8')
 
   datas = pd.read_csv(city + '/datas.csv', sep=',', encoding='utf-8')
 
 
   datatf['dateComplete'] = pd.to_datetime(datatf['dateComplete'])
   dataw['dateComplete'] = pd.to_datetime(dataw['dateComplete'])
+  datai['Data'] = pd.to_datetime(datai['Data'])
 
   datatf.sort_values(by=['dateComplete'], inplace=True)
   dataw.sort_values(by=['dateComplete'], inplace=True)
+  datai.sort_values(by=['Data'], inplace=True)
 
-  merged_df = pd.merge_asof( datatf, dataw, left_on=['dateComplete'], right_on=['dateComplete'], direction='nearest')
+  merged_df = pd.merge_asof(datatf, dataw, left_on=['dateComplete'], right_on=['dateComplete'], direction='nearest')
 
   # merged_df.drop(columns=["creation_date_y","creation_time_y"])
   del merged_df["creation_date_y"]
   del merged_df["creation_time_y"]
   merged_df.rename(columns={'creation_date_x':'creation_date', 'creation_time_x':'creation_time'}, inplace=True)
 
-
   merged_df = pd.merge(merged_df, datas, left_on=['creation_date'], right_on=['data'])
 
+  merged_df = pd.merge_asof(merged_df, datai, left_on=['dateComplete'], right_on=['Data'], direction='nearest')
 
   # merged_df = pd.merge_asof(datatf,dataw,right_index=True,left_index=True,direction='nearest',tolerance=tol)
-  merged_df.to_csv(city + "/tfw.csv", sep=',', encoding='utf-8', index=False)
+  merged_df.to_csv(city + "/tfwi.csv", sep=',', encoding='utf-8', index=False)
 
 
 # Transformacoes Necessarias
