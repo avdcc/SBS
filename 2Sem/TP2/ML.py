@@ -228,7 +228,7 @@ def main():
   #1º passo: preparar dados
 
   #nome do csv com os dados
-  input_csv = "./Guimaraes/tfw.csv"
+  input_csv = "./Guimaraes/tfwi.csv"
   #percentagem de dados que serão para treino
   training_percentile = 0.8
   #ler data do csv
