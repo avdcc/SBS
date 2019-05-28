@@ -14,8 +14,9 @@ from numpy import round
 #####################
 #     DEFINES       #
 #####################
-OUTPUT = 'Guimaraes/modtf.csv'
-NUM_PARAMETROS_SEM_RUAS = 11
+OUTPUT = 'Braga/Traffic_Flow_Braga_Until_20190228.csv'
+#OUTPUT = 'Guimaraes/tfw.csv'
+NUM_PARAMETROS_SEM_RUAS = 20
 DATA_ind = 9 
 #####################
 
@@ -29,6 +30,8 @@ def writeFile(name_file,table):
     with open(name_file,'w') as fd:
         fd.write( '\n'.join(list(map(lambda x: ';'.join(x),table))) )
 
+def printTable(table):
+        print( '\n'.join(list(map(lambda x: ';'.join(x),table))) )
 
 def testa_dataSet():
     lista = readFile(cidade + 'ti.csv')[:-1]
@@ -46,11 +49,13 @@ def testa_dataSet():
 if (len(sys.argv) > 1):
     cidade = sys.argv[1] + '/'
 else:
-    cidade = 'Guimaraes/'
+    #cidade = 'Guimaraes/'
+    cidade = 'Braga/'
     #cidade = 'Porto/'
 
 #print(testa_dataSet())
-lista = readFile(cidade + 'ti.csv')[1:-1]
+#lista = readFile(cidade + 'ti.csv')[1:-1]
+lista = readFile(cidade + 'Traffic_Incidents_Braga_Until_20190228.csv')[1:-1]
 #lista = readFile(cidade + 'Traffic_Incidents_Porto_Until_20190228.csv')[1:-1]
 #print(lista[3][3])
 
@@ -219,7 +224,8 @@ def ordena(l):
            from_road[i],
            to_road[i],
            affected_roads[i],
-           magnitude_of_delay_desc[i]] for i in l],key= lambda x: x[0],reverse=True)
+           delay_in_seconds[i]] for i in l],key= lambda x: x[0],reverse=True)
+           #magnitude_of_delay_desc[i]] for i in l],key= lambda x: x[0],reverse=True)
 
 
 def new_date(date,range_date =12):
@@ -305,14 +311,15 @@ def print_conect():
         print(x + '---> ' + str( len(list(g[x])) ))
         #res.add()
 
-def calc_weight(date1,date2,mag):
+def calc_weight(date1,date2,d):
     #date1 = date_to_datetime(date1)
     # diff hours
     #print(date2)
-    diff = date1 - date2
+    diff = date1 - date2 if (date1 > date2) else date2 - date1
     diff = diff.total_seconds()
     diff = round(float(diff)/(60*60))
-    return max( round(mag - (diff/2)) ,0)
+    #if(d == 3): print(diff)
+    return int(max( round(d/(diff + 1)) ,0))
 
 def street_weight(l,ruas,date):
     calculadas = []
@@ -321,8 +328,9 @@ def street_weight(l,ruas,date):
         if(len(calculadas)==len(ruas)):
             break
         else:
-            #weight = calc_weight(date,row[0],row[-1])
-            weight = row[-1]
+            weight = calc_weight(date,row[0],row[-1])
+            #print(row[-1])
+            #weight = row[-1]
             if(row[1] not in calculadas):
                 calculadas.append(row[1])
                 res.append((row[1],weight))
@@ -352,57 +360,102 @@ def street_weight(l,ruas,date):
 #DataSet = filter_date(ordena(range(len(incident_date))),'2019-02-28 19:45:01.855000',12)
 #['road_name', 'functional_road_class_desc', 'current_speed', 'free_flow_speed', 'speed_diff', 'current_travel_time', 'free_flow_travel_time', 'time_diff', 'creation_date', 'datecomplete', 'creation_time']
 Output = readFile(OUTPUT) 
-DataSet = ordena(range(len(incident_date)))
-#print(len(Output[0]))
+DATAS_OUTPUT = set()
+#DATAS_OUTPUT.add('2019-02-18 09:30:00')
+for x in Output[1:-1]:
+    #DATAS_OUTPUT.add(x[9])
+    DATAS_OUTPUT.add(x[10])
+
+# print(Output[0:3])
 l_ruas = ruas()
-ruas_ind = dict(list(map(lambda x : (x[1],x[0]),list(enumerate(l_ruas)))))
-#print(ruas_ind)
-if(len(Output[1]) == NUM_PARAMETROS_SEM_RUAS):
-    # criar uma 
-    Output[0] += l_ruas
-    Output[1:] = list(map(lambda x: x + len(l_ruas)*['0'],Output[1:]))
+#print('[' + 'Data' +','+ ','.join(l_ruas) + ']')
+print('Data' +','+ ','.join(l_ruas))
+DataSet = ordena(range(len(incident_date)))
+#print(len(list(DATAS_OUTPUT)))
+#for x in list(DATAS_OUTPUT):
+#    print(x)
+    #try:
+    #    date_to_datetime(x)
+    #except:
+    #    print(x)
+for data in list(DATAS_OUTPUT):
+    date = date_to_datetime(data)
+    sw = street_weight(DataSet, l_ruas, date)
+    print(data + ',' + ','.join(list(map(lambda x: str(x[1]),sw))))
+# 21
+#print(len(Output[0]))
+#printTable(Output)
+# 244
+# l_ruas = ruas()
+# #print(len(l_ruas))
+# ruas_ind = dict(list(map(lambda x : (x[1],x[0]),list(enumerate(l_ruas)))))
+# #print(ruas_ind)
+# #print(Output)
+# nl = len(Output[1])
+# #if(nl == NUM_PARAMETROS_SEM_RUAS):
+# if(True):
+#    # criar uma 
+#    #print(Output)
+#    Output[0] += l_ruas
+#    Output[1:] = list(map(lambda x: x + len(l_ruas)*['0'],Output[1:]))
+
+   #printTable(Output)
 #print(len(Output[1]))
 #print(Output[1])
 #print(DataSet[1])
-data_sw = {}
-#DataSet = ordena(range(len(incident_date)))
-#print(DataSet)
-#table_res = Output
-for i,row in enumerate(Output):
-    if(i == 0) or (i == len(Output)-1): continue
-    if(len(row) < DATA_ind): continue
-    #print(DataSet)
-    data = row[DATA_ind]
-    date = date_to_datetime(data)
+# data_sw = {}
+# #DataSet = ordena(range(len(incident_date)))
+# #print(DataSet)
+# #table_res = Output
+# for i,row in enumerate(Output):
+#    if(i == 0) or (i == len(Output)-1): continue
+#    if(len(row) < DATA_ind): continue
+#    #print(DataSet)
+#    #print(row[Data_ind])
+#    data = row[10]
+#    #print(data)
+#    date = date_to_datetime(data)
 
-    if(data not in data_sw.keys()):
-        #print(DataSet)
-        sw = street_weight(DataSet,l_ruas,date)
-        data_sw[data] = sw
-    else:
-        sw = data_sw[data]
-    #print(date)
-    # [(street,weight) , ...]
+#    if(data not in data_sw.keys()):
+#        #print(DataSet)
+#        sw = street_weight(DataSet,l_ruas,date)
+#        data_sw[data] = sw
+#    else:
+#        sw = data_sw[data]
+#    #print(date)
+#    # [(street,weight) , ...]
 
-    #print(sw)
-    for x in sw:
-        if(x[0] != ''):
-            Output[i][ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
-            #table_res[ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
-            #print(x[0])
-            #print('----')
+#    #print(sw)
+#    for x in sw:
+#        if(x[0] != ''):
+#            #None
+#            # 265
+#            #print(len(Output[i]))
+#            #print(ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1)
+#            try:
+#                Output[i][ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
+#            except:
+#                None
+
+           #table_res[ruas_ind[x[0]]+NUM_PARAMETROS_SEM_RUAS+1] = str(x[1])
+           #print(x[0])
+           #print('----')
 
 #forEach(lambda x: print(';'.join(x)),table_res)
 #writeFile('testeout.csv',Output)
-writeFile(OUTPUT,Output)
+#writeFile(OUTPUT,Output)
+#printTable(Output)
+#
+#
+##for x in DataSet:
+#
+#
+#
+#
+#
+##print()
+##print()
+##print()
+#
+#
 
-
-#for x in DataSet:
-
-
-
-
-
-print()
-print()
-print()
