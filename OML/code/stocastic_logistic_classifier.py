@@ -221,7 +221,7 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
     #tamanho da janela: MAX_ITER/50
     window_size = int(MAX_ITER/50)
     #se tivermos elementos suficientes em err(equivalente a dizer que já valor superior a window_size em it)
-    if((it > window_size) and (it%window_size == 0) ):
+    if((len(err) > window_size) and (it%window_size == 0) ):
       #obtemos os elementos da nossa janela
       #e calculamos a média
       med_err_window = np.mean(err[-window_size])
