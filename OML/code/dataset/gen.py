@@ -53,7 +53,7 @@ def gen(n, lista, gen):
 
     if (gen == 3):
       z = random.uniform(-1,1)
-      c = avalQuadrantes(x,y,z,lista)
+      c = avalQuadrantes3(x,y,z,lista)
       l.append((x,y,z,c))
     else:
       c = avalLinha(x,y,lista)
