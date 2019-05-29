@@ -121,9 +121,14 @@ def build_model(input_neurons,input_shape,learning_rate):
   #como estamos a prever 1 valor numa coluna deve ter valor 1
   out_dim = 1
   #número de neurónios a usar na primeira camada escondida
-  hidden_neurons = 500
+  hidden_neurons = 500 #20*input_shape #15* input_shape #.......
+      #alterar número em função das coisas que estamos a considerar, impacto relevante(mas não sei quanto)
+
   #número a usar na segunda
   hidden_neurons_2 = int(hidden_neurons/2)
+  #percentagem de dados a remover em cada dropout
+  dropout_percentile = 0.2 #0.1 #0.15 
+      #testar com vários valores, deve ser pouco relevante
 
   #nesta função devemos criar um modelo usando keras
   #e retornar dito modelo após estar compilado usando Adam
@@ -138,7 +143,7 @@ def build_model(input_neurons,input_shape,learning_rate):
   model.add(input_layer)
 
   #em seguida adicionamos uma camada de dropout
-  drop_layer_1 = Dropout(0.2)
+  drop_layer_1 = Dropout(dropout_percentile)
   model.add(drop_layer_1)
 
 
@@ -148,7 +153,7 @@ def build_model(input_neurons,input_shape,learning_rate):
   model.add(hidden_layer_1)
 
   #dropout 2
-  drop_layer_2 = Dropout(0.2)
+  drop_layer_2 = Dropout(dropout_percentile)
   model.add(drop_layer_2)
 
   #2ª escondida
@@ -156,13 +161,12 @@ def build_model(input_neurons,input_shape,learning_rate):
   model.add(hidden_layer_2)
 
   #dropout 3
-  drop_layer_3 = Dropout(0.2)
+  drop_layer_3 = Dropout(dropout_percentile)
   model.add(drop_layer_3)
 
   #finalmente definimos a camada de saida
   output_layer = Dense(out_dim,input_dim = hidden_neurons_2,activation = 'relu')
   model.add(output_layer)
-
 
   #após termos definido o modelo, devemos compilar usando o Adam e o
   #learning rate definido nos argumentos da função
@@ -183,7 +187,6 @@ def train_model(model,data,batch_size,epochs):
   #para isso começamos por desenpacotar os dados
   (x_train,y_train),(x_test,y_test) = data
   
-
   #depois disto podemos já fazer o fit do modelo  
   #usando os dados e os argumentos da função, 
   #fazendo ainda shuffle dos dados ao longo do treino
@@ -232,15 +235,23 @@ def main():
 
   #metadados dos modelos
   #nº de neurónios de entrada do modelo
-  input_neurons = 64
+  input_neurons = 64  #128  #96  #...
+      #alternar para ver se tem algum impacto ou não
+
   #learning rate do modelo
   learning_rate = 0.001
+      #apesar de ser extremamente importante não tenho a minima ideia se se deve aumentar ou diminuir 
+      #este valor
+
   
   #metadados para treino
   #batch size
   batch_size = 96
+    #pouco relevante, não deve fazer diferença
   #nº de épocas que o modelo deve ser treinado
-  epochs = 8
+  epochs = 8 #16 #24 #32
+    #mais épocas deve levar a melhores resultados, mas demasiadas pode levar a um imenso desperdicio de tempo
+    #por muito pouco ganho
 
 
   #k-fold cross-validation:
@@ -253,9 +264,11 @@ def main():
 
   #seed para o split da base de dados
   seed = 1024
+    #se quiseres mudar a seed, está à vontade, não sei se importa
   np.random.seed(seed)
   #número de folds que serão usados
   kfold_num = 10
+      #não mudar este valor
   #lista dos vários scores dados nos folds
   fold_score_list = []
   #iniciar o separador k-fold da base de dados usando sklearn  
@@ -287,7 +300,7 @@ def main():
 
 
   #terminado
-  print("Training terminated")
+  print("Training and evaluation terminated")
 
 
 
