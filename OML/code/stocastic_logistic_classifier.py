@@ -58,7 +58,7 @@ def plot_error(err):
     plt.plot(range(len(err)), err, marker='o')
     plt.xlabel('Iterations')
     plt.ylabel('Number of misclassifications')
-    plt.ylim([0,20])
+    plt.ylim([0,5])
     plt.show()
     return 
 
@@ -300,7 +300,7 @@ X_calc_mat = calc_linear_kernel(Xt_tilde,1)
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(X_calc_mat,Yt,Nt,1,10000,al,err);print("\n")
+al,err=run_stocastic(X_calc_mat,Yt,Nt,0.1,10000,al,err);print("\n")
 #print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
 #print("\n",al,"\n")
