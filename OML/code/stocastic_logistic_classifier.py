@@ -265,6 +265,7 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 #N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 N,n_row,n_col,data=read_asc_data('./dataset/sqrt.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/sqrt_big.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
@@ -294,8 +295,8 @@ al=np.ones([Nt])
 Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
 #que podemos calcular para usar durante o update usando o kernel
-X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
-#X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
+#X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
+X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
