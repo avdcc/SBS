@@ -264,8 +264,14 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/sqr.txt')
+
+N,n_row,n_col,data=read_asc_data('./dataset/lin.txt')
+
+#N,n_row,n_col,data=read_asc_data('./dataset/sqr.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/sqr_big.txt')
+
+#N,n_row,n_col,data=read_asc_data('./dataset/cubed.txt')
+
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
@@ -295,8 +301,9 @@ al=np.ones([Nt])
 Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
 #que podemos calcular para usar durante o update usando o kernel
-#X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
-X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
+X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
+#X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
+#X_calc_mat = calc_linear_kernel(Xt_tilde,3) 
 #inicializar array de erros
 err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
@@ -313,6 +320,7 @@ plot_error(err)
 
 #print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
 C,R =confusion(X_calc_mat,Yt,Nt,al)
+print("################  in-samples statistics  ################")
 print(C)
 print(R)
 print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
@@ -322,6 +330,7 @@ if(training_percentage < 1):
   Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
   #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
   C,R =confusion(Xe,Ye,Ne,al)
+  print("################  out-samples statistics  ################")
   print(C)
   print(R)
   print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
