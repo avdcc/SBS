@@ -18,7 +18,7 @@ import numpy as np
 """
 def save(lista):
 
-  print(len(lista), len(lista[0]) ,len(set(map(lambda x: x[-1], lista))))
+  print(len(lista), len(lista[0]) - 1 ,len(set(map(lambda x: x[-1], lista))) - 1)
   for i in lista:
     print (" ".join(map(str,i)))
 
@@ -218,7 +218,8 @@ def avalQuadrantes3(x,y,z,lista):
 # --------------------------------------------
 
 plt.xkcd()
-#save(gen(1500, [1,2,1,0], 2))
+pprint(gen(1500, [1,0,0], 2,0.2))
+save(gen(1500, [1,0,0], 2,0.2))
 #pprint(gen(1500, [1,2,3,4],1,0.2))
-pprint(gen(19500, [1,2,3,4,5,6,7,8],3,0.3))
+#pprint(gen(19500, [1,2,3,4,5,6,7,8],3,0.3))
 #print(gen(1500, [1,2,3,4,5,6,7,8],3,0))

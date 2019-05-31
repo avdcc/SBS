@@ -262,9 +262,9 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 #=========== MAIN CODE ===============
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
-#N,n_row,n_col,data=read_asc_data('./dataset/CAND_BIG.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/sqrt.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
