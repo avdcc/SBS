@@ -233,12 +233,7 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
       if((med_sub_window >= med_err_window * 0.9) and (med_sub_window <= med_err_window * 1.1)):
         #enquanto isto se verifica, reduzimos o eta
         eta = eta / 5
-      #TODO: neste momento tem um problema: ainda não está bem ajustado
-      #e eventualmente o eta é demasiado pequeno
-      #ideia para melhorar: ajustar o eta pelo algarismo mais significativo
-      #do erro
-      #i.e, em vez de fazer eta*0.75 alteramos o eta de modo a conseguir ajustar
-      #o algarismo mais significativo E ser menor que o que tinha antes
+      #se o valor estiver demasiado baixo para o eta temos de ajustar
       if((med_sub_window >= med_err_window * 0.99) and (med_sub_window <= med_err_window * 1.01)):
         eta = eta * 10
 
@@ -263,7 +258,12 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
 N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/OR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
+
+
+#N,n_row,n_col,data=read_asc_data('./dataset/AND3D.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/OR3D.txt')
 
 
 #N,n_row,n_col,data=read_asc_data('./dataset/lin.txt')
