@@ -81,14 +81,15 @@ def calc_exponential_kernel(X_tilde):
 
 def confusion(X_calc_mat,Yeval,N,al):
     C=np.zeros([2,2])
+    R = []
     for n in range(N):
-        y=predictor(n,X_calc_mat,al)
-        #print(n,y)
-        if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
-        if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
-        if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
-        if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1
-    return C
+      y=predictor(n,X_calc_mat,al)
+      R.append((Yeval[n],y))
+      if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
+      if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
+      if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
+      if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1
+    return C,R
 
 #calculos de precisão do modelo
 def recall(C):
@@ -262,6 +263,7 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
 N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/CAND_BIG.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
@@ -309,16 +311,18 @@ plot_error(err)
 
 
 #print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
-C =confusion(X_calc_mat,Yt,Nt,al)
+C,R =confusion(X_calc_mat,Yt,Nt,al)
 print(C)
+print(R)
 print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
 if(training_percentage < 1):
   Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
   #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
-  C =confusion(Xe,Ye,Ne,al)
+  C,R =confusion(Xe,Ye,Ne,al)
   print(C)
+  print(R)
   print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
   #TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
   #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))

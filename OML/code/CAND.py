@@ -7,7 +7,7 @@ l = [(-1, -1, 0)
 ,(1 ,1 ,1)]
 
 for i in range(len(l)):
-  for a in range(10):
+  for a in range(100):
     rand_x = random.random() * l[i][0]
     rand_y = random.random() * l[i][1]
     if(rand_x> 0 and rand_y > 0):
@@ -16,7 +16,7 @@ for i in range(len(l)):
       tag = 0
     l.append((rand_x,rand_y,tag))
   
-file = open("./dataset/CAND.txt","a")
+file = open("./dataset/CAND_BIG.txt","a")
 
 for w in l:
   txt = str(w[0]) + " " + str(w[1]) + " " + str(w[2]) + "\n"
