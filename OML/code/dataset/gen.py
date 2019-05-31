@@ -120,14 +120,19 @@ def gen(n, eq, g,m=0):
             z = random.uniform(-1,1)
             if( (abs(x) > m) and (abs(y) > m) and (abs(z) > m) ):
                 break
+        else:
+            if( (abs(x) > m) and (abs(y) > m)):
+                break
 
     if (g == 3):
       c = avalQuadrantes3(x,y,z,eq)
-      l.append((x,y,z,c))
-    else:
+      l.append(((x/2) + 1/2,(y/2) + 1/2,(z/2) + 1/2,c))
+    elif(g ==2):
       c = avalLinha(x,y,eq)
-      # c = avalQuadrantes2(x,y,eq)
-      l.append((x,y,c))
+      l.append(((x/2) + 1/2,(y/2)+ 1/2,c))
+    else:
+      c = avalQuadrantes2(x,y,eq)
+      l.append(((x/2)+1/2,(y/2)+1/2,c))
 
   return (l)
 
@@ -214,6 +219,6 @@ def avalQuadrantes3(x,y,z,lista):
 
 plt.xkcd()
 #save(gen(1500, [1,2,1,0], 2))
-#pprint(gen(1500, [1,2,1,0],2,0.4))
+#pprint(gen(1500, [1,2,3,4],1,0.2))
 pprint(gen(19500, [1,2,3,4,5,6,7,8],3,0.3))
 #print(gen(1500, [1,2,3,4,5,6,7,8],3,0))
