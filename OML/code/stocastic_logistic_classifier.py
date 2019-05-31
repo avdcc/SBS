@@ -262,18 +262,25 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 #=========== MAIN CODE ===============
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
-#N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
+N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 
-N,n_row,n_col,data=read_asc_data('./dataset/lin.txt')
+
+#N,n_row,n_col,data=read_asc_data('./dataset/lin.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/3linP1.txt')
+
 
 #N,n_row,n_col,data=read_asc_data('./dataset/sqr.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/sqr_big.txt')
 
+
 #N,n_row,n_col,data=read_asc_data('./dataset/cubed.txt')
+
 
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle60.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/rectangle600.txt')
+
+
 #N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line1500.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/my_digit.txt');np.place(data[:,-1], data[:,-1]!=1, [-1])

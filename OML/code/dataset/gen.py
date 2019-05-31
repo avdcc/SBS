@@ -220,8 +220,8 @@ def avalQuadrantes3(x,y,z,lista):
 plt.xkcd()
 
 #x(lin)
-pprint(gen(150, [1,0], 2,0.2))
-save(gen(150, [1,0], 2,0.2))
+#pprint(gen(150, [1,0], 2,0.2))
+#save(gen(150, [1,0], 2,0.2))
 
 #3*x + 1(3linP1)
 #pprint(gen(150, [3,1], 2,0.2))
@@ -239,6 +239,9 @@ save(gen(150, [1,0], 2,0.2))
 #pprint(gen(150, [1,0,0,0], 2,0.2))
 #save(gen(150, [1,0,0,0], 2,0.2))
 
+#quadrantes 2D(quad2D)
+pprint(gen(150, [1,2,3,4],1,0.2))
+save(gen(150, [1,2,3,4],1,0.2))
 
 
 #pprint(gen(1500, [1,2,3,4],1,0.2))
