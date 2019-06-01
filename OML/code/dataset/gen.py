@@ -238,11 +238,15 @@ def file2Image(path):
     if len(l) > 2:
       res.append(tuple(map(float,l.rstrip().split(" "))))  
 
+  #pprint(res)
   saveImage(res,path[:-4]+".png")
 
 # --------------------------------------------
 
-plt.xkcd()
+#plt.xkcd()
+
+file2Image('lin.txt')
+
 
 #x(lin)
 #pprint(gen(150, [1,0], 2,0.2))
