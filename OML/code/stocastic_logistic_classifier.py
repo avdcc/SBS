@@ -405,10 +405,21 @@ def run_battery_tests(dataset_name,num_test=10,training_percentage=0.8,kernel_de
     json.dump(ret_val, fp, sort_keys=True, indent=2)
 
   #
-  print("Bateria de testes concluida, resultados guardados em",filename)
+  if(verbose > 0):
+    print("Bateria de testes concluida, resultados guardados em",filename)
   #retornar
   return ret_val
   
+
+
+#corre baterias de testes em todos os datasets
+def run_battery_tests_all_datasets(datasets,num_test=10,training_percentage=0.8,kernel_deg=1,learning_rate=0.1,MAX_ITER=10000,verbose=1):
+  for dataset_name in datasets:
+    run_battery_tests(dataset_name,num_test,training_percentage,kernel_deg,learning_rate,MAX_ITER,verbose)
+
+
+
+
 
 
 
@@ -427,9 +438,12 @@ datasets = ['AND','CAND','OR',
 #pprint(statistics, width=1)
 
 #correr uma bateria de testes sem qualquer mensagem excepto a de estar concluida
-stats = run_battery_tests('CAND',verbose=0)
+#stats = run_battery_tests('CAND',verbose=0)
 #pprint(stats, width=1)
 
+
+#corre uma bateria de testes em todos os datasets especificados
+run_battery_tests_all_datasets(datasets,verbose = 0)
 
 
 
