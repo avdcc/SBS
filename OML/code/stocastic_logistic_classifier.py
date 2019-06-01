@@ -403,7 +403,7 @@ def run_battery_tests(dataset_name,num_test=10,training_percentage=0.8,kernel_de
   ret_val['out-samples']['C'] = [ x.tolist() for x in ret_val['out-samples']['C'] ]
 
   #gravar para ficheiro
-  filename = './resultados/' + dataset_name + str(num_test) + "k" + kernel_deg + ".json"
+  filename = './resultados/' + dataset_name + str(num_test) + "k" + str(kernel_deg) + ".json"
   with open(filename, 'w') as fp:
     json.dump(ret_val, fp, sort_keys=True, indent=2)
 
