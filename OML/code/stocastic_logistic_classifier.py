@@ -277,11 +277,6 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
   N,n_row,n_col,data=read_asc_data(datafile)
   #transformar os dados
 
-  #transformação base de dados quadratica
-  #(x1,x2) -> (sqrt(2)*x1,sqrt(2)*x2,x1*x1,x2*x2,sqrt(2)*x1*x2)
-
-  #transformação base de dados x^3
-  #...
 
   #shuffle dos dados
   np.random.shuffle(data)

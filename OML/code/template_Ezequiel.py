@@ -64,13 +64,13 @@ def plot_error(err):
     return
 
 def confusion(Xeval,Yeval,N,ew):
-    C=np.zeros([2,2]);
+    C=np.zeros([2,2])
     for n in range(N):
-        y=predictor(Xeval[n],ew);
-        if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1;
-        if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1;
-        if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1;
-        if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1;
+        y=predictor(Xeval[n],ew)
+        if(y<0.5 and Yeval[n]<0.5): C[0,0]=C[0,0]+1
+        if(y>0.5 and Yeval[n]>0.5): C[1,1]=C[1,1]+1
+        if(y<0.5 and Yeval[n]>0.5): C[1,0]=C[1,0]+1
+        if(y>0.5 and Yeval[n]<0.5): C[0,1]=C[0,1]+1
     return C
 
 def sigmoid(s):
@@ -205,7 +205,7 @@ print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",
 
 print("\n\n")
 
-Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1];
+Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
 print('out-samples error=%f' % (cost(Xe,Ye,Ne,ew)))
 C =confusion(Xe,Ye,Ne,ew)
 print("Confusion matrix:")
