@@ -414,7 +414,7 @@ datasets = ['AND','CAND','OR',
 
 #correr uma bateria de testes
 stats = run_battery_tests('CAND')
-pprint(stats, width=1)
+#pprint(stats, width=1)
 
 
 
