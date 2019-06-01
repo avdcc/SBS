@@ -6,6 +6,29 @@ import numpy as np
 
 # --------------------------------------------
 
+def saveImage(lista, path):
+
+  x = list(map(lambda x: x[0], lista))
+  y = list(map(lambda x: x[1], lista))
+
+  if (len(lista[0]) == 3):
+    c = list(map(lambda x: x[2], lista))
+    plt.scatter(x,y,c=c)
+  else:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    z = list(map(lambda x: x[2], lista))
+    c = list(map(lambda x: x[3], lista))
+    ax.scatter(x, y, z, c=c)
+
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+
+  plt.savefig(path)
+
+
 """
 ## Mostrar o grafico ##
     INPUT:
@@ -200,20 +223,22 @@ def avalQuadrantes3(x,y,z,lista):
 
 
 # --------------------------------------------
-# DONUT
+# IMAGES
 
-# def donut (n, r, R, mx, my):
+def file2Image(path):
 
-  # for i in range(0,n//2):
+  file = open(path, "r") 
 
+  aux = file.readline()
+  dim = int(aux.split(" ")[1])
 
+  res = []
 
+  for l in file.readlines():
+    if len(l) > 2:
+      res.append(tuple(map(float,l.rstrip().split(" "))))  
 
-
-
-
-
-
+  saveImage(res,path[:-4]+".png")
 
 # --------------------------------------------
 
@@ -249,10 +274,16 @@ plt.xkcd()
 #save(gen(300, [1,1,1,1,1,1,0,1],3,0.2))
 
 #AND 3D
-pprint(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
-save(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
+# pprint(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
+# save(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
 
-
-#pprint(gen(1500, [1,2,3,4],1,0.2))
+# pprint(gen(1500, [1,2,3,4],1,0.2))
 #pprint(gen(19500, [1,2,3,4,5,6,7,8],3,0.3))
 #print(gen(1500, [1,2,3,4,5,6,7,8],3,0))
+
+# import glob
+
+# for f in glob.glob("*.txt"):
+#   print(f)
+#   if f not in ["OR.txt","CAND.txt","sqr.txt","XOR.txt","3linP1.txt","sqr_big.txt","lin.txt"] :
+#     file2Image(f)
