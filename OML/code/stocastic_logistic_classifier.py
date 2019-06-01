@@ -253,7 +253,7 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err,verbose=1):
     #adicionamos o custo atual ao array de custos que estamos a acumular
     err.append(cost(X_calc_mat,Y,N,al))
     #debug
-    if(verbose > 3):
+    if(verbose >= 3):
       print('iter %d, cost=%f, eta=%e     \r' %(it,err[-1],new_eta),end='')
     #aumentamos as iterações feitas
     it = it + 1    
@@ -300,14 +300,14 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
   err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
   #correr modelo
-  if(verbose > 2):
+  if(verbose >= 2):
     print("Iniciando teste em",dataset_name,"com",N,"linhas de dimensão",n_row,"X",n_col)
   al,err=run_stocastic(X_calc_mat,Yt,Nt,learning_rate,MAX_ITER,al,err,verbose)
-  if(verbose > 3):
+  if(verbose >= 3):
     print("\n")
 
   #avaliar modelo
-  if(verbose > 2):
+  if(verbose >= 2):
     print("Avaliando modelo")
   statistics = {}
 
@@ -320,7 +320,7 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
   statistics['in-samples']['accuracy'] = accuracy(C)
   statistics['in-samples']['precision'] = precision(C)
   #debug
-  if(verbose > 1):
+  if(verbose >= 1):
     print("avaliação in-samples: (",recall(C),",",accuracy(C),",",precision(C),")")
 
   #out-samples
@@ -408,7 +408,7 @@ def run_battery_tests(dataset_name,num_test=10,training_percentage=0.8,kernel_de
     json.dump(ret_val, fp, sort_keys=True, indent=2)
 
   #
-  if(verbose > 0):
+  if(verbose >= 0):
     print("Bateria de testes concluida, resultados guardados em",filename)
   #retornar
   return ret_val
@@ -445,8 +445,26 @@ datasets = ['CAND','OR',
 #pprint(stats, width=1)
 
 
-#corre uma bateria de testes em todos os datasets especificados
-run_battery_tests_all_datasets(datasets,verbose = 0)
+#número de vezes que o modelo será corrido para cálculo de média de resultados
+nt = 10
+#percentagem de dados de treino 
+tp = 0.8
+#valor para o kernel
+#se a 1, é o linear, se a 2 é o quadrático,...
+kg = 1
+#learning rate inicial do modelo
+lr = 0.1
+#número máximo de iterações que podem ser feitas por modelo
+max_iter = 10000
+#verbosidade do processo
+#se menor que 0, não avisa nada
+#se a 0, apenas avisa quando terminar cada um dos datasets dados
+#se a 1 avisa dados de quando inicia testes individuais para certo dataset
+#se a 2 mostra tudo excepto os valores dos modelos enquanto estão a correr
+#se maior que 2 mostra todas as mensagens
+verb = 0
+#corre uma bateria de testes em todos os datasets especificados com as variáveis acima definidas
+run_battery_tests_all_datasets(datasets,nt,tp,kg,lr,max_iter,verb)
 
 
 
