@@ -6,6 +6,7 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from pprint import pprint
 
 # ============ FILE load and write stuff ===========================
 
@@ -255,9 +256,88 @@ def run_stocastic(X_calc_mat,Y,N,eta,MAX_ITER,al,err):
 
 
 #=========== MAIN CODE ===============
+
+
+
+#corre um teste para um dataset
+def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1,MAX_ITER=10000):
+  #read data file
+  datafile = './dataset/' + dataset_name + '.txt'
+  N,n_row,n_col,data=read_asc_data(datafile)
+  #transformar os dados
+
+  #transformação base de dados quadratica
+  #(x1,x2) -> (sqrt(2)*x1,sqrt(2)*x2,x1*x1,x2*x2,sqrt(2)*x1*x2)
+
+  #transformação base de dados x^3
+  #...
+
+  #shuffle dos dados
+  np.random.shuffle(data)
+  #calcular tamanhos  
+  Nt=int(N*training_percentage)
+  #inicializar X e Y
+  Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
+  #inicializar array de pesos
+  al=np.ones([Nt])
+  #calcular X tilde
+  Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
+  #calculamos uma matriz 3D contendo todos os valores
+  #que podemos calcular para usar durante o update usando o kernel
+  X_calc_mat = calc_linear_kernel(Xt_tilde,kernel_deg) 
+  #inicializar array de erros
+  err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
+
+  #correr modelo
+  print("Iniciando teste em",dataset_name,"com",N,"linhas de dimensão",n_row,"X",n_col)
+  al,err=run_stocastic(X_calc_mat,Yt,Nt,learning_rate,MAX_ITER,al,err);print("\n")
+
+  #avaliar modelo
+  print("Avaliando modelo")
+  statistics = {}
+
+  #in-samples
+  statistics['in-samples'] = {}
+  C,R = confusion(X_calc_mat,Yt,Nt,al)
+  statistics['in-samples']['C'] = C
+  statistics['in-samples']['R'] = R
+  statistics['in-samples']['recall'] = recall(C)
+  statistics['in-samples']['accuracy'] = accuracy(C)
+  statistics['in-samples']['precision'] = precision(C)
+
+  #out-samples
+  statistics['out-samples'] = {}
+  if(training_percentage < 1):
+    Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
+    C,R = confusion(Xe,Ye,Ne,al)
+    statistics['out-samples']['C'] = C
+    statistics['out-samples']['R'] = R
+    statistics['out-samples']['recall'] = recall(C)
+    statistics['out-samples']['accuracy'] = accuracy(C)
+    statistics['out-samples']['precision'] = precision(C)
+  
+  #terminado
+  return statistics
+
+
+
+#datasets
+#alguns foram omitidos de propósito
+datasets = ['AND','CAND','OR',
+            'AND3D','OR3D',
+            'lin','3linP1',
+            'sqr','cubed']
+
+
+#correr um teste
+statistics = run_test('CAND')
+pprint(statistics, width=1)
+
+
+
 # read the data file
 #N,n_row,n_col,data=read_asc_data('./dataset/AND.txt')
-N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
+#N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/OR.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/XOR.txt')
 
@@ -284,7 +364,7 @@ N,n_row,n_col,data=read_asc_data('./dataset/CAND.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line600.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/line1500.txt')
 #N,n_row,n_col,data=read_asc_data('./dataset/my_digit.txt');np.place(data[:,-1], data[:,-1]!=1, [-1])
-print('find %d images of %d X %d pixels' % (N,n_row,n_col))
+#print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 #plot_data(10,6,n_row,n_col,data)
 
@@ -295,54 +375,54 @@ print('find %d images of %d X %d pixels' % (N,n_row,n_col))
 
 
 #shuffle dos dados
-np.random.shuffle(data)
+#np.random.shuffle(data)
 
 #calcular tamanhos
-training_percentage = 0.8
-Nt=int(N*training_percentage)
+#training_percentage = 0.8
+#Nt=int(N*training_percentage)
 #inicializar X e Y
-Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
+#Xt=data[:Nt,:-1];Yt=data[:Nt,-1]
 #inicializar array de pesos
-al=np.ones([Nt])
+#al=np.ones([Nt])
 #calcular X tilde
-Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
+#Xt_tilde = np.array( [ np.insert(Xt[i], 0, 1, axis=0) for i in range(Nt)] )
 #calculamos uma matriz 3D contendo todos os valores
 #que podemos calcular para usar durante o update usando o kernel
-X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
+#X_calc_mat = calc_linear_kernel(Xt_tilde,1) 
 #X_calc_mat = calc_linear_kernel(Xt_tilde,2) 
 #X_calc_mat = calc_linear_kernel(Xt_tilde,3) 
 #inicializar array de erros
-err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
+#err=[];err.append(cost(Xt_tilde,Yt,Nt,al))
 
 #correr modelo
-al,err=run_stocastic(X_calc_mat,Yt,Nt,0.1,10000,al,err);print("\n")
+#al,err=run_stocastic(X_calc_mat,Yt,Nt,0.1,10000,al,err);print("\n")
 #print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.2,500,al,err);print("\n")
 #print("\n",al,"\n")
 #al,err=run_stocastic(X_calc_mat,Yt,Nt,0.003,1000,al,err);print("\n")
 #print("\n",al,"\n")
 #mostrar gráfico de erro
-plot_error(err)
+#plot_error(err)
 
 
 #print('in-samples error=%f ' % (cost(Xt,Yt,Nt,al)))
-C,R =confusion(X_calc_mat,Yt,Nt,al)
-print("################  in-samples statistics  ################")
-print(C)
-print(R)
-print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
+#C,R =confusion(X_calc_mat,Yt,Nt,al)
+#print("################  in-samples statistics  ################")
+#print(C)
+#print(R)
+#print("in-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
 #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
 
-if(training_percentage < 1):
-  Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
-  #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
-  C,R =confusion(Xe,Ye,Ne,al)
-  print("################  out-samples statistics  ################")
-  print(C)
-  print(R)
-  print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
+#if(training_percentage < 1):
+#  Ne=N-Nt;Xe=data[Nt:N,:-1];Ye=data[Nt:N,-1]
+#  #print('out-samples error=%f' % (cost(Xe,Ye,Ne,al)))
+#  C,R =confusion(Xe,Ye,Ne,al)
+#  print("################  out-samples statistics  ################")
+#  print(C)
+#  print(R)
+#  print("out-samples confusion matrix evaluations (recall,accuracy,precision) = (",recall(C),",",accuracy(C),",",precision(C),")")
   #TP,TN,FP,FN =confusion(Xe,Ye,Ne,al)
   #print('True positive=%i, True Negative=%i, False positive=%i, False negative=%i, ' % (TP,TN,FP,FN))
   #plot_tagged_data(10,6,n_row,n_col,Xe,Ye,al)
 
-print('bye')
+print('Programa terminado')
