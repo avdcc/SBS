@@ -304,6 +304,8 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
   statistics['in-samples']['recall'] = recall(C)
   statistics['in-samples']['accuracy'] = accuracy(C)
   statistics['in-samples']['precision'] = precision(C)
+  #debug
+  print("avaliação in-samples: (",recall(C),",",accuracy(C),",",precision(C),")")
 
   #out-samples
   statistics['out-samples'] = {}
@@ -315,9 +317,86 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
     statistics['out-samples']['recall'] = recall(C)
     statistics['out-samples']['accuracy'] = accuracy(C)
     statistics['out-samples']['precision'] = precision(C)
+    #debug
+    print("avaliação out-samples: (",recall(C),",",accuracy(C),",",precision(C),")")
   
   #terminado
   return statistics
+
+
+
+#corre vários testes para uma única base de dados
+def run_battery_tests(dataset_name,num_test=10,training_percentage=0.8,kernel_deg=1,learning_rate=0.1,MAX_ITER=10000):
+  #
+  print("Iniciando bateria de",num_test,"testes para",dataset_name)
+
+  #
+  statistics_arr = []
+  #correr vários testes
+  for i in range(num_test):
+    #
+    print("Iniciando teste",i+1)
+    #correr modelo
+    stats = run_test(dataset_name,training_percentage,kernel_deg,learning_rate,MAX_ITER)
+    #adicionar estatisticas ao array
+    statistics_arr.append(stats)
+  #objeto de retorno
+  ret_val = {
+    'in-samples': {
+      'C': [],
+      'R': [],
+      'recall': [],
+      'accuracy': [],
+      'precision': []
+    },
+    'out-samples': {
+      'C': [],
+      'R': [],
+      'recall': [],
+      'accuracy': [],
+      'precision': []
+    }
+  }
+  #adicionar os vários C e R existentes e scores para os vários modelos
+  for stat in statistics_arr:
+
+    #in-samples
+    for key in stat['in-samples'].keys():
+      ret_val['in-samples'][key].append( stat['in-samples'][key] )
+
+    #ret_val['in-samples']['C'].append( stat['in-samples']['C'] )
+    #ret_val['in-samples']['R'].append( stat['in-samples']['R'] )
+    #ret_val['in-samples']['recall'].append( stat['in-samples']['recall'] )
+    #ret_val['in-samples']['accuracy'].append( stat['in-samples']['accuracy'] )
+    #ret_val['in-samples']['precision'].append( stat['in-samples']['precision'] )
+
+    #out-samples
+    if(learning_rate < 1):
+      for key in stat['out-samples'].keys():
+        ret_val['out-samples'][key].append( stat['out-samples'][key] )
+      #ret_val['out-samples']['C'].append( stat['out-samples']['C'] )
+      #ret_val['out-samples']['R'].append( stat['out-samples']['R'] )
+      #ret_val['out-samples']['recall'].append( stat['out-samples']['recall'] )
+      #ret_val['out-samples']['accuracy'].append( stat['out-samples']['accuracy'] )
+      #ret_val['out-samples']['precision'].append( stat['out-samples']['precision'] )
+
+  #calculo de média dos valores das avaliações
+  #.....
+  #ret_val[...][avg_recall] = ...
+  #ret_val[...][avg_accuracy] = ...
+  #ret_val[...][avg_precision] = ...
+
+  #gravar para ficheiro
+  filename = './resultados/' + dataset_name + str(num_test) + ".txt"
+  open(filename,"w").write(ret_val)
+
+  #
+  print("Bateria de testes concluida, resultados guardados em",filename)
+  #retornar
+  return ret_val
+  
+
+
 
 
 
@@ -330,8 +409,13 @@ datasets = ['AND','CAND','OR',
 
 
 #correr um teste
-statistics = run_test('CAND')
-pprint(statistics, width=1)
+#statistics = run_test('CAND')
+#pprint(statistics, width=1)
+
+#correr uma bateria de testes
+stats = run_battery_tests('CAND')
+pprint(stats, width=1)
+
 
 
 
