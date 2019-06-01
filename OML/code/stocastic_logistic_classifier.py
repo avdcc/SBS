@@ -101,6 +101,9 @@ def recall(C):
     return (C[0,0]) / (C[0,0] + C[1,0])
 
 def accuracy(C):
+  if((C[0,0] + C[0,1] + C[1,0] + C[1,1]) == 0):
+    return 0
+  else:
     return (C[0,0] + C[1,1])/(C[0,0] + C[0,1] + C[1,0] + C[1,1])
 
 def precision(C):
@@ -427,7 +430,7 @@ def run_battery_tests_all_datasets(datasets,num_test=10,training_percentage=0.8,
 
 #datasets
 #alguns foram omitidos de propósito
-datasets = ['AND','CAND','OR',
+datasets = ['CAND','OR',
             'AND3D','OR3D',
             'lin','3linP1',
             'sqr','cubed']
