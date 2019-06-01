@@ -403,7 +403,7 @@ def run_battery_tests(dataset_name,num_test=10,training_percentage=0.8,kernel_de
   ret_val['out-samples']['C'] = [ x.tolist() for x in ret_val['out-samples']['C'] ]
 
   #gravar para ficheiro
-  filename = './resultados/' + dataset_name + str(num_test) + ".json"
+  filename = './resultados/' + dataset_name + str(num_test) + "k" + kernel_deg + ".json"
   with open(filename, 'w') as fp:
     json.dump(ret_val, fp, sort_keys=True, indent=2)
 
@@ -462,7 +462,7 @@ max_iter = 10000
 #se a 1 avisa dados de quando inicia testes individuais para certo dataset
 #se a 2 mostra tudo excepto os valores dos modelos enquanto estão a correr
 #se maior que 2 mostra todas as mensagens
-verb = 0
+verb = 1
 #corre uma bateria de testes em todos os datasets especificados com as variáveis acima definidas
 run_battery_tests_all_datasets(datasets,nt,tp,kg,lr,max_iter,verb)
 
