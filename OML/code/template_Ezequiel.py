@@ -238,7 +238,7 @@ def run_test(dataset_name,training_percentage=0.8,learning_rate=0.1,MAX_ITER=100
     statistics['out-samples']['accuracy'] = accuracy(C)
     statistics['out-samples']['precision'] = precision(C)
     #debug
-    if(verbose > 1):
+    if(verbose >= 1):
       print("avaliação out-samples: (",recall(C),",",accuracy(C),",",precision(C),")")
   
   #terminado
@@ -340,11 +340,13 @@ def run_battery_tests_all_datasets(datasets,num_test=10,training_percentage=0.8,
 
 #datasets
 #alguns foram omitidos de propósito
-datasets = ['CAND','OR',
-            'AND3D','OR3D',
-            'lin','3linP1',
-            'sqr','cubed']
+#datasets = ['CAND','OR',
+#            'AND3D','OR3D',
+#            'lin','3linP1',
+#            'sqr','cubed']
 
+
+datasets = ['CXOR']
 
 
 #número de vezes que o modelo será corrido para cálculo de média de resultados

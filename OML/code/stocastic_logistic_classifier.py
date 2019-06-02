@@ -329,7 +329,7 @@ def run_test(dataset_name,training_percentage=0.8,kernel_deg=1,learning_rate=0.1
     statistics['out-samples']['accuracy'] = accuracy(C)
     statistics['out-samples']['precision'] = precision(C)
     #debug
-    if(verbose > 1):
+    if(verbose >= 1):
       print("avaliação out-samples: (",recall(C),",",accuracy(C),",",precision(C),")")
   
   #terminado
@@ -425,10 +425,13 @@ def run_battery_tests_all_datasets(datasets,num_test=10,training_percentage=0.8,
 
 #datasets
 #alguns foram omitidos de propósito
-datasets = ['CAND','OR',
-            'AND3D','OR3D',
-            'lin','3linP1',
-            'sqr','cubed']
+#datasets = ['CAND','OR',
+#            'AND3D','OR3D',
+#            'lin','3linP1',
+#            'sqr','cubed']
+
+
+datasets = ['CXOR']
 
 
 #correr um teste
@@ -446,7 +449,7 @@ nt = 10
 tp = 0.8
 #valor para o kernel
 #se a 1, é o linear, se a 2 é o quadrático,...
-kg = 1
+kg = 3
 #learning rate inicial do modelo
 lr = 0.1
 #número máximo de iterações que podem ser feitas por modelo
