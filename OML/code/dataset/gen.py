@@ -159,6 +159,22 @@ def gen(n, eq, g,m=0):
 
   return (l)
 
+def circular(n, r, R,m=0):
+  # y = mx + b
+  l = []
+  for i in range(n):
+
+    while(True):
+        x = random.uniform(-1,1)
+        y = random.uniform(-1,1)
+        if( x**2 + y**2 < r):
+            l.append(((x/2) + 1/2,(y/2) + 1/2,0))
+            break
+        elif( x**2 + y**2 > R):
+            l.append(((x/2) +1/2,(y/2)+1/2,1))
+            break
+
+  return (l)
 # --------------------------------------------
 # QUADRANTES
 
@@ -245,12 +261,14 @@ def file2Image(path):
 
 #plt.xkcd()
 
-file2Image('lin.txt')
+#file2Image('lin.txt')
+#pprint(circular(150,0.1,0.4))
+#save(circular(1500,0.1,0.4))
 
 
 #x(lin)
 #pprint(gen(150, [1,0], 2,0.2))
-#save(gen(150, [1,0], 2,0.2))
+#save(gen(1500, [1,0], 2,0.2))
 
 #3*x + 1(3linP1)
 #pprint(gen(150, [3,1], 2,0.2))
@@ -258,14 +276,14 @@ file2Image('lin.txt')
 
 #x^2(sqr)
 #pprint(gen(150, [1,0,0], 2,0.2))
-#save(gen(150, [1,0,0], 2,0.2))
+save(gen(1500, [1,0,0], 2,0.2))
 
 #x^2 + x(sqrPlin)
 #pprint(gen(150, [1,1,0], 2,0.2))
 #save(gen(150, [1,1,0], 2,0.2))
 
 #x^3(cubed)
-pprint(gen(150, [1,0,0,0], 2,0.2))
+#pprint(gen(150, [1,0,0,0], 2,0.2))
 #save(gen(150, [1,0,0,0], 2,0.2))
 
 #OR
@@ -274,8 +292,8 @@ pprint(gen(150, [1,0,0,0], 2,0.2))
 
 
 #XOR
-pprint(gen(150, [0,1,0,1],1,0.2))
-save(gen(150, [0,1,0,1],1,0.2))
+#pprint(gen(150, [0,1,0,1],1,0.2))
+#save(gen(1500, [0,1,0,1],1,0.2))
 
 
 
@@ -285,7 +303,7 @@ save(gen(150, [0,1,0,1],1,0.2))
 
 #AND 3D
 # pprint(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
-# save(gen(300, [1,0,0,0,0,0,0,0],3,0.2))
+#save(gen(1500, [1,0,0,0,0,0,0,0],3,0.2))
 
 # pprint(gen(1500, [1,2,3,4],1,0.2))
 #pprint(gen(19500, [1,2,3,4,5,6,7,8],3,0.3))
