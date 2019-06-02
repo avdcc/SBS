@@ -261,7 +261,7 @@ def file2Image(path):
 
 #plt.xkcd()
 
-#file2Image('lin.txt')
+file2Image('CAND400p.txt')
 #pprint(circular(150,0.1,0.4))
 #save(circular(400,0.1,0.4))
 
