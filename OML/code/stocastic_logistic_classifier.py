@@ -431,7 +431,7 @@ def run_battery_tests_all_datasets(datasets,num_test=10,training_percentage=0.8,
 #            'sqr','cubed']
 
 
-datasets = ['CXOR']
+datasets = ['circular400p','lin400p','CXOR400p','CAND400p','sqr400p']
 
 
 #correr um teste
